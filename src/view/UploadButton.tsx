@@ -1,23 +1,36 @@
 import React from 'react';
 
-interface ButtonProps {
-  //unnötig?
+export interface OpenedDocs {
+  //unbenennen in OpenedDocs oder so
+  //fileContents: string;
 }
 
-export const UploadButton: React.FC<ButtonProps> = () => {
-  //const [file, setFile] = useState<null | File>(null); //unnötig?
-
+const UploadButton: React.FC<OpenedDocs> = () => {
   const handleClick = (uploadedFileEvent: React.ChangeEvent<HTMLInputElement>) => {
     const inputElem = uploadedFileEvent.target as HTMLInputElement & {
       files: FileList;
     };
+    //TODO der überprüft ja momentan noch nicht wirklich, ob das eine .tck Datei ist...
 
     if (!inputElem.files[0]) {
       return;
     }
+    console.log(inputElem.files[0]); //eingelesene File
 
-    //TODO der überprüft ja momentan noch nicht wirklich, ob das eine .tck Datei ist...
-    //TODO was soll er dann mit der file anstellen? Muss ich die noch irgendwo anders abspeichern
+    //das alles vllcht in einen "Promise"-Block reinpacken???
+
+    //definition für fileReader
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      const fileContent = fileReader.result as string;
+      console.log(fileContent);
+
+      //TODO und hier dann in das onload selbst Parser noch rein
+    };
+    fileReader.readAsText(inputElem.files[0]);
+    //TODO Parser Class in anderer Datei erstellen für String auslesen oder in onload selbst
+
+    //TODO Muss ich die File noch irgendwo anders abspeichern?
   };
 
   //TODO hier noch das "Upload file" in diese Localization file tun
