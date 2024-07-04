@@ -103,13 +103,11 @@ attributes
  | attribute TOK_COLON attributes
  ;
 
-/* value of attribute can be empty */
 attribute
  : TOK_TEXT TOK_COLON TOK_TEXT
  | TOK_TEXT TOK_COLON
  ;
 
-/* weil mindestens zwei sync constraints */
 syncConstraints
  : syncConstraint TOK_COLON syncConstraint1
  ;

@@ -71,7 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var ta_parser = (function () {
+var timedAutomata = (function () {
   var o = function (k, v, o, l) {
       for (o = o || {}, l = k.length; l--; o[k[l]] = v);
       return o;
@@ -935,10 +935,10 @@ var ta_parser = (function () {
 })();
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-  exports.parser = ta_parser;
-  exports.Parser = ta_parser.Parser;
+  exports.parser = timedAutomata;
+  exports.Parser = timedAutomata.Parser;
   exports.parse = function () {
-    return ta_parser.parse.apply(ta_parser, arguments);
+    return timedAutomata.parse.apply(timedAutomata, arguments);
   };
   exports.main = function commonjsMain(args) {
     if (!args[1]) {
