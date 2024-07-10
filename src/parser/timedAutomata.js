@@ -156,7 +156,7 @@ var timedAutomata = (function () {
       TOK_URGENT: 44,
       TOK_PROV: 45,
       TOK_DO: 46,
-      reset: 47,
+      doSomething: 47,
       TOK_COMMA: 48,
       constraint: 49,
       TOK_AND: 50,
@@ -301,6 +301,107 @@ var timedAutomata = (function () {
 
       var $0 = $$.length - 1;
       switch (yystate) {
+        case 1:
+          return $$[$0 - 1];
+          break;
+        case 2:
+        case 4:
+          this.$ = $$[$0 - 1] + $$[$0];
+          break;
+        case 3:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 35:
+        case 44:
+        case 46:
+        case 50:
+        case 54:
+        case 55:
+        case 56:
+        case 57:
+        case 58:
+        case 59:
+        case 60:
+        case 61:
+        case 62:
+        case 63:
+        case 64:
+          this.$ = $$[$0];
+          break;
+        case 12:
+        case 14:
+        case 16:
+        case 26:
+          this.$ = $$[$0 - 3] + $$[$0 - 1] + $$[$0];
+          break;
+        case 13:
+        case 15:
+        case 17:
+        case 27:
+        case 28:
+        case 30:
+          this.$ = $$[$0 - 2] + $$[$0];
+          break;
+        case 18:
+        case 22:
+          this.$ = $$[$0 - 5] + $$[$0 - 3] + $$[$0 - 1] + $$[$0];
+          break;
+        case 19:
+        case 23:
+          this.$ = $$[$0 - 4] + $$[$0 - 2] + $$[$0];
+          break;
+        case 20:
+          this.$ = $$[$0 - 11] + $$[$0 - 9] + $$[$0 - 7] + $$[$0 - 5] + $$[$0 - 3] + $$[$0 - 1] + $$[$0];
+          break;
+        case 21:
+          this.$ = $$[$0 - 10] + $$[$0 - 8] + $$[$0 - 6] + $$[$0 - 4] + $$[$0 - 2] + $$[$0];
+          break;
+        case 24:
+          this.$ = $$[$0 - 9] + $$[$0 - 7] + $$[$0 - 5] + $$[$0 - 3] + $$[$0 - 1] + $$[$0];
+          break;
+        case 25:
+          this.$ = $$[$0 - 8] + $$[$0 - 6] + $$[$0 - 4] + $$[$0 - 2] + $$[$0];
+          break;
+        case 29:
+          this.$ = $$[$0];
+          break;
+        case 31:
+          this.$ = $$[$0 - 2] + $$[$0 - 1] + $$[$0];
+          break;
+        case 32:
+          this.$ = $$[$0 - 3] + $$[$0 - 2] + $$[$0 - 1] + $$[$0];
+          break;
+        case 33:
+        case 37:
+        case 40:
+        case 41:
+          this.$ = $$[$0 - 1];
+          break;
+        case 36:
+        case 38:
+        case 39:
+        case 42:
+        case 43:
+        case 45:
+        case 47:
+          this.$ = $$[$0 - 2] + $$[$0];
+          break;
+        case 48:
+        case 51:
+        case 52:
+          this.$ = $$[$0 - 2] + $$[$0 - 1] + $$[$0];
+          break;
+        case 49:
+          this.$ = $$[$0 - 4] + $$[$0 - 3] + $$[$0 - 2] + $$[$0 - 1];
+          break;
+        case 53:
+          this.$ = $$[$0 - 4] + $$[$0 - 3] + $$[$0 - 2] + $$[$0 - 1] + $$[$0];
+          break;
       }
     },
     table: [
