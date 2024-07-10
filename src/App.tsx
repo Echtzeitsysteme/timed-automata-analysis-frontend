@@ -6,6 +6,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { useAnalysisViewModel } from './viewmodel/AnalysisViewModel';
 import { AutomatonManipulation } from './view/AutomatonManipulation';
 import UploadButton from './view/UploadButton.tsx';
+import DownloadButton from './view/DownloadButton.tsx';
 
 function App() {
   const viewModel = useAnalysisViewModel();
@@ -39,6 +40,7 @@ function App() {
         ⏰ {t('app.title')}
       </h1>
       <UploadButton></UploadButton>
+      <DownloadButton></DownloadButton>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid
