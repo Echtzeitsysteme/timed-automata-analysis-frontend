@@ -58,142 +58,142 @@
 %%
 
 file
- : taSystem TOK_EOF
+ : taSystem TOK_EOF {return $1;}
  ;
 
 taSystem
- : systemDef items
+ : systemDef items {$$ = $1 + $2;}
  ;
 
 items
- : item
- | item items
+ : item {$$ = $1;}
+ | item items {$$ = $1 + $2;}
  ;
 
 item
- : processDef
- | eventDef
- | clockDef
- | intDef
- | locationDef
- | edgeDef
- | syncDef
+ : processDef {$$ = $1;}
+ | eventDef {$$ = $1;}
+ | clockDef {$$ = $1;}
+ | intDef {$$ = $1;}
+ | locationDef {$$ = $1;}
+ | edgeDef {$$ = $1;}
+ | syncDef {$$ = $1;}
  ;
 
 
 systemDef
- : TOK_SYSTEM TOK_COLON TOK_ID attributeList
- | TOK_SYSTEM TOK_COLON TOK_ID
+ : TOK_SYSTEM TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $4;}
+ | TOK_SYSTEM TOK_COLON TOK_ID { $$ = $1 + $3;}
  ;
 
 processDef
- : TOK_PROCESS TOK_COLON TOK_ID attributeList
- | TOK_PROCESS TOK_COLON TOK_ID
+ : TOK_PROCESS TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $4;}
+ | TOK_PROCESS TOK_COLON TOK_ID { $$ = $1 + $3;}
  ;
 
 eventDef
- : TOK_EVENT TOK_COLON TOK_ID attributeList
- | TOK_EVENT TOK_COLON TOK_ID
+ : TOK_EVENT TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $4;}
+ | TOK_EVENT TOK_COLON TOK_ID { $$ = $1 + $3;}
  ;
 
 clockDef
- : TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList
- | TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID
+ : TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $5 + $6;}
+ | TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = $1 + $3 + $5;}
  ;
 
 intDef
- : TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList
- | TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID
+ : TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $5 + $7 + $9 + $11 + $12;}
+ | TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = $1 + $3 + $5 + $7 + $9 + $11;}
  ;
 
 locationDef
- : TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList
- | TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID
+ : TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $5 + $6;}
+ | TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID { $$ = $1 + $3 + $5;}
  ;
 
 
 edgeDef
- : TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList
- | TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID
+ : TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $5 + $7 + $9 + $10;}
+ | TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID { $$ = $1 + $3 + $5 + $7 + $9;}
  ;
 
 syncDef
- : TOK_SYNC TOK_COLON syncConstraints attributeList
- | TOK_SYNC TOK_COLON syncConstraints
+ : TOK_SYNC TOK_COLON syncConstraints attributeList { $$ = $1 + $3 + $4;}
+ | TOK_SYNC TOK_COLON syncConstraints { $$ = $1 + $3;}
  ;
 
 syncConstraints
- : syncConstraint TOK_COLON syncConstraint1
+ : syncConstraint TOK_COLON syncConstraint1 { $$ = $1 + $3;}
  ;
 
 syncConstraints1
- : syncConstraint
- | syncConstraints1 TOK_COLON syncConstraint
+ : syncConstraint { $$ = $1;}
+ | syncConstraints1 TOK_COLON syncConstraint { $$ = $1 + $3;}
  ;
 
 syncConstraint
- : TOK_ID TOK_AT TOK_ID
- | TOK_PROCESS TOK_AT TOK_ID TOK_QMARK
+ : TOK_ID TOK_AT TOK_ID { $$ = $1 + $2 + $3;}
+ | TOK_PROCESS TOK_AT TOK_ID TOK_QMARK { $$ = $1 + $2 + $3 + $4;}
  ;
 
 attributeList
- : TOK_LBRACE attributes TOK_RBRACE
+ : TOK_LBRACE attributes TOK_RBRACE {$$ = $2;}
  | TOK_LBRACE TOK_RBRACE
  ;
 
 attributes
- : attribute
- | attribute TOK_COLON attributes
+ : attribute {$$ = $1;}
+ | attribute TOK_COLON attributes {$$ = $1 + $3;}
  ;
 
 attribute
- : TOK_INIT TOK_COLON
- | TOK_LABELS TOK_COLON labelsList
- | TOK_INVAR TOK_COLON constraints
- | TOK_COMMIT TOK_COLON
- | TOK_URGENT TOK_COLON
- | TOK_PROV TOK_COLON constraints
- | TOK_DO TOK_COLON reset
+ : TOK_INIT TOK_COLON {$$ = $1;}
+ | TOK_LABELS TOK_COLON labelsList {$$ = $1 + $3;}
+ | TOK_INVAR TOK_COLON constraints {$$ = $1 + $3;}
+ | TOK_COMMIT TOK_COLON {$$ = $1;}
+ | TOK_URGENT TOK_COLON {$$ = $1;}
+ | TOK_PROV TOK_COLON constraints {$$ = $1 + $3;}
+ | TOK_DO TOK_COLON doSomething {$$ = $1 + $3;}
  ;
 
 labelsList
- : TOK_ID
- | TOK_ID TOK_COMMA labelsList
+ : TOK_ID {$$ = $1;}
+ | TOK_ID TOK_COMMA labelsList {$$ = $1 + $3;}
  ;
 
 constraints
- : constraint
- | constraint TOK_AND constraints
+ : constraint {$$ = $1;}
+ | constraint TOK_AND constraints {$$ = $1 + $3;}
  ;
 
 constraint
- : TOK_ID cmp formula
- | formula cmp TOK_ID cmp formula
+ : TOK_ID cmp formula {$$ = $1 + $2 + $3;}
+ | formula cmp TOK_ID cmp formula {$$ = $1 + $2 + $3 + $4;}
  ;
 
 formula
- : TOK_INTEGER
- | TOK_INTEGER maths formula
+ : TOK_INTEGER {$$ = $1;}
+ | TOK_INTEGER maths formula {$$ = $1 + $2 + $3;}
  ;
 
-reset
- : TOK_ID TOK_SET TOK_INTEGER
- | TOK_ID TOK_SET TOK_INTEGER TOK_SEMICOLON reset
+doSomething
+ : TOK_ID TOK_SET TOK_INTEGER {$$ = $1 + $2 + $3;}
+ | TOK_ID TOK_SET TOK_INTEGER TOK_SEMICOLON doSomething {$$ = $1 + $2 + $3 + $4 + $5;}
  ;
 
 cmp
- : TOK_EQ
- | TOK_LT
- | TOK_LEQ
- | TOK_GEQ
- | TOK_GT
- | TOK_NEQ
+ : TOK_EQ {$$ = $1;}
+ | TOK_LT {$$ = $1;}
+ | TOK_LEQ {$$ = $1;}
+ | TOK_GEQ {$$ = $1;}
+ | TOK_GT {$$ = $1;}
+ | TOK_NEQ {$$ = $1;}
  ;
 
 maths
- : TOK_PLUS
- | TOK_MINUS
- | TOK_MUL
- | TOK_DIV
- | TOK_PERCENT
+ : TOK_PLUS {$$ = $1;}
+ | TOK_MINUS {$$ = $1;}
+ | TOK_MUL {$$ = $1;}
+ | TOK_DIV {$$ = $1;}
+ | TOK_PERCENT {$$ = $1;}
  ;
