@@ -66,7 +66,6 @@ const createFile = async (ta: TimedAutomaton) => {
 };
 
 const DownloadButton: React.FC<ActiveModel> = () => {
-  //dieses viewModel darf nur in einer React.FC aufgerufen werden, wegen Hooks.
   const viewModel = useAnalysisViewModel(); //<-- ist das so überhaupt richtig?
   console.log(viewModel);
 
