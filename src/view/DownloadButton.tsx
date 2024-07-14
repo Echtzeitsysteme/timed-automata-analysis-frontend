@@ -6,7 +6,7 @@ interface ActiveModel {
   viewModel: AnalysisViewModel;
 }
 
-const createFile = (ta: TimedAutomaton) => {
+const createFile = async (ta: TimedAutomaton) => {
   //TODO doesnt encompass any processes, systems or other definitions since the TA Definition only contains these types
   const system = 'system'; //system name
   const process = 'process'; //process name
@@ -60,15 +60,9 @@ const createFile = (ta: TimedAutomaton) => {
     edges += newEdge;
   });
   const taFile = systemDef + processDef + clocks + locations + edges;
-  console.log(taFile);
+  //console.log(taFile);
 
-  //und dann hier file downloadable machen
-  const blob = new Blob([taFile]);
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'file.tck';
-
-  return createFile; //like dis???
+  return taFile;
 };
 
 const DownloadButton: React.FC<ActiveModel> = () => {
@@ -76,17 +70,28 @@ const DownloadButton: React.FC<ActiveModel> = () => {
   const viewModel = useAnalysisViewModel(); //<-- ist das so überhaupt richtig?
   console.log(viewModel);
 
-  const downloadModel = createFile(viewModel.ta);
+  const downloadModel = async () => {
+    try {
+      const file = await createFile(viewModel.ta);
+
+      const blob = new Blob([file]);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'file.tck';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   //TODO hier noch das "Download Model" in diese Localization file tun
   return (
     <label htmlFor="downloadModel">
-      <button className="uploadButton" download="file.tck" onClick={downloadModel}>
+      <button className="uploadButton" onClick={downloadModel}>
         Download Model (alt)
       </button>
-      <a className="uploadButton" id="a1" download="file.tck">
-        Download Model
-      </a>
     </label>
   );
 };
