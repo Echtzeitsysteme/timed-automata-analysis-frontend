@@ -30,7 +30,7 @@ const UploadButton: React.FC<OpenedDocs> = () => {
       const parser = new timedAutomata.Parser();
 
       const parsedData = parser.parse(fileContent);
-      console.log('parsedData', parsedData); //gibt einfach "true" zurück...
+      console.log(parsedData);
     };
     fileReader.readAsText(inputElem.files[0]);
 
@@ -60,12 +60,10 @@ const UploadButton: React.FC<OpenedDocs> = () => {
 
   //TODO hier noch das "Upload file" in diese Localization file tun
   return (
-    <div>
-      <label htmlFor="uploadFile">
-        <input id="uploadFile" type="file" accept=".tck" onChange={handleClick} />
-        <div className="uploadButton"> Upload file</div>
-      </label>
-    </div>
+    <label htmlFor="uploadFile">
+      <input id="uploadFile" type="file" accept=".tck" onChange={handleClick} />
+      <div className="uploadButton">Upload file</div>
+    </label>
   );
 };
 
