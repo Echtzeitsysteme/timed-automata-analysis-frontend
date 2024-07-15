@@ -1,8 +1,8 @@
 import React from 'react';
 
-import timedAutomata from '../parser/timedAutomata';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
-console.log(timedAutomata);
+import { TsTckParser } from '../parser/tsTck.ts';
+//import timedAutomata_doof from '../parser/timedAutomata_doof';
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel; //für update Locations iwie?
@@ -11,10 +11,10 @@ export interface OpenedDocs {
 }
 
 const parseFile = async (fileContent: string) => {
-  const parser = new timedAutomata.Parser();
-
+  //const parser = new timedAutomata.Parser();
+  //const parser = new timedAutomata_alt.Parser();
+  const parser = new TsTckParser();
   const parsedData = parser.parse(fileContent);
-  //console.log(parsedData);
 
   return parsedData;
 };
@@ -39,7 +39,9 @@ const UploadButton: React.FC<OpenedDocs> = () => {
 
       try {
         const parsedData = await parseFile(fileContent);
-        console.log(parsedData); //contents of parsed File
+        console.log(parsedData);
+        //console.log(JSON.parse(parsedData)); //contents of parsed File
+        //parsedData.forEach((elem) => console.log(elem));
       } catch (error) {
         console.error(error);
       }
