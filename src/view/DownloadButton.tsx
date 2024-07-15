@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnalysisViewModel, useAnalysisViewModel } from '../viewmodel/AnalysisViewModel';
+import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel';
 import { TimedAutomaton } from '../model/ta/timedAutomaton.ts';
 
 interface ActiveModel {
@@ -65,8 +65,8 @@ const createFile = async (ta: TimedAutomaton) => {
   return taFile;
 };
 
-const DownloadButton: React.FC<ActiveModel> = () => {
-  const viewModel = useAnalysisViewModel(); //<-- ist das so überhaupt richtig?
+const DownloadButton: React.FC<ActiveModel> = (props) => {
+  const { viewModel } = props;
   console.log(viewModel);
 
   const downloadModel = async () => {
@@ -89,7 +89,7 @@ const DownloadButton: React.FC<ActiveModel> = () => {
   return (
     <label htmlFor="downloadModel">
       <button className="uploadButton" onClick={downloadModel}>
-        Download Model (alt)
+        Download Model
       </button>
     </label>
   );
