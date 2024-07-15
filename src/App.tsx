@@ -40,7 +40,7 @@ function App() {
         ⏰ {t('app.title')}
       </h1>
       <UploadButton></UploadButton>
-      <DownloadButton></DownloadButton>
+      <DownloadButton viewModel={viewModel}></DownloadButton>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid
