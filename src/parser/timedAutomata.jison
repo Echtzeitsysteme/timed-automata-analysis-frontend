@@ -62,12 +62,12 @@ file
  ;
 
 taSystem
- : systemDef items {$$ = $1 + $2;}
+ : systemDef items {$$ = {system: $1, items: $2};}
  ;
 
 items
- : item {$$ = $1;}
- | item items {$$ = $1 + $2;}
+ : items item {$1.push($2); $$ = $1;}
+ | item { $$ = [$1];}
  ;
 
 item
@@ -82,44 +82,44 @@ item
 
 
 systemDef
- : TOK_SYSTEM TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $4;}
- | TOK_SYSTEM TOK_COLON TOK_ID { $$ = $1 + $3;}
+ : TOK_SYSTEM TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attr: $4};}
+ | TOK_SYSTEM TOK_COLON TOK_ID { $$ = {type: $1, name: $3};}
  ;
 
 processDef
- : TOK_PROCESS TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $4;}
- | TOK_PROCESS TOK_COLON TOK_ID { $$ = $1 + $3;}
+ : TOK_PROCESS TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attr: $4};}
+ | TOK_PROCESS TOK_COLON TOK_ID { $$ = {type: $1, name: $3};}
  ;
 
 eventDef
- : TOK_EVENT TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $4;}
- | TOK_EVENT TOK_COLON TOK_ID { $$ = $1 + $3;}
+ : TOK_EVENT TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attr: $4};}
+ | TOK_EVENT TOK_COLON TOK_ID { $$ = {type: $1, name: $3};}
  ;
 
 clockDef
- : TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $5 + $6;}
- | TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = $1 + $3 + $5;}
+ : TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = {type: $1, amount: Number($3), name: $5, attr: $6};}
+ | TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = {type: $1, amount: $3, name: $5};}
  ;
 
 intDef
- : TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $5 + $7 + $9 + $11 + $12;}
- | TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = $1 + $3 + $5 + $7 + $9 + $11;}
+ : TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = {type: $1, size: Number($3), min: Number($5), max: Number($7), init: Number($9), name: $11, attr: $12};}
+ | TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = {type: $1, size: $3, min: $5, max: $7, init: $9, name: $11};}
  ;
 
 locationDef
- : TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $5 + $6;}
- | TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID { $$ = $1 + $3 + $5;}
+ : TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = { type: $1, processName: $3, name: $5, attr: $6};}
+ | TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID { $$ = { type: $1, processName: $3, name: $5};}
  ;
 
 
 edgeDef
- : TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = $1 + $3 + $5 + $7 + $9 + $10;}
- | TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID { $$ = $1 + $3 + $5 + $7 + $9;}
+ : TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = { type: $1, processName: $3, source: $5, target: $7, event: $9, attr: $10};}
+ | TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID { $$ = { type: $1, processName: $3, source: $5, target: $7, event: $9};}
  ;
 
 syncDef
- : TOK_SYNC TOK_COLON syncConstraints attributeList { $$ = $1 + $3 + $4;}
- | TOK_SYNC TOK_COLON syncConstraints { $$ = $1 + $3;}
+ : TOK_SYNC TOK_COLON syncConstraints attributeList { $$ = { type: $1, syncConstr: $3, attr: $4};}
+ | TOK_SYNC TOK_COLON syncConstraints { $$ = { type: $1, syncConstr: $3};}
  ;
 
 syncConstraints
@@ -138,32 +138,32 @@ syncConstraint
 
 attributeList
  : TOK_LBRACE attributes TOK_RBRACE {$$ = $2;}
- | TOK_LBRACE TOK_RBRACE
+ | TOK_LBRACE TOK_RBRACE { $$ = [];}
  ;
 
 attributes
- : attribute {$$ = $1;}
- | attribute TOK_COLON attributes {$$ = $1 + $3;}
+ : attribute {$$ = [$1];}
+ | attributes TOK_COLON attribute {$1.push($3); $$ = $3;}
  ;
 
 attribute
- : TOK_INIT TOK_COLON {$$ = $1;}
- | TOK_LABELS TOK_COLON labelsList {$$ = $1 + $3;}
- | TOK_INVAR TOK_COLON constraints {$$ = $1 + $3;}
- | TOK_COMMIT TOK_COLON {$$ = $1;}
- | TOK_URGENT TOK_COLON {$$ = $1;}
- | TOK_PROV TOK_COLON constraints {$$ = $1 + $3;}
- | TOK_DO TOK_COLON doSomething {$$ = $1 + $3;}
+ : TOK_INIT TOK_COLON {$$ = {invariant: $1};}
+ | TOK_LABELS TOK_COLON labelsList {$$ = {labels: $1, labelList: $3};}
+ | TOK_INVAR TOK_COLON constraints {$$ = {invariant: $1, constraint: $3};}
+ | TOK_COMMIT TOK_COLON {$$ = {commit: $1};}
+ | TOK_URGENT TOK_COLON {$$ = {urgent: $1};}
+ | TOK_PROV TOK_COLON constraints {$$ = {provided: $1, constraint: $3};}
+ | TOK_DO TOK_COLON doSomething {$$ = {do: $1, maths: $3};}
  ;
 
 labelsList
- : TOK_ID {$$ = $1;}
- | TOK_ID TOK_COMMA labelsList {$$ = $1 + $3;}
+ : TOK_ID {$$ = [$1];}
+ | labelsList TOK_COMMA TOK_ID {$1.push($3); $$ = $3;}
  ;
 
 constraints
- : constraint {$$ = $1;}
- | constraint TOK_AND constraints {$$ = $1 + $3;}
+ : constraint {$$ = [$1];}
+ | constraints TOK_AND constraint {$1.push($3); $$ = $3;}
  ;
 
 constraint
