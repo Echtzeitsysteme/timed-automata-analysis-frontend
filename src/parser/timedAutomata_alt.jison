@@ -62,12 +62,12 @@ file
  ;
 
 taSystem
- : systemDef items {$$ = $1 + $2;}
+ : systemDef items {$$ = {system: $1, items: $2};}
  ;
 
 items
- : item {$$ = $1;}
- | item items {$$ = $1 + $2;}
+ : items item {$1.push($2); $$ = $1;}
+ | item { $$ = [$1];}
  ;
 
 item
@@ -182,18 +182,18 @@ doSomething
  ;
 
 cmp
- : TOK_EQ {$$ = $1;}
- | TOK_LT {$$ = $1;}
- | TOK_LEQ {$$ = $1;}
- | TOK_GEQ {$$ = $1;}
- | TOK_GT {$$ = $1;}
- | TOK_NEQ {$$ = $1;}
+ : TOK_EQ {$$ = {comparator: $1};}
+ | TOK_LT {$$ = {comparator: $1};}
+ | TOK_LEQ {$$ = {comparator: $1};}
+ | TOK_GEQ {$$ = {comparator: $1};}
+ | TOK_GT {$$ = {comparator: $1};}
+ | TOK_NEQ {$$ = {comparator: $1};}
  ;
 
 maths
- : TOK_PLUS {$$ = $1;}
- | TOK_MINUS {$$ = $1;}
- | TOK_MUL {$$ = $1;}
- | TOK_DIV {$$ = $1;}
- | TOK_PERCENT {$$ = $1;}
+ : TOK_PLUS {$$ = {mathOp: $1};}
+ | TOK_MINUS {$$ = {mathOp: $1};}
+ | TOK_MUL {$$ = {mathOp: $1};}
+ | TOK_DIV {$$ = {mathOp: $1};}
+ | TOK_PERCENT {$$ = {mathOp: $1};}
  ;
