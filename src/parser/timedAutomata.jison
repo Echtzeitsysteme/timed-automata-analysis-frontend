@@ -1,3 +1,6 @@
+/* description: transforms a .tck-File into BNF */
+/* TODO: parser cant read certain complex formulas yet, see train_gate_3.tck file and the official documentation on valid input files */
+
 /* lexical grammar */
 %lex
 %options case-sensitive
@@ -123,12 +126,8 @@ syncDef
  ;
 
 syncConstraints
- : syncConstraint TOK_COLON syncConstraint1 { $$ = $1 + $3;}
- ;
-
-syncConstraints1
- : syncConstraint { $$ = $1;}
- | syncConstraints1 TOK_COLON syncConstraint { $$ = $1 + $3;}
+ : syncConstraint { $$ = [$1];}
+ | syncConstraints TOK_COLON syncConstraint {$1.push($3); $$ = $1;}
  ;
 
 syncConstraint
@@ -143,7 +142,7 @@ attributeList
 
 attributes
  : attribute {$$ = [$1];}
- | attributes TOK_COLON attribute {$1.push($3); $$ = $3;}
+ | attributes TOK_COLON attribute {$1.push($3); $$ = $1;}
  ;
 
 attribute
@@ -158,12 +157,12 @@ attribute
 
 labelsList
  : TOK_ID {$$ = [$1];}
- | labelsList TOK_COMMA TOK_ID {$1.push($3); $$ = $3;}
+ | labelsList TOK_COMMA TOK_ID {$1.push($3); $$ = $1;}
  ;
 
 constraints
  : constraint {$$ = [$1];}
- | constraints TOK_AND constraint {$1.push($3); $$ = $3;}
+ | constraints TOK_AND constraint {$1.push($3); $$ = $1;}
  ;
 
 constraint
@@ -177,8 +176,15 @@ formula
  ;
 
 doSomething
- : TOK_ID TOK_SET TOK_INTEGER {$$ = $1 + $2 + $3;}
- | TOK_ID TOK_SET TOK_INTEGER TOK_SEMICOLON doSomething {$$ = $1 + $2 + $3 + $4 + $5;}
+ : TOK_ID TOK_SET doFormula {$$ = $1 + $2 + $3;}
+ | TOK_ID TOK_SET doFormula TOK_SEMICOLON doSomething {$$ = $1 + $2 + $3 + $4 + $5;}
+ ;
+
+doFormula
+ : TOK_ID {$$ = $1;}
+ | TOK_INTEGER {$$ = $1;}
+ | TOK_ID maths doFormula {$$ = $1 + $2 + $3;}
+ | TOK_INTEGER maths doFormula {$$ = $1 + $2 + $3;}
  ;
 
 cmp
