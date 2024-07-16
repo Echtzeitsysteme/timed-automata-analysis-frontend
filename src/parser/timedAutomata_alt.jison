@@ -103,7 +103,7 @@ clockDef
 
 intDef
  : TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = {type: $1, size: Number($3), min: Number($5), max: Number($7), init: Number($9), name: $11, attr: $12};}
- | TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = {type: $1, size: $3, min: $5, max: $7, init: $9, init: $11};}
+ | TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = {type: $1, size: $3, min: $5, max: $7, init: $9, name: $11};}
  ;
 
 locationDef
