@@ -138,32 +138,32 @@ syncConstraint
 
 attributeList
  : TOK_LBRACE attributes TOK_RBRACE {$$ = $2;}
- | TOK_LBRACE TOK_RBRACE
+ | TOK_LBRACE TOK_RBRACE { $$ = [];}
  ;
 
 attributes
- : attribute {$$ = $1;}
- | attribute TOK_COLON attributes {$$ = $1 + $3;}
+ : attribute {$$ = [$1];}
+ | attributes TOK_COLON attribute {$1.push($3); $$ = $3;}
  ;
 
 attribute
- : TOK_INIT TOK_COLON {$$ = $1;}
- | TOK_LABELS TOK_COLON labelsList {$$ = $1 + $3;}
- | TOK_INVAR TOK_COLON constraints {$$ = $1 + $3;}
- | TOK_COMMIT TOK_COLON {$$ = $1;}
- | TOK_URGENT TOK_COLON {$$ = $1;}
- | TOK_PROV TOK_COLON constraints {$$ = $1 + $3;}
- | TOK_DO TOK_COLON doSomething {$$ = $1 + $3;}
+ : TOK_INIT TOK_COLON {$$ = {invariant: $1};}
+ | TOK_LABELS TOK_COLON labelsList {$$ = {labels: $1, labelList: $3};}
+ | TOK_INVAR TOK_COLON constraints {$$ = {invariant: $1, constraint: $3};}
+ | TOK_COMMIT TOK_COLON {$$ = {commit: $1};}
+ | TOK_URGENT TOK_COLON {$$ = {urgent: $1};}
+ | TOK_PROV TOK_COLON constraints {$$ = {provided: $1, constraint: $3};}
+ | TOK_DO TOK_COLON doSomething {$$ = {do: $1, maths: $3};}
  ;
 
 labelsList
- : TOK_ID {$$ = $1;}
- | TOK_ID TOK_COMMA labelsList {$$ = $1 + $3;}
+ : TOK_ID {$$ = [$1];}
+ | labelsList TOK_COMMA TOK_ID {$1.push($3); $$ = $3;}
  ;
 
 constraints
- : constraint {$$ = $1;}
- | constraint TOK_AND constraints {$$ = $1 + $3;}
+ : constraint {$$ = [$1];}
+ | constraints TOK_AND constraint {$1.push($3); $$ = $3;}
  ;
 
 constraint
@@ -182,18 +182,18 @@ doSomething
  ;
 
 cmp
- : TOK_EQ {$$ = {comparator: $1};}
- | TOK_LT {$$ = {comparator: $1};}
- | TOK_LEQ {$$ = {comparator: $1};}
- | TOK_GEQ {$$ = {comparator: $1};}
- | TOK_GT {$$ = {comparator: $1};}
- | TOK_NEQ {$$ = {comparator: $1};}
+ : TOK_EQ {$$ = $1;}
+ | TOK_LT {$$ = $1;}
+ | TOK_LEQ {$$ = $1;}
+ | TOK_GEQ {$$ = $1;}
+ | TOK_GT {$$ = $1;}
+ | TOK_NEQ {$$ = $1;}
  ;
 
 maths
- : TOK_PLUS {$$ = {mathOp: $1};}
- | TOK_MINUS {$$ = {mathOp: $1};}
- | TOK_MUL {$$ = {mathOp: $1};}
- | TOK_DIV {$$ = {mathOp: $1};}
- | TOK_PERCENT {$$ = {mathOp: $1};}
+ : TOK_PLUS {$$ = $1;}
+ | TOK_MINUS {$$ = $1;}
+ | TOK_MUL {$$ = $1;}
+ | TOK_DIV {$$ = $1;}
+ | TOK_PERCENT {$$ = $1;}
  ;
