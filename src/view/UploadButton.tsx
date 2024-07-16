@@ -2,6 +2,7 @@ import React from 'react';
 
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import { TsTckParser } from '../parser/tsTck.ts';
+import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
 //import timedAutomata_doof from '../parser/timedAutomata_doof';
 
 export interface OpenedDocs {
@@ -18,6 +19,10 @@ const parseFile = async (fileContent: string) => {
 
   return parsedData;
 };
+
+const convertToTa = async (parsedData : string)=> {
+  //TODO und dann eben hier einen TA erstellen und anhand der File clocks, locations, edges einfügen
+}
 
 const UploadButton: React.FC<OpenedDocs> = () => {
   const handleClick = (uploadedFileEvent: React.ChangeEvent<HTMLInputElement>) => {

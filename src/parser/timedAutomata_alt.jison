@@ -62,12 +62,12 @@ file
  ;
 
 taSystem
- : systemDef items {$$ = {$1, $2};}
+ : systemDef items {$$ = $1 + $2;}
  ;
 
 items
  : item {$$ = $1;}
- | item items {$$ = {$1, $2};}
+ | item items {$$ = $1 + $2;}
  ;
 
 item

@@ -28,7 +28,7 @@ case 1:
 return $$[$0-1];
 break;
 case 2: case 4:
-this.$ = {$$[$0-1], $$[$0]};
+this.$ = $$[$0-1] + $$[$0];
 break;
 case 3: case 5: case 6: case 7: case 8: case 9: case 10: case 11: case 35: case 44: case 46: case 50: case 54: case 55: case 56: case 57: case 58: case 59: case 60: case 61: case 62: case 63: case 64:
 this.$ = $$[$0];
