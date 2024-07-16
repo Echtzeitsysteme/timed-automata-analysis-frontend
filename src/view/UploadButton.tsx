@@ -3,7 +3,7 @@ import React from 'react';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import { TsTckParser } from '../parser/tsTck.ts';
 import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
-//import timedAutomata_doof from '../parser/timedAutomata_doof';
+import timedAutomata from '../parser/timedAutomata';
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel; //für update Locations iwie?
@@ -12,9 +12,8 @@ export interface OpenedDocs {
 }
 
 const parseFile = async (fileContent: string) => {
-  //const parser = new timedAutomata.Parser();
-  //const parser = new timedAutomata_alt.Parser();
-  const parser = new TsTckParser();
+  const parser = new timedAutomata.Parser();
+  //const parser = new TsTckParser();
   const parsedData = parser.parse(fileContent);
 
   return parsedData;

@@ -49,7 +49,7 @@ case 20:
  this.$ = {type: $$[$0-11], size: Number($$[$0-9]), min: Number($$[$0-7]), max: Number($$[$0-5]), init: Number($$[$0-3]), name: $$[$0-1], attr: $$[$0]};
 break;
 case 21:
- this.$ = {type: $$[$0-10], size: $$[$0-8], min: $$[$0-6], max: $$[$0-4], init: $$[$0-2], init: $$[$0]};
+ this.$ = {type: $$[$0-10], size: $$[$0-8], min: $$[$0-6], max: $$[$0-4], init: $$[$0-2], name: $$[$0]};
 break;
 case 22:
  this.$ = { type: $$[$0-5], processName: $$[$0-3], name: $$[$0-1], attr: $$[$0]};
