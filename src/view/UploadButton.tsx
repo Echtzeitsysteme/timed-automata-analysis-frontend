@@ -9,6 +9,8 @@ import {Location} from "../model/ta/location.ts";
 import {ClockConstraint} from "../model/ta/clockConstraint.ts";
 import {Clause} from "../model/ta/clause.ts";
 import {ClockComparator} from "../model/ta/clockComparator.ts";
+import {Switch} from "../model/ta/switch.ts";
+import {isDataViewLike} from "vis-data";
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel; //für update Locations iwie?
@@ -24,11 +26,11 @@ const parseFile = async (fileContent: string) => {
   return parsedData;
 };
 
-const convertToTa = async (parsedData)=> {
+const convertToTa = async (parsedData, viewModel:AnalysisViewModel)=> {
   const taModel: [string,TimedAutomaton][] = []; //TODO das abändern, oder Namen in timedAutomaton.ts packen?
 
   parsedData.items.forEach((item) => {
-    if(item.type == 'process'){
+    if (item.type == 'process') {
       const name: string = item.name;
       const TA: TimedAutomaton = {
         locations: [],
@@ -37,18 +39,21 @@ const convertToTa = async (parsedData)=> {
       };
       taModel.push([name, TA]);
     }
+  });
+  parsedData.items.forEach((item) => {
     if(item.type == 'event') {
 
     }
     if(item.type == 'clock') {
       if (item.amount == 1) {
         const newClock: Clock = item.name;
-        taModel[1].forEach((ta:TimedAutomaton) => { ta.clocks.push(newClock) });
+        taModel.forEach(([process, ta]) => { ta.clocks.push(newClock) });
       } else {
         for (let i = 0; i < item.amount; i++) {
           const clockName: string = item.name + String(item.amount)
           const newClock: Clock = {name: clockName};
           taModel[1].forEach((ta:TimedAutomaton) => { ta.clocks.push(newClock) });
+          //viewModel.addClock(viewModel, clockName);
         }
       }
     }
@@ -81,23 +86,43 @@ const convertToTa = async (parsedData)=> {
 
         }
       })
-      //const newLocation: Location = {name:  };
+      const newLocation: Location = {name: locName, isInitial: isInitial, invariant: invariants, xCoordinate: 0, yCoordinate: 0 };
+      taModel.forEach(([process, ta]) => {
+        if(process == processName){
+          ta.locations.push(newLocation);
+        }
+      });
+      //viewModel.addLocation(viewModel, locName, isInitial, invariants);
     }
     if(item.type == 'edge'){
       const processName : string = item.processName;
       const actionLabel : string = item.event;
       const sourceName : string = item.source;
       const targetName : string = item.target;
-      //TODO d.h. muss noch die Location anhand des Namens raussuchen
+      let source : Location;
+      let target : Location;
+      taModel.forEach(([process, ta]) => {
+        if(process == processName){
+          ta.locations.forEach((location) => {
+            if(location.name == sourceName){
+              source = location;
+            }
+            if(location.name == targetName){
+              target = location;
+            }
+          });
+        }
+      });
 
       const guard :ClockConstraint = { clauses: [] };
       const setClocks : Clock[] = [];
+      const clockNames : string[] = [];
       item.attributes.forEach((attribute) => {
 
         if (attribute.hasOwnProperty('provided')) {
-          const lhs: Clock = attribute.maths.lhs;
-          const comparator: ClockComparator = attribute.maths.comparator;
-          const rhs: number = attribute.maths.rhs;
+          const lhs: Clock = attribute.constraint.lhs;
+          const comparator: ClockComparator = attribute.constraint.comparator;
+          const rhs: number = attribute.constraint.rhs;
           const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
           guard.clauses.push(newClause);
         }
@@ -108,21 +133,28 @@ const convertToTa = async (parsedData)=> {
           //for now only really resets clocks?
           if(set == '=' && rhs == 0){
             setClocks.push(lhs);
+            clockNames.push(lhs.name);
           }
           //TODO was wenn nicht zB x=0? das ist ja glaub ich noch nicht möglich
         }
       });
+      const newSwitch : Switch = {source: source, guard: guard, actionLabel: actionLabel, reset: setClocks, target: target};
+      taModel.forEach(([process, ta]) => {
+        if(process == processName){
+          ta.switches.push(newSwitch);
+        }
+      });
+      //viewModel.addSwitch(viewModel, sourceName, actionLabel, clockNames, targetName, guard);
     }
     if(item.type == 'sync'){
     }
 
   });
-  //TODO und dann eben hier einen TA erstellen und anhand der File clocks, locations, edges einfügen
+  console.log(taModel);
 }
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
   const { viewModel } = props;
-
   const handleClick = (uploadedFileEvent: React.ChangeEvent<HTMLInputElement>) => {
     const inputElem = uploadedFileEvent.target as HTMLInputElement & {
       files: FileList;
@@ -143,7 +175,7 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
       try {
         const parsedData = await parseFile(fileContent);
         console.log(parsedData);
-        const ta = await convertToTa(parsedData);
+        const ta = await convertToTa(parsedData, viewModel);
         //console.log(JSON.parse(parsedData)); //contents of parsed File
       } catch (error) {
         console.error(error);

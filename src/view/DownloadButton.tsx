@@ -67,7 +67,7 @@ const createFile = async (ta: TimedAutomaton) => {
 
 const DownloadButton: React.FC<ActiveModel> = (props) => {
   const { viewModel } = props;
-  console.log(viewModel);
+  //console.log(viewModel);
 
   const downloadModel = async () => {
     try {
