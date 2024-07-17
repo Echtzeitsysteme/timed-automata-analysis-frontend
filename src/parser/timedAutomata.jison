@@ -85,43 +85,43 @@ item
 
 
 systemDef
- : TOK_SYSTEM TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attr: $4};}
+ : TOK_SYSTEM TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attributes: $4};}
  | TOK_SYSTEM TOK_COLON TOK_ID { $$ = {type: $1, name: $3};}
  ;
 
 processDef
- : TOK_PROCESS TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attr: $4};}
+ : TOK_PROCESS TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attributes: $4};}
  | TOK_PROCESS TOK_COLON TOK_ID { $$ = {type: $1, name: $3};}
  ;
 
 eventDef
- : TOK_EVENT TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attr: $4};}
+ : TOK_EVENT TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attributes: $4};}
  | TOK_EVENT TOK_COLON TOK_ID { $$ = {type: $1, name: $3};}
  ;
 
 clockDef
- : TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = {type: $1, amount: Number($3), name: $5, attr: $6};}
+ : TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = {type: $1, amount: $3, name: $5, attributes: $6};}
  | TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = {type: $1, amount: $3, name: $5};}
  ;
 
 intDef
- : TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = {type: $1, size: Number($3), min: Number($5), max: Number($7), init: Number($9), name: $11, attr: $12};}
+ : TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = {type: $1, size: $3, min: $5, max: $7, init: $9, name: $11, attributes: $12};}
  | TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = {type: $1, size: $3, min: $5, max: $7, init: $9, name: $11};}
  ;
 
 locationDef
- : TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = { type: $1, processName: $3, name: $5, attr: $6};}
+ : TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = { type: $1, processName: $3, name: $5, attributes: $6};}
  | TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID { $$ = { type: $1, processName: $3, name: $5};}
  ;
 
 
 edgeDef
- : TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = { type: $1, processName: $3, source: $5, target: $7, event: $9, attr: $10};}
+ : TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = { type: $1, processName: $3, source: $5, target: $7, event: $9, attributes: $10};}
  | TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID { $$ = { type: $1, processName: $3, source: $5, target: $7, event: $9};}
  ;
 
 syncDef
- : TOK_SYNC TOK_COLON syncConstraints attributeList { $$ = { type: $1, syncConstr: $3, attr: $4};}
+ : TOK_SYNC TOK_COLON syncConstraints attributeList { $$ = { type: $1, syncConstr: $3, attributes: $4};}
  | TOK_SYNC TOK_COLON syncConstraints { $$ = { type: $1, syncConstr: $3};}
  ;
 
@@ -146,13 +146,13 @@ attributes
  ;
 
 attribute
- : TOK_INIT TOK_COLON {$$ = {invariant: $1};}
+ : TOK_INIT TOK_COLON {$$ = {initial: $1};}
  | TOK_LABELS TOK_COLON labelsList {$$ = {labels: $1, labelList: $3};}
  | TOK_INVAR TOK_COLON constraints {$$ = {invariant: $1, constraint: $3};}
  | TOK_COMMIT TOK_COLON {$$ = {commit: $1};}
  | TOK_URGENT TOK_COLON {$$ = {urgent: $1};}
  | TOK_PROV TOK_COLON constraints {$$ = {provided: $1, constraint: $3};}
- | TOK_DO TOK_COLON doSomething {$$ = {do: $1, maths: $3};}
+ | TOK_DO TOK_COLON statements {$$ = {do: $1, maths: $3};}
  ;
 
 labelsList
@@ -166,8 +166,8 @@ constraints
  ;
 
 constraint
- : TOK_ID cmp formula {$$ = $1 + $2 + $3;}
- | formula cmp TOK_ID cmp formula {$$ = $1 + $2 + $3 + $4;}
+ : TOK_ID cmp formula {$$ = {lhs: $1, comparator: $2, rhs: $3};}
+ | formula cmp TOK_ID cmp formula {$$ = {lhs: $1, compLeft: $2, mhs: $3, comRight: $4};}
  ;
 
 formula
@@ -175,9 +175,13 @@ formula
  | TOK_INTEGER maths formula {$$ = $1 + $2 + $3;}
  ;
 
-doSomething
- : TOK_ID TOK_SET doFormula {$$ = $1 + $2 + $3;}
- | TOK_ID TOK_SET doFormula TOK_SEMICOLON doSomething {$$ = $1 + $2 + $3 + $4 + $5;}
+statements
+ : statement {$$ = [$1];}
+ | statements TOK_SEMICOLON statement {$1.push($3); $$ = $1;}
+ ;
+
+statement
+ : TOK_ID TOK_SET doFormula {$$ = {lhs: $1, set: $2, rhs: $3};}
  ;
 
 doFormula
