@@ -1,6 +1,7 @@
 import React from 'react';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel';
 import { TimedAutomaton } from '../model/ta/timedAutomaton.ts';
+import Button from "@mui/material/Button";
 
 interface ActiveModel {
   viewModel: AnalysisViewModel;
@@ -88,9 +89,9 @@ const DownloadButton: React.FC<ActiveModel> = (props) => {
   //TODO hier noch das "Download Model" in diese Localization file tun
   return (
     <label htmlFor="downloadModel">
-      <button className="uploadButton" onClick={downloadModel}>
+      <Button variant='contained' onClick={downloadModel}>
         Download Model
-      </button>
+      </Button>
     </label>
   );
 };

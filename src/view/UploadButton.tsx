@@ -11,6 +11,7 @@ import {Clause} from "../model/ta/clause.ts";
 import {ClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {isDataViewLike} from "vis-data";
+import {Button} from "@mui/material";
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel; //für update Locations iwie?
@@ -26,7 +27,7 @@ const parseFile = async (fileContent: string) => {
   return parsedData;
 };
 
-const convertToTa = async (parsedData, viewModel:AnalysisViewModel)=> {
+const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
   const taModel: [string,TimedAutomaton][] = []; //TODO das abändern, oder Namen in timedAutomaton.ts packen?
 
   parsedData.items.forEach((item) => {
@@ -103,20 +104,14 @@ const convertToTa = async (parsedData, viewModel:AnalysisViewModel)=> {
       let target : Location;
       taModel.forEach(([process, ta]) => {
         if(process == processName){
-          ta.locations.forEach((location) => {
-            if(location.name == sourceName){
-              source = location;
-            }
-            if(location.name == targetName){
-              target = location;
-            }
-          });
+          source = ta.locations.filter((location) => location.name === sourceName)[0];
+          target = ta.locations.filter((location) => location.name === targetName)[0];
         }
       });
 
       const guard :ClockConstraint = { clauses: [] };
       const setClocks : Clock[] = [];
-      const clockNames : string[] = [];
+      //const clockNames : string[] = [];
       item.attributes.forEach((attribute) => {
 
         if (attribute.hasOwnProperty('provided')) {
@@ -133,7 +128,7 @@ const convertToTa = async (parsedData, viewModel:AnalysisViewModel)=> {
           //for now only really resets clocks?
           if(set == '=' && rhs == 0){
             setClocks.push(lhs);
-            clockNames.push(lhs.name);
+            //clockNames.push(lhs.name);
           }
           //TODO was wenn nicht zB x=0? das ist ja glaub ich noch nicht möglich
         }
@@ -151,6 +146,7 @@ const convertToTa = async (parsedData, viewModel:AnalysisViewModel)=> {
 
   });
   console.log(taModel);
+  return taModel;
 }
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
@@ -175,8 +171,46 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
       try {
         const parsedData = await parseFile(fileContent);
         console.log(parsedData);
-        const ta = await convertToTa(parsedData, viewModel);
-        //console.log(JSON.parse(parsedData)); //contents of parsed File
+        const taModel = await convertToTa(parsedData);
+
+        console.log(taModel[0][1]);
+        const firstProcess = taModel[0][1];
+
+
+        //viewModel.addClock({ ...viewModel, ta: firstProcess }, "test");
+
+        firstProcess.clocks.forEach((clock : Clock) => {
+          //viewModel.addClock(viewModel, clock.name);
+          //viewModel.addClock({ ...viewModel, ta: firstProcess }, "test");
+        });
+
+        /**
+        firstProcess.locations.forEach((location : Location) => {
+          console.log(location);
+          if(location.invariant?.clauses.length == 0){
+            viewModel.addLocation(viewModel, location.name, location.isInitial);
+          } else {
+            viewModel.addLocation(viewModel, location.name, location.isInitial, location.invariant);
+          }
+        });
+
+        /**
+        firstProcess.switches.forEach((edge : Switch) => {
+          const clockNames:string[] = [];
+          edge.reset.forEach((clock:Clock ) => {clockNames.push(clock.name)})
+          if(edge.guard?.clauses.length == 0){
+            viewModel.addSwitch(viewModel, edge.source.name, edge.actionLabel, clockNames, edge.target.name);
+          } else {
+            viewModel.addSwitch(viewModel, edge.source.name, edge.actionLabel, clockNames, edge.target.name, edge.guard);
+          }
+        });
+        **/
+
+        /** nachdem ich neuen Zustände hinzugefügt habe
+        oldStates.switches.forEach((edge) => {viewModel.removeSwitch(viewModel, edge);});
+        oldStates.locations.forEach((location) => {viewModel.removeLocation(viewModel, location.name);});
+        oldStates.clocks.forEach((clock) => {viewModel.removeClock(viewModel, clock);});
+        **/
       } catch (error) {
         console.error(error);
       }
@@ -189,8 +223,10 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
   //TODO hier noch das "Upload file" in diese Localization file tun
   return (
     <label htmlFor="uploadFile">
-      <input id="uploadFile" type="file" accept=".tck" onChange={handleClick} />
-      <div className="uploadButton">Upload file</div>
+      <Button variant="contained" component="label">
+        Upload File
+        <input id="uploadFile" type="file" accept=".tck" onChange={handleClick}/>
+      </Button>
     </label>
   );
 };
