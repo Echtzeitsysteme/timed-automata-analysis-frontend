@@ -42,7 +42,12 @@ const createFile = async (ta: TimedAutomaton) => {
     if (edge.guard != undefined) {
       let first: boolean = true;
       edge.guard.clauses.forEach((clause) => {
-        const newClause = clause.lhs.name.toString() + clause.op.toString() + clause.rhs.toString();
+        let newClause = "";
+        if(clause.op.toString() == "="){
+          newClause = clause.lhs.name.toString() + "==" + clause.rhs.toString();
+        } else{
+          newClause = clause.lhs.name.toString() + clause.op.toString() + clause.rhs.toString();
+        }
         if (first) {
           newEdge += 'provided:' + newClause;
           first = false;
