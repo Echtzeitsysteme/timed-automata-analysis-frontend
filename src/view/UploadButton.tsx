@@ -47,14 +47,13 @@ const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
     }
     if(item.type == 'clock') {
       if (item.amount == 1) {
-        const newClock: Clock = item.name;
+        const newClock: Clock = { name: item.name };
         taModel.forEach(([process, ta]) => { ta.clocks.push(newClock) });
       } else {
         for (let i = 0; i < item.amount; i++) {
           const clockName: string = item.name + String(item.amount)
           const newClock: Clock = {name: clockName};
           taModel[1].forEach((ta:TimedAutomaton) => { ta.clocks.push(newClock) });
-          //viewModel.addClock(viewModel, clockName);
         }
       }
     }
@@ -93,7 +92,6 @@ const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
           ta.locations.push(newLocation);
         }
       });
-      //viewModel.addLocation(viewModel, locName, isInitial, invariants);
     }
     if(item.type == 'edge'){
       const processName : string = item.processName;
@@ -115,14 +113,15 @@ const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
       item.attributes.forEach((attribute) => {
 
         if (attribute.hasOwnProperty('provided')) {
-          const lhs: Clock = attribute.constraint.lhs;
+          const lhs: Clock = {name: attribute.constraint.lhs};
           const comparator: ClockComparator = attribute.constraint.comparator;
           const rhs: number = attribute.constraint.rhs;
           const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
           guard.clauses.push(newClause);
+          console.log("Guard:", guard);
         }
         if(attribute.hasOwnProperty('do')){
-          const lhs: Clock = attribute.maths.lhs;
+          const lhs: Clock = {name: attribute.maths.lhs};
           const set: ClockComparator = attribute.maths.set;
           const rhs: number = attribute.maths.rhs;
           //for now only really resets clocks?
@@ -139,7 +138,6 @@ const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
           ta.switches.push(newSwitch);
         }
       });
-      //viewModel.addSwitch(viewModel, sourceName, actionLabel, clockNames, targetName, guard);
     }
     if(item.type == 'sync'){
     }
@@ -176,14 +174,14 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
         console.log(taModel[0][1]);
         const firstProcess = taModel[0][1];
 
+        viewModel.setTa(viewModel, firstProcess);
 
-        //viewModel.addClock({ ...viewModel, ta: firstProcess }, "test");
-
+        /**
         firstProcess.clocks.forEach((clock : Clock) => {
           //viewModel.addClock(viewModel, clock.name);
-          //viewModel.addClock({ ...viewModel, ta: firstProcess }, "test");
+          viewModel.addClock({ ...viewModel, ta: firstProcess }, clock.name);
         });
-
+        **/
         /**
         firstProcess.locations.forEach((location : Location) => {
           console.log(location);
