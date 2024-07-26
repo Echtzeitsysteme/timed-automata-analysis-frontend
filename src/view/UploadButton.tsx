@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
-import { TsTckParser } from '../parser/tsTck.ts';
+import {AnalysisViewModel} from '../viewmodel/AnalysisViewModel.ts';
 import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
 import timedAutomata from '../parser/timedAutomata';
 import {Clock} from "../model/ta/clock.ts";
@@ -10,7 +9,6 @@ import {ClockConstraint} from "../model/ta/clockConstraint.ts";
 import {Clause} from "../model/ta/clause.ts";
 import {ClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
-import {isDataViewLike} from "vis-data";
 import {Button} from "@mui/material";
 
 export interface OpenedDocs {
@@ -70,11 +68,13 @@ const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
           isInitial = true;
         }
         if(attribute.hasOwnProperty('invariant')){
-          const lhs: Clock = {name: attribute.constraint.lhs};
-          const comparator: ClockComparator = attribute.constraint.comparator;
-          const rhs: number = attribute.constraint.rhs;
-          const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
-          invariants.clauses.push(newClause);
+          attribute.constraint.forEach((constr) => {
+            const lhs: Clock = {name: constr.lhs};
+            const comparator: ClockComparator = constr.comparator;
+            const rhs: number = constr.rhs;
+            const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
+            invariants.clauses.push(newClause);
+          });
         }
         if(attribute.hasOwnProperty('labels')){
 
@@ -113,22 +113,30 @@ const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
       item.attributes.forEach((attribute) => {
 
         if (attribute.hasOwnProperty('provided')) {
-          const lhs: Clock = {name: attribute.constraint.lhs};
-          const comparator: ClockComparator = attribute.constraint.comparator;
-          const rhs: number = attribute.constraint.rhs;
-          const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
-          guard.clauses.push(newClause);
-          console.log("Guard:", guard);
+          attribute.constraint.forEach((constr) => {
+            const lhs: Clock = {name: constr.lhs};
+            let comparator: ClockComparator;
+            if(constr.comparator == "=="){
+              comparator = ClockComparator.EQ;
+            }else{
+              comparator = constr.comparator;
+            }
+            const rhs: number = constr.rhs;
+            const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
+            guard.clauses.push(newClause);
+          });
         }
         if(attribute.hasOwnProperty('do')){
-          const lhs: Clock = {name: attribute.maths.lhs};
-          const set: ClockComparator = attribute.maths.set;
-          const rhs: number = attribute.maths.rhs;
-          //for now only really resets clocks?
-          if(set == '=' && rhs == 0){
-            setClocks.push(lhs);
-            //clockNames.push(lhs.name);
-          }
+          attribute.maths.forEach((math) => {
+            const lhs: Clock = {name: math.lhs};
+            const set: ClockComparator = math.set;
+            const rhs: number = math.rhs;
+            //for now only really resets clocks?
+            if(set == '=' && rhs == 0){
+              setClocks.push(lhs);
+              //clockNames.push(lhs.name);
+            }
+          });
           //TODO was wenn nicht zB x=0? das ist ja glaub ich noch nicht möglich
         }
       });
@@ -143,7 +151,7 @@ const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
     }
 
   });
-  console.log(taModel);
+  console.log("All processes:", taModel);
   return taModel;
 }
 
@@ -159,56 +167,23 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
       console.log('Invalid or no File');
       return;
     }
-    console.log(inputElem.files[0]); //eingelesene File
+    console.log("inputFile:", inputElem.files[0]); //eingelesene File
 
     const fileReader = new FileReader();
     fileReader.onload = async () => {
       const fileContent = fileReader.result as string;
-      console.log(fileContent);
+      console.log("fileContent:", fileContent);
 
       try {
         const parsedData = await parseFile(fileContent);
-        console.log(parsedData);
+        console.log("parsed Data:", parsedData);
         const taModel = await convertToTa(parsedData);
 
-        console.log(taModel[0][1]);
+        console.log("First Process:", taModel[0][1]);
         const firstProcess = taModel[0][1];
 
         viewModel.setTa(viewModel, firstProcess);
 
-        /**
-        firstProcess.clocks.forEach((clock : Clock) => {
-          //viewModel.addClock(viewModel, clock.name);
-          viewModel.addClock({ ...viewModel, ta: firstProcess }, clock.name);
-        });
-        **/
-        /**
-        firstProcess.locations.forEach((location : Location) => {
-          console.log(location);
-          if(location.invariant?.clauses.length == 0){
-            viewModel.addLocation(viewModel, location.name, location.isInitial);
-          } else {
-            viewModel.addLocation(viewModel, location.name, location.isInitial, location.invariant);
-          }
-        });
-
-        /**
-        firstProcess.switches.forEach((edge : Switch) => {
-          const clockNames:string[] = [];
-          edge.reset.forEach((clock:Clock ) => {clockNames.push(clock.name)})
-          if(edge.guard?.clauses.length == 0){
-            viewModel.addSwitch(viewModel, edge.source.name, edge.actionLabel, clockNames, edge.target.name);
-          } else {
-            viewModel.addSwitch(viewModel, edge.source.name, edge.actionLabel, clockNames, edge.target.name, edge.guard);
-          }
-        });
-        **/
-
-        /** nachdem ich neuen Zustände hinzugefügt habe
-        oldStates.switches.forEach((edge) => {viewModel.removeSwitch(viewModel, edge);});
-        oldStates.locations.forEach((location) => {viewModel.removeLocation(viewModel, location.name);});
-        oldStates.clocks.forEach((clock) => {viewModel.removeClock(viewModel, clock);});
-        **/
       } catch (error) {
         console.error(error);
       }
