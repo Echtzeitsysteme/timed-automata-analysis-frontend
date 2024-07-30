@@ -55,7 +55,7 @@ export interface AnalysisViewModel {
   addClock: (viewModel: AnalysisViewModel, clockName: string) => void;
   editClock: (viewModel: AnalysisViewModel, clockName: string, prevClockName: string) => void;
   removeClock: (viewModel: AnalysisViewModel, clock: Clock) => void;
-  setTa : (viewModel: AnalysisViewModel, ta: TimedAutomaton) => void;
+  setAutomaton : (viewModel: AnalysisViewModel, ta: TimedAutomaton) => void;
 }
 
 export enum AnalysisState {
@@ -278,7 +278,7 @@ export function useAnalysisViewModel(): AnalysisViewModel {
     [removeAllClausesUsingClock, removeClockFromAllResets]
   );
 
-  const setTa = useCallback(
+  const setAutomaton = useCallback(
       (viewModel: AnalysisViewModel, ta: TimedAutomaton) => {
         setViewModel({ ...viewModel, ta: ta, state: AnalysisState.READY });
       },
@@ -299,7 +299,7 @@ export function useAnalysisViewModel(): AnalysisViewModel {
     addClock: addClock,
     editClock: editClock,
     removeClock: removeClock,
-    setTa: setTa,
+    setAutomaton: setAutomaton,
   });
 
   // ===================================================================================================================
