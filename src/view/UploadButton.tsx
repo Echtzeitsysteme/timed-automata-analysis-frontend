@@ -10,6 +10,7 @@ import {Clause} from "../model/ta/clause.ts";
 import {ClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {Button} from "@mui/material";
+import { useMathUtils } from '../utils/mathUtils';
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel; //für update Locations iwie?
@@ -25,7 +26,7 @@ const parseFile = async (fileContent: string) => {
   return parsedData;
 };
 
-const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
+const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<[string,TimedAutomaton][]> => {
   const taModel: [string,TimedAutomaton][] = []; //TODO das abändern, oder Namen in timedAutomaton.ts packen?
 
   parsedData.items.forEach((item) => {
@@ -86,7 +87,10 @@ const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
 
         }
       })
-      const newLocation: Location = {name: locName, isInitial: isInitial, invariant: invariants, xCoordinate: 0, yCoordinate: 0 };
+      const locations = viewModel.ta.locations;
+      const xCoordAvg = avgRounded(locations.map((l) => l.xCoordinate));
+      const yCoordAvg = avgRounded(locations.map((l) => l.yCoordinate));
+      const newLocation: Location = {name: locName, isInitial: isInitial, invariant: invariants, xCoordinate: xCoordAvg, yCoordinate: yCoordAvg };
       taModel.forEach(([process, ta]) => {
         if(process == processName){
           ta.locations.push(newLocation);
@@ -157,6 +161,7 @@ const convertToTa = async (parsedData):Promise<[string,TimedAutomaton][]> => {
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
   const { viewModel } = props;
+  const { avgRounded } = useMathUtils();
   const handleClick = (uploadedFileEvent: React.ChangeEvent<HTMLInputElement>) => {
     const inputElem = uploadedFileEvent.target as HTMLInputElement & {
       files: FileList;
@@ -177,12 +182,12 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
       try {
         const parsedData = await parseFile(fileContent);
         console.log("parsed Data:", parsedData);
-        const taModel = await convertToTa(parsedData);
+        const taModel = await convertToTa(parsedData, viewModel, avgRounded);
 
         console.log("First Process:", taModel[0][1]);
         const firstProcess = taModel[0][1];
 
-        viewModel.setTa(viewModel, firstProcess);
+        viewModel.setAutomaton(viewModel, firstProcess);
 
       } catch (error) {
         console.error(error);
