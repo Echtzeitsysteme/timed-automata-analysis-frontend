@@ -17,28 +17,29 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export interface AutomatonSelectionProps {
-  viewModel: AnalysisViewModel;
+    viewModel: AnalysisViewModel;
 }
 
 interface AutomatonOptionType {
-  label: string;
-  automaton: TimedAutomaton;
-  inputValue?: string;
+    label: string;
+    automaton: TimedAutomaton;
+    inputValue?: string;
 }
 
 const filter = createFilterOptions<AutomatonOptionType>();
 
+
 const AutomatonSelection: React.FC<AutomatonSelectionProps> = (props) => {
-  const { viewModel } = props; //für so ein viewModel.setAutomaton
-  const automaton = viewModel.ta;
-  const [options, setOptions] = React.useState<AutomatonOptionType[]>([
-    { label: 'init_Automaton', automaton: automaton },
-    { label: 'second_Automaton', automaton: automaton },
-    { label: 'third_Automaton', automaton: automaton },
-  ]);
-  const [value, setValue] = React.useState<AutomatonOptionType>(options[0]);
-  const [inputValue, setInputValue] = React.useState('');
-  let addNewVal = false;
+    const { viewModel } = props; //für so ein viewModel.setAutomaton
+    const automaton = viewModel.ta;
+    const [options, setOptions] = React.useState<AutomatonOptionType[]>([
+        { label: 'init_Automaton', automaton: automaton },
+        { label: 'second_Automaton', automaton: automaton },
+        { label: 'third_Automaton', automaton: automaton },
+    ]);
+    const [value, setValue] = React.useState<AutomatonOptionType>(options[0]);
+    const [inputValue, setInputValue] = React.useState('');
+    let addNewVal = false;
 
   let newModelName: string = '';
   const addModel = () => {
