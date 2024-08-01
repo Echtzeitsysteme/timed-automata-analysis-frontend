@@ -8,6 +8,7 @@ import { AutomatonManipulation } from './view/AutomatonManipulation';
 import UploadButton from './view/UploadButton.tsx';
 import DownloadButton from './view/DownloadButton.tsx';
 import AutomatonSelection from './view/AutomatonSelection.tsx';
+import AutomatonDrawer from "./view/AutomationDrawer.tsx";
 
 function App() {
   const viewModel = useAnalysisViewModel();
@@ -40,6 +41,7 @@ function App() {
       <h1 style={{ paddingLeft: '16px' }} ref={headerRef}>
         ⏰ {t('app.title')}
       </h1>
+      <AutomatonDrawer viewModel={viewModel}></AutomatonDrawer>
       <UploadButton viewModel={viewModel}></UploadButton>
       <DownloadButton viewModel={viewModel}></DownloadButton>
       <AutomatonSelection viewModel={viewModel}></AutomatonSelection>
