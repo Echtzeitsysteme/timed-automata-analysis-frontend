@@ -7,6 +7,7 @@ import { useAnalysisViewModel } from './viewmodel/AnalysisViewModel';
 import { AutomatonManipulation } from './view/AutomatonManipulation';
 import UploadButton from './view/UploadButton.tsx';
 import DownloadButton from './view/DownloadButton.tsx';
+import AutomatonSelection from './view/AutomatonSelection.tsx';
 
 function App() {
   const viewModel = useAnalysisViewModel();
@@ -41,6 +42,7 @@ function App() {
       </h1>
       <UploadButton viewModel={viewModel}></UploadButton>
       <DownloadButton viewModel={viewModel}></DownloadButton>
+      <AutomatonSelection viewModel={viewModel}></AutomatonSelection>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid
