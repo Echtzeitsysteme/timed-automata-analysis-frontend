@@ -78,7 +78,7 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
                 open={open}
             >
                 <DrawerHeader>
-                    Add or Swap Models
+                    Filler blabla
                     <IconButton onClick={handleDrawerClose}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
                     </IconButton>
@@ -96,7 +96,6 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
                         </ListItem>
                     ))}
                 </List>
-                <AutomatonSelection viewModel={viewModel}></AutomatonSelection>
             </Drawer>
         </Box>
     );
