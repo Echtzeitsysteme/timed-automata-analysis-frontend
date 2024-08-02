@@ -201,7 +201,7 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
   //TODO hier noch das "Upload file" in diese Localization file tun
   return (
     <label htmlFor="uploadFile">
-      <Button variant="contained" component="label">
+      <Button variant="contained" component="label" sx={{mr: 0.15, mb: 0.2}}>
         Upload File
         <input id="uploadFile" type="file" accept=".tck" onChange={handleClick}/>
       </Button>
