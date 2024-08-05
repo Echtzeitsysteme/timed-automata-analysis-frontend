@@ -195,6 +195,7 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
     };
     fileReader.readAsText(inputElem.files[0]);
 
+    inputElem.value = '';
     //TODO Muss ich die File noch irgendwo anders abspeichern?
   };
 

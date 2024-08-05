@@ -35,7 +35,7 @@ const AutomatonSelection: React.FC<AutomatonSelectionProps> = (props) => {
         { label: 'init_Automaton', automaton: automaton },
     ]);
     const [value, setValue] = React.useState<AutomatonOptionType>(options[0]);
-    const [inputValue, setInputValue] = React.useState('');
+    //const [inputValue, setInputValue] = React.useState('');
     //let addNewVal = false;
 
     //alternativ hier "newModelName" durch inputValue ersetzen, dann muss input in select-Feld eingegeben werden
@@ -70,13 +70,13 @@ const AutomatonSelection: React.FC<AutomatonSelectionProps> = (props) => {
         <Box sx={{ display: 'inline-flex'}}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }} >
                 <FormControl sx={{ width: 200, mr:0.2}} id="enter-name-field" label="Model Name">
-                    <InputLabel htmlFor="my-input">Enter New Model</InputLabel>
+                    <InputLabel htmlFor="my-input">Enter New Process</InputLabel>
                     <Input id="my-input" aria-describedby="my-helper-text" onChange={handleInput} sx={{ml: 0.5}}/>
                     <FormHelperText id="my-helper-text">Names can't be duplicates.</FormHelperText>
                 </FormControl>
                 <Button variant="contained" onClick={addModel} sx={{mb: 1}}>
                     <AddIcon></AddIcon>
-                    Add Model
+                    Add Process
                 </Button>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -134,14 +134,16 @@ const AutomatonSelection: React.FC<AutomatonSelectionProps> = (props) => {
                     }}
                     **/
                     options={options.map((option) => option.label)}
+                    /**
                     onInputChange={(event, newInputValue) => {
                         setInputValue(newInputValue);
                     }}
+                    **/
                     renderInput={(params) => <TextField {...params} label="Select Model" />}
                 ></Autocomplete>
                 <Button variant="contained" onClick={deleteModel}>
                     <DeleteIcon></DeleteIcon>
-                    Discard Model
+                    Discard Process
                 </Button>
             </Box>
         </Box>
