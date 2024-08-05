@@ -95,7 +95,7 @@ const DownloadButton: React.FC<ActiveModel> = (props) => {
   return (
     <label htmlFor="downloadModel">
       <Button variant='contained' onClick={downloadModel} sx={{mr: 0.15, mb: 0.2}}>
-        Download Model
+        Download System
       </Button>
     </label>
   );
