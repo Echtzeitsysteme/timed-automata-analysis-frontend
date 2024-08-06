@@ -30,15 +30,15 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
   let optionLabels = openedProcesses.getLabels(openedProcesses.automatonOptions);
   //const [value, setValue] = React.useState<AutomatonOptionType>(options[0]);
 
-  let newModelName: string = '';
+  let newProcessName: string = '';
   const addProcess = () => {
-    const isExisting = options.some((option) => newModelName === option.label);
-    if (!isExisting && newModelName.length > 0) {
-      const newOption: AutomatonOptionType = { label: newModelName, automaton: INIT_AUTOMATON };
+    const isExisting = options.some((option) => newProcessName === option.label);
+    if (!isExisting && newProcessName.length > 0) {
+      const newOption: AutomatonOptionType = { label: newProcessName, automaton: INIT_AUTOMATON };
       openedProcesses.addAutomatonOption(openedProcesses, newOption);
       console.log('value', value);
       //value.automaton = viewModel.ta;
-      console.log('new Value:', newModelName);
+      console.log('new Value:', newProcessName);
       openedProcesses.setSelectedAutomaton(newOption);
       value = newOption;
       //setValue(newOption);
@@ -48,7 +48,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
     }
   };
   const handleInput = (inputEvent) => {
-    newModelName = inputEvent.target.value as string;
+    newProcessName = inputEvent.target.value as string;
   };
 
   const deleteProcess = () => {

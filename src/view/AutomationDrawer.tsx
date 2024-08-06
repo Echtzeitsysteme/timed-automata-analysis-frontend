@@ -17,6 +17,7 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import {AnalysisViewModel} from "../viewmodel/AnalysisViewModel.ts";
 import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
 import SystemSelection from "./SystemSelection.tsx";
+import {OpenedSystems, useOpenedSystems} from "./OpenedSystems.tsx";
 
 const drawerWidth = 240;
 
@@ -31,10 +32,11 @@ const DrawerHeader = styled('div')(({theme}) => ({
 
 export interface AutomatonDrawerProps {
     viewModel: AnalysisViewModel;
+    openedSystems: OpenedSystems;
 }
 
 const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
-    const { viewModel } = props;
+    const { viewModel, openedSystems } = props;
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const [openedAutomata, setOpenedAutomata] = React.useState<TimedAutomaton[]>([viewModel.ta]);
@@ -84,7 +86,7 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
                     </IconButton>
                 </DrawerHeader>
                 <Divider/>
-                <SystemSelection viewModel={viewModel}></SystemSelection>
+                <SystemSelection viewModel={viewModel} openedSystems={openedSystems}></SystemSelection>
             </Drawer>
         </Box>
     );

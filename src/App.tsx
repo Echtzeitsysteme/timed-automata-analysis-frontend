@@ -11,10 +11,11 @@ import ProcessSelection from './view/ProcessSelection.tsx';
 import AutomatonDrawer from "./view/AutomationDrawer.tsx";
 import {TimedAutomaton} from "./model/ta/timedAutomaton.ts";
 import {OpenedProcesses, useOpenedProcesses} from "./view/OpenedProcesses.tsx";
+import {useOpenedSystems} from "./view/OpenedSystems.tsx";
 
 function App() {
   const viewModel = useAnalysisViewModel();
-  const currentSystems: [string, OpenedProcesses[]][] = [];
+  const openedSystems= useOpenedSystems();
   const openedProcesses = useOpenedProcesses();
   const { t } = useTranslation();
 
@@ -45,7 +46,7 @@ function App() {
       <h1 style={{ paddingLeft: '16px' }} ref={headerRef}>
         ⏰ {t('app.title')}
       </h1>
-      <AutomatonDrawer viewModel={viewModel}></AutomatonDrawer>
+      <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems}></AutomatonDrawer>
       <UploadButton viewModel={viewModel} openedProcesses={openedProcesses}></UploadButton>
       <DownloadButton viewModel={viewModel} openedProcesses={openedProcesses}></DownloadButton>
       <ProcessSelection viewModel={viewModel} openedProcesses={openedProcesses}></ProcessSelection>
