@@ -7,12 +7,14 @@ import { useAnalysisViewModel } from './viewmodel/AnalysisViewModel';
 import { AutomatonManipulation } from './view/AutomatonManipulation';
 import UploadButton from './view/UploadButton.tsx';
 import DownloadButton from './view/DownloadButton.tsx';
-import ProcessSelection, {useOpenedProcesses} from './view/ProcessSelection.tsx';
+import ProcessSelection from './view/ProcessSelection.tsx';
 import AutomatonDrawer from "./view/AutomationDrawer.tsx";
 import {TimedAutomaton} from "./model/ta/timedAutomaton.ts";
+import {OpenedProcesses, useOpenedProcesses} from "./view/OpenedProcesses.tsx";
 
 function App() {
   const viewModel = useAnalysisViewModel();
+  const currentSystems: [string, OpenedProcesses[]][] = [];
   const openedProcesses = useOpenedProcesses();
   const { t } = useTranslation();
 
