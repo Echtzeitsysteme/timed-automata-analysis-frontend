@@ -7,11 +7,13 @@ import { useAnalysisViewModel } from './viewmodel/AnalysisViewModel';
 import { AutomatonManipulation } from './view/AutomatonManipulation';
 import UploadButton from './view/UploadButton.tsx';
 import DownloadButton from './view/DownloadButton.tsx';
-import AutomatonSelection from './view/AutomatonSelection.tsx';
+import ProcessSelection, {useOpenedProcesses} from './view/ProcessSelection.tsx';
 import AutomatonDrawer from "./view/AutomationDrawer.tsx";
+import {TimedAutomaton} from "./model/ta/timedAutomaton.ts";
 
 function App() {
   const viewModel = useAnalysisViewModel();
+  const openedProcesses = useOpenedProcesses();
   const { t } = useTranslation();
 
   // calculate size of content elements so that content always fits the window size
@@ -42,9 +44,9 @@ function App() {
         ⏰ {t('app.title')}
       </h1>
       <AutomatonDrawer viewModel={viewModel}></AutomatonDrawer>
-      <UploadButton viewModel={viewModel}></UploadButton>
-      <DownloadButton viewModel={viewModel}></DownloadButton>
-      <AutomatonSelection viewModel={viewModel}></AutomatonSelection>
+      <UploadButton viewModel={viewModel} openedProcesses={openedProcesses}></UploadButton>
+      <DownloadButton viewModel={viewModel} openedProcesses={openedProcesses}></DownloadButton>
+      <ProcessSelection viewModel={viewModel} openedProcesses={openedProcesses}></ProcessSelection>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid

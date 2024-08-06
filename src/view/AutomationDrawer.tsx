@@ -16,7 +16,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import {AnalysisViewModel} from "../viewmodel/AnalysisViewModel.ts";
 import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
-import AutomatonSelection from "./AutomatonSelection.tsx";
+import SystemSelection from "./SystemSelection.tsx";
 
 const drawerWidth = 240;
 
@@ -78,24 +78,13 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
                 open={open}
             >
                 <DrawerHeader>
-                    Filler blabla
+                    Select or Add System
                     <IconButton onClick={handleDrawerClose}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
                     </IconButton>
                 </DrawerHeader>
                 <Divider/>
-                <List>
-                    {openedAutomata.map((ta, index) => (
-                        <ListItem key={index} disablePadding>
-                            <ListItemButton onClick={handleClick}>
-                                <ListItemIcon>
-                                    <InboxIcon/>
-                                </ListItemIcon>
-                                <ListItemText primary={"init"}/>
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
+                <SystemSelection viewModel={viewModel}></SystemSelection>
             </Drawer>
         </Box>
     );

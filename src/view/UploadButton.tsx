@@ -11,9 +11,11 @@ import {ClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {Button} from "@mui/material";
 import { useMathUtils } from '../utils/mathUtils';
+import {AutomatonOptionType, OpenedProcesses} from "./ProcessSelection.tsx";
 
 export interface OpenedDocs {
-  viewModel: AnalysisViewModel; //für update Locations iwie?
+  viewModel: AnalysisViewModel;//für update Locations iwie?
+  openedProcesses : OpenedProcesses;
   // brauche dann noch so ne "mapParsedDataToTA" Funktion und kann dann aus mappingUtils die Fkt aufrufen
   //fileContents: string; //<-- brauch ich sowas???
 }
@@ -160,7 +162,7 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<[string,T
 }
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
-  const { viewModel } = props;
+  const { viewModel, openedProcesses } = props;
   const { avgRounded } = useMathUtils();
   const handleClick = (uploadedFileEvent: React.ChangeEvent<HTMLInputElement>) => {
     const inputElem = uploadedFileEvent.target as HTMLInputElement & {
@@ -184,10 +186,14 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
         console.log("parsed Data:", parsedData);
         const taModel = await convertToTa(parsedData, viewModel, avgRounded);
 
-        console.log("First Process:", taModel[0][1]);
-        const firstProcess = taModel[0][1];
-
-        viewModel.setAutomaton(viewModel, firstProcess);
+        const automatonOptions: AutomatonOptionType[] = [];
+        taModel.forEach(([label, automaton]) => {
+          automatonOptions.push({label: label, automaton: automaton});
+        });
+        console.log("AutomatonOptions:", automatonOptions);
+        openedProcesses.setAutomatonOptions(openedProcesses, automatonOptions);
+        viewModel.setAutomaton(viewModel, automatonOptions[0].automaton);
+        console.log("processes created in Selection bar!!");
 
       } catch (error) {
         console.error(error);
