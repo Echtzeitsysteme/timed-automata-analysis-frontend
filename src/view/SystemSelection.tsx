@@ -8,37 +8,38 @@ import {
     InputLabel,
     TextField,
 } from '@mui/material';
-import { TimedAutomaton } from '../model/ta/timedAutomaton.ts';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
-import { INIT_AUTOMATON } from '../utils/initAutomaton.ts';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {AutomatonOptionType} from "./ProcessSelection.tsx";
-import {useOpenedProcesses} from "./OpenedProcesses.tsx";
-import {OpenedSystems} from "./OpenedSystems.tsx";
+import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
+import {AutomatonOptionType, useOpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
+import {INIT_AUTOMATON} from "../utils/initAutomaton.ts";
+
 
 export interface SystemSelectionProps {
     viewModel: AnalysisViewModel;
     openedSystems: OpenedSystems;
 }
 
-export interface SystemOptionType {
-    label: string;
-    process: AutomatonOptionType[];
-}
-
 const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
     const { viewModel, openedSystems } = props;
     const options = openedSystems.systemOptions;
-    let value = openedSystems.selectedProcess;
+    let value = openedSystems.selectedSystem;
     let optionLabels = openedSystems.getLabels(openedSystems.systemOptions)
 
+    const initialProcess = useOpenedProcesses();
+    console.log(initialProcess);
     let newSystemName: string = '';
     const addSystem = () => {
         const isExisting = options.some((option) => newSystemName === option.label);
         if (!isExisting && newSystemName.length > 0) {
-            //TODO
+            const newProcess = initialProcess;
+            const newOption : SystemOptionType = {label: newSystemName, processes: newProcess};
+            openedSystems.addSystemOption(openedSystems, newOption);
+            newProcess.setSelectedAutomaton(newProcess.selectedOption);
+            value = newOption;
+            optionLabels = openedSystems.getLabels(openedSystems.systemOptions);
         }
     };
     const handleInput = (inputEvent) => {
@@ -47,7 +48,9 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
 
     const deleteSystem = () => {
         if (options.length > 1) {
-            //TODO
+            openedSystems.deleteSystemOption(openedSystems, openedSystems.selectedSystem);
+            value = openedSystems.selectedSystem;
+            viewModel.setAutomaton(viewModel, openedSystems.selectedSystem.processes.selectedOption.automaton);
         }
     };
 
@@ -72,6 +75,7 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
                     freeSolo
                     selectOnFocus
                     handleHomeEndKeys
+                    disableClearable
                     value={value}
                     onChange={(event, newValue) => {
                         console.log(event);
@@ -80,7 +84,12 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
                         //set value and automaton to existing option
                         options.forEach((option) => {
                             if (option.label === newValue) {
-                                //TODO
+                                value.processes.selectedOption.automaton = viewModel.ta;
+                                openedSystems.selectedSystem = option;
+                                //setValue(option);
+                                openedSystems.selectedSystem.processes.setAutomatonOptions(openedSystems.selectedSystem.processes, openedSystems.selectedSystem.processes.automatonOptions);
+                                viewModel.setAutomaton(viewModel, option.processes.selectedOption.automaton);
+                                console.log("openedSystems after change:",openedSystems);
                             }
                         });
                     }}

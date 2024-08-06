@@ -6,16 +6,11 @@ import { INIT_AUTOMATON } from '../utils/initAutomaton.ts';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { OpenedProcesses } from './OpenedProcesses.tsx';
+import {AutomatonOptionType, OpenedProcesses} from '../viewmodel/OpenedProcesses.ts';
 
 export interface ProcessSelectionProps {
   viewModel: AnalysisViewModel;
   openedProcesses: OpenedProcesses;
-}
-
-export interface AutomatonOptionType {
-  label: string;
-  automaton: TimedAutomaton;
 }
 
 const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
@@ -36,7 +31,6 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
     if (!isExisting && newProcessName.length > 0) {
       const newOption: AutomatonOptionType = { label: newProcessName, automaton: INIT_AUTOMATON };
       openedProcesses.addAutomatonOption(openedProcesses, newOption);
-      console.log('value', value);
       //value.automaton = viewModel.ta;
       console.log('new Value:', newProcessName);
       openedProcesses.setSelectedAutomaton(newOption);
@@ -85,6 +79,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
           freeSolo
           selectOnFocus
           handleHomeEndKeys
+          disableClearable
           value={value}
           onChange={(event, newValue) => {
             console.log(event);

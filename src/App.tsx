@@ -10,13 +10,15 @@ import DownloadButton from './view/DownloadButton.tsx';
 import ProcessSelection from './view/ProcessSelection.tsx';
 import AutomatonDrawer from "./view/AutomationDrawer.tsx";
 import {TimedAutomaton} from "./model/ta/timedAutomaton.ts";
-import {OpenedProcesses, useOpenedProcesses} from "./view/OpenedProcesses.tsx";
-import {useOpenedSystems} from "./view/OpenedSystems.tsx";
+import {OpenedProcesses, useOpenedProcesses} from "./viewmodel/OpenedProcesses.ts";
+import {useOpenedSystems} from "./viewmodel/OpenedSystems.ts";
 
 function App() {
   const viewModel = useAnalysisViewModel();
   const openedSystems= useOpenedSystems();
-  const openedProcesses = useOpenedProcesses();
+  //const openedProcesses = useOpenedProcesses();
+  //TODO das hier nochmal richtig stellen. das ist glaube ich so noch fehlerhaft
+  const currentProcesses = openedSystems.selectedSystem.processes;
   const { t } = useTranslation();
 
   // calculate size of content elements so that content always fits the window size
@@ -47,9 +49,9 @@ function App() {
         ⏰ {t('app.title')}
       </h1>
       <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems}></AutomatonDrawer>
-      <UploadButton viewModel={viewModel} openedProcesses={openedProcesses}></UploadButton>
-      <DownloadButton viewModel={viewModel} openedProcesses={openedProcesses}></DownloadButton>
-      <ProcessSelection viewModel={viewModel} openedProcesses={openedProcesses}></ProcessSelection>
+      <UploadButton viewModel={viewModel} openedProcesses={currentProcesses}></UploadButton>
+      <DownloadButton viewModel={viewModel} openedProcesses={currentProcesses}></DownloadButton>
+      <ProcessSelection viewModel={viewModel} openedProcesses={currentProcesses}></ProcessSelection>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid
