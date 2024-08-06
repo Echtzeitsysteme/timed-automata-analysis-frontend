@@ -1,6 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { INIT_AUTOMATON } from '../utils/initAutomaton.ts';
-import { AutomatonOptionType } from './ProcessSelection.tsx';
+import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
+
+export interface AutomatonOptionType {
+  label: string;
+  automaton: TimedAutomaton;
+}
 
 export interface OpenedProcesses {
   automatonOptions: AutomatonOptionType[];

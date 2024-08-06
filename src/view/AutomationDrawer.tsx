@@ -17,7 +17,7 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import {AnalysisViewModel} from "../viewmodel/AnalysisViewModel.ts";
 import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
 import SystemSelection from "./SystemSelection.tsx";
-import {OpenedSystems, useOpenedSystems} from "./OpenedSystems.tsx";
+import {OpenedSystems, useOpenedSystems} from "../viewmodel/OpenedSystems.ts";
 
 const drawerWidth = 240;
 
