@@ -31,7 +31,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
   //const [value, setValue] = React.useState<AutomatonOptionType>(options[0]);
 
   let newModelName: string = '';
-  const addModel = () => {
+  const addProcess = () => {
     const isExisting = options.some((option) => newModelName === option.label);
     if (!isExisting && newModelName.length > 0) {
       const newOption: AutomatonOptionType = { label: newModelName, automaton: INIT_AUTOMATON };
@@ -51,7 +51,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
     newModelName = inputEvent.target.value as string;
   };
 
-  const deleteModel = () => {
+  const deleteProcess = () => {
     if (options.length > 1) {
       openedProcesses.deleteAutomatonOption(openedProcesses, openedProcesses.selectedOption);
       //value.automaton = viewModel.ta;
@@ -73,7 +73,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
           <Input id="my-input" aria-describedby="my-helper-text" onChange={handleInput} sx={{ ml: 0.5 }} />
           <FormHelperText id="my-helper-text">Names can't be duplicates.</FormHelperText>
         </FormControl>
-        <Button variant="contained" onClick={addModel} sx={{ mb: 1 }}>
+        <Button variant="contained" onClick={addProcess} sx={{ mb: 1 }}>
           <AddIcon></AddIcon>
           Add Process
         </Button>
@@ -105,7 +105,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
           options={optionLabels}
           renderInput={(params) => <TextField {...params} label="Select Process" />}
         ></Autocomplete>
-        <Button variant="contained" onClick={deleteModel}>
+        <Button variant="contained" onClick={deleteProcess}>
           <DeleteIcon></DeleteIcon>
           Discard Process
         </Button>
