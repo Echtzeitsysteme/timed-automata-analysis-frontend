@@ -28,8 +28,8 @@ const parseFile = async (fileContent: string) => {
   return parsedData;
 };
 
-const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<[string,TimedAutomaton][]> => {
-  const taModel: [string,TimedAutomaton][] = []; //TODO das abändern, oder Namen in timedAutomaton.ts packen?
+const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<AutomatonOptionType[]> => {
+  const taModel: AutomatonOptionType[] = []; //TODO das abändern, oder Namen in timedAutomaton.ts packen?
 
   parsedData.items.forEach((item) => {
     if (item.type == 'process') {
@@ -39,7 +39,7 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<[string,T
         clocks: [],
         switches: [],
       };
-      taModel.push([name, TA]);
+      taModel.push({label:name, automaton:TA});
     }
   });
   parsedData.items.forEach((item) => {
@@ -49,12 +49,12 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<[string,T
     if(item.type == 'clock') {
       if (item.amount == 1) {
         const newClock: Clock = { name: item.name };
-        taModel.forEach(([process, ta]) => { ta.clocks.push(newClock) });
+        taModel.forEach((option) => {option.automaton.clocks.push(newClock) });
       } else {
         for (let i = 0; i < item.amount; i++) {
-          const clockName: string = item.name + String(item.amount)
+          const clockName: string = item.name + String(item.amount);
           const newClock: Clock = {name: clockName};
-          taModel[1].forEach((ta:TimedAutomaton) => { ta.clocks.push(newClock) });
+          taModel.forEach((option) => { option.automaton.clocks.push(newClock) });
         }
       }
     }
@@ -93,9 +93,9 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<[string,T
       const xCoordAvg = avgRounded(locations.map((l) => l.xCoordinate));
       const yCoordAvg = avgRounded(locations.map((l) => l.yCoordinate));
       const newLocation: Location = {name: locName, isInitial: isInitial, invariant: invariants, xCoordinate: xCoordAvg, yCoordinate: yCoordAvg };
-      taModel.forEach(([process, ta]) => {
-        if(process == processName){
-          ta.locations.push(newLocation);
+      taModel.forEach((option) => {
+        if(option.label == processName){
+          option.automaton.locations.push(newLocation);
         }
       });
     }
@@ -106,10 +106,10 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<[string,T
       const targetName : string = item.target;
       let source : Location;
       let target : Location;
-      taModel.forEach(([process, ta]) => {
-        if(process == processName){
-          source = ta.locations.filter((location) => location.name === sourceName)[0];
-          target = ta.locations.filter((location) => location.name === targetName)[0];
+      taModel.forEach((option) => {
+        if(option.label == processName){
+          source = option.automaton.locations.filter((location) => location.name === sourceName)[0];
+          target = option.automaton.locations.filter((location) => location.name === targetName)[0];
         }
       });
 
@@ -147,9 +147,9 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<[string,T
         }
       });
       const newSwitch : Switch = {source: source, guard: guard, actionLabel: actionLabel, reset: setClocks, target: target};
-      taModel.forEach(([process, ta]) => {
-        if(process == processName){
-          ta.switches.push(newSwitch);
+      taModel.forEach((option) => {
+        if(option.label == processName){
+          option.automaton.switches.push(newSwitch);
         }
       });
     }
@@ -184,12 +184,8 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
       try {
         const parsedData = await parseFile(fileContent);
         console.log("parsed Data:", parsedData);
-        const taModel = await convertToTa(parsedData, viewModel, avgRounded);
+        const automatonOptions = await convertToTa(parsedData, viewModel, avgRounded);
 
-        const automatonOptions: AutomatonOptionType[] = [];
-        taModel.forEach(([label, automaton]) => {
-          automatonOptions.push({label: label, automaton: automaton});
-        });
         console.log("AutomatonOptions:", automatonOptions);
         openedProcesses.setAutomatonOptions(openedProcesses, automatonOptions);
         viewModel.setAutomaton(viewModel, automatonOptions[0].automaton);
