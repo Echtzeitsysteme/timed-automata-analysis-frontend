@@ -3,23 +3,19 @@ import {styled, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
-import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import {AnalysisViewModel} from "../viewmodel/AnalysisViewModel.ts";
 import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
 import SystemSelection from "./SystemSelection.tsx";
-import {OpenedSystems, useOpenedSystems} from "../viewmodel/OpenedSystems.ts";
+import {OpenedSystems} from "../viewmodel/OpenedSystems.ts";
+import UploadButton from "./UploadButton.tsx";
+import DownloadButton from "./DownloadButton.tsx";
 
-const drawerWidth = 240;
+const drawerWidth = '20%';
 
 const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex',
@@ -50,12 +46,9 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
         setOpen(false);
     };
 
-    const handleClick = () => {
-        console.log("peepeepoopoo");
-    }
 
     return (
-        <Box sx={{display: 'flex'}}>
+        <Box sx={{display: 'inline-flex'}}>
             <CssBaseline/>
             <IconButton
                 color="inherit"
@@ -86,7 +79,14 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
                     </IconButton>
                 </DrawerHeader>
                 <Divider/>
-                <SystemSelection viewModel={viewModel} openedSystems={openedSystems}></SystemSelection>
+                <Box sx={{display: 'inline-flex', alignItems: 'center', mt: 1, mb: 1}}>
+                    <UploadButton viewModel={viewModel} openedSystems={openedSystems}></UploadButton>
+                    <DownloadButton openedSystems={openedSystems}></DownloadButton>
+                </Box>
+                <Divider/>
+                <Box sx={{display: 'inline-flex', mt: 1, mb: 1}}>
+                    <SystemSelection viewModel={viewModel} openedSystems={openedSystems}></SystemSelection>
+                </Box>
             </Drawer>
         </Box>
     );

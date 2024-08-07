@@ -1,12 +1,8 @@
 import React from 'react';
-import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel';
-import { TimedAutomaton } from '../model/ta/timedAutomaton.ts';
 import Button from "@mui/material/Button";
-import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
 import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
 
 interface ActiveModel {
-  viewModel: AnalysisViewModel;
   openedSystems : OpenedSystems;
 }
 
@@ -15,6 +11,9 @@ const createFile = async (currentSystem: SystemOptionType) => {
   const systemName = currentSystem.label;
   const systemDef = 'system:' + systemName + '\n';
   let taFile = systemDef;
+  let processes = '';
+  let events = '';
+  let existingEvents: string[] = [];
 
   const automatonOptions = currentSystem.processes.automatonOptions;
   automatonOptions.forEach((option)=> {
@@ -36,6 +35,9 @@ const createFile = async (currentSystem: SystemOptionType) => {
       if (location.isInitial) {
         newLocation += 'initial:';
       }
+      if (location.isInitial && location.invariant != undefined && location.invariant.clauses.length > 0){
+        newLocation += ' : ';
+      }
       if (location.invariant != undefined) {
         location.invariant.clauses.forEach((clause) => {
           const newClause = clause.lhs.name.toString() + clause.op.toString() + clause.rhs.toString();
@@ -46,6 +48,13 @@ const createFile = async (currentSystem: SystemOptionType) => {
       locations += newLocation;
     });
     ta.switches.forEach((edge) => {
+      //check for events
+      if(existingEvents.filter((event)  => {return event === edge.actionLabel}).length == 0){
+        existingEvents.push(edge.actionLabel);
+        const newEvent = 'event:' + edge.actionLabel + '\n';
+        events += newEvent;
+      }
+      //actual edge definition
       let newEdge = 'edge:' + process + ':' + edge.source.name + ':' + edge.target.name + ':' + edge.actionLabel + '{';
       let needColon: boolean = false;
       if (edge.guard != undefined) {
@@ -68,25 +77,31 @@ const createFile = async (currentSystem: SystemOptionType) => {
       }
       if (needColon && edge.reset.length > 0) {
         newEdge += ':';
-        console.log("ich war hier");
       }
+      let first: boolean = true;
       edge.reset.forEach((reset) => {
-        newEdge += 'do:' + reset.name + '=0';
+        if (first) {
+          newEdge += 'do:' + reset.name + '=0';
+          first = false;
+        } else {
+          newEdge += ';' + reset.name + '=0';
+        }
       });
       newEdge += '}' + '\n';
       edges += newEdge;
     });
     const singularProcess = processDef + clocks + locations + edges;
-    taFile += singularProcess;
+    processes += singularProcess;
   })
+  taFile += events;
+  taFile += processes;
   //console.log(taFile);
 
   return taFile;
 };
 
 const DownloadButton: React.FC<ActiveModel> = (props) => {
-  const { viewModel, openedSystems } = props;
-  //console.log(viewModel);
+  const {openedSystems } = props;
   const currentSystem = openedSystems.selectedSystem;
   const fileName = currentSystem.label + '.tck';
 

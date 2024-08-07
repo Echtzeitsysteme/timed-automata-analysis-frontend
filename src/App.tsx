@@ -5,8 +5,6 @@ import { Box, Grid } from '@mui/material';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useAnalysisViewModel } from './viewmodel/AnalysisViewModel';
 import { AutomatonManipulation } from './view/AutomatonManipulation';
-import UploadButton from './view/UploadButton.tsx';
-import DownloadButton from './view/DownloadButton.tsx';
 import ProcessSelection from './view/ProcessSelection.tsx';
 import AutomatonDrawer from "./view/AutomationDrawer.tsx";
 import {useOpenedSystems} from "./viewmodel/OpenedSystems.ts";
@@ -47,8 +45,6 @@ function App() {
         ⏰ {t('app.title')}
       </h1>
       <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems}></AutomatonDrawer>
-      <UploadButton viewModel={viewModel} openedSystems={openedSystems}></UploadButton>
-      <DownloadButton viewModel={viewModel} openedSystems={openedSystems}></DownloadButton>
       <ProcessSelection viewModel={viewModel} openedProcesses={currentProcesses}></ProcessSelection>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Autocomplete, Box, FormControl, FormHelperText, Input, InputLabel, TextField } from '@mui/material';
-import { TimedAutomaton } from '../model/ta/timedAutomaton.ts';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import { INIT_AUTOMATON } from '../utils/initAutomaton.ts';
 import Button from '@mui/material/Button';

@@ -11,15 +11,13 @@ import {ClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {Button} from "@mui/material";
 import { useMathUtils } from '../utils/mathUtils';
-import {AutomatonOptionType, OpenedProcesses, useOpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
+import {AutomatonOptionType, useOpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
 import {useClockConstraintUtils} from "../utils/clockConstraintUtils.ts";
 import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel;//für update Locations iwie?
   openedSystems : OpenedSystems;
-  // brauche dann noch so ne "mapParsedDataToTA" Funktion und kann dann aus mappingUtils die Fkt aufrufen
-  //fileContents: string; //<-- brauch ich sowas???
 }
 
 const parseFile = async (fileContent: string) => {
@@ -203,7 +201,7 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
         console.log("parsed Data:", parsedData);
         let [systemName, automatonOptions] = await convertToTa(parsedData, viewModel, avgRounded, constraintUsesClock);
 
-        let one = 1;
+        const one = 1;
         openedSystems.systemOptions.forEach(option => {
           if(option.label === systemName){
             systemName += '(' + String(one) + ')';
@@ -213,10 +211,10 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
         const newSystem : SystemOptionType = {label: systemName, processes: processes};
         openedSystems.addSystemOption(openedSystems, newSystem);
 
-        console.log("AutomatonOptions:", automatonOptions);
+        //console.log("AutomatonOptions:", automatonOptions);
         processes.automatonOptions = automatonOptions; //<-- sollte eig nicht notwendig sein, aber wird benötigt...
         processes.setAutomatonOptions(processes, automatonOptions);
-        console.log("options set in opened Processes", processes);
+        //console.log("options set in opened Processes", processes);
 
         //viewModel.setAutomaton(viewModel, automatonOptions[0].automaton);
         //console.log("processes created in Selection bar!!");

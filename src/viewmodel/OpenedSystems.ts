@@ -10,6 +10,7 @@ export interface OpenedSystems {
     systemOptions : SystemOptionType[];
     selectedSystem: SystemOptionType;
     addSystemOption :(openedSystems: OpenedSystems, systemOption: SystemOptionType) => void;
+    setSystemOption: (openedSystems: OpenedSystems, systemOption: SystemOptionType) => void;
     deleteSystemOption :(openedSystems: OpenedSystems, systemOption: SystemOptionType) => void;
     getLabels: (systemOptions: SystemOptionType[]) => string[];
 }
