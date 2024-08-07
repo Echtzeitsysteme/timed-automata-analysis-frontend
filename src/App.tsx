@@ -47,7 +47,7 @@ function App() {
         ⏰ {t('app.title')}
       </h1>
       <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems}></AutomatonDrawer>
-      <UploadButton viewModel={viewModel} openedProcesses={currentProcesses}></UploadButton>
+      <UploadButton viewModel={viewModel} openedSystems={openedSystems}></UploadButton>
       <DownloadButton viewModel={viewModel} openedSystems={openedSystems}></DownloadButton>
       <ProcessSelection viewModel={viewModel} openedProcesses={currentProcesses}></ProcessSelection>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
