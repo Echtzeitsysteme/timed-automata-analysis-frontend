@@ -6,14 +6,13 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { useAnalysisViewModel } from './viewmodel/AnalysisViewModel';
 import { AutomatonManipulation } from './view/AutomatonManipulation';
 import ProcessSelection from './view/ProcessSelection.tsx';
-import AutomatonDrawer from "./view/AutomationDrawer.tsx";
-import {useOpenedSystems} from "./viewmodel/OpenedSystems.ts";
+import AutomatonDrawer from './view/AutomationDrawer.tsx';
+import { useOpenedSystems } from './viewmodel/OpenedSystems.ts';
 
 function App() {
   const viewModel = useAnalysisViewModel();
-  const openedSystems= useOpenedSystems();
-  //const openedProcesses = useOpenedProcesses();
-  //TODO das hier nochmal richtig stellen. das ist glaube ich so noch fehlerhaft
+  const openedSystems = useOpenedSystems();
+  //TODO passt das hier so?
   const currentProcesses = openedSystems.selectedSystem.processes;
   const { t } = useTranslation();
 
