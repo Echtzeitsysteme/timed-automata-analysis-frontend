@@ -9,8 +9,6 @@ import UploadButton from './view/UploadButton.tsx';
 import DownloadButton from './view/DownloadButton.tsx';
 import ProcessSelection from './view/ProcessSelection.tsx';
 import AutomatonDrawer from "./view/AutomationDrawer.tsx";
-import {TimedAutomaton} from "./model/ta/timedAutomaton.ts";
-import {OpenedProcesses, useOpenedProcesses} from "./viewmodel/OpenedProcesses.ts";
 import {useOpenedSystems} from "./viewmodel/OpenedSystems.ts";
 
 function App() {
@@ -50,7 +48,7 @@ function App() {
       </h1>
       <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems}></AutomatonDrawer>
       <UploadButton viewModel={viewModel} openedProcesses={currentProcesses}></UploadButton>
-      <DownloadButton viewModel={viewModel} openedProcesses={currentProcesses}></DownloadButton>
+      <DownloadButton viewModel={viewModel} openedSystems={openedSystems}></DownloadButton>
       <ProcessSelection viewModel={viewModel} openedProcesses={currentProcesses}></ProcessSelection>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>

@@ -2,20 +2,21 @@ import React from 'react';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel';
 import { TimedAutomaton } from '../model/ta/timedAutomaton.ts';
 import Button from "@mui/material/Button";
-import {AutomatonOptionType, OpenedProcesses} from "./ProcessSelection.tsx";
+import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
+import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
 
 interface ActiveModel {
   viewModel: AnalysisViewModel;
-  openedProcesses : OpenedProcesses;
+  openedSystems : OpenedSystems;
 }
 
-const createFile = async (automatonOptions: AutomatonOptionType[]) => {
+const createFile = async (currentSystem: SystemOptionType) => {
   //TODO doesnt encompass any processes, systems or other definitions since the TA Definition only contains these types
-  const system = 'system'; //system name
-  const systemDef = 'system:' + system + '\n';
-
+  const systemName = currentSystem.label;
+  const systemDef = 'system:' + systemName + '\n';
   let taFile = systemDef;
 
+  const automatonOptions = currentSystem.processes.automatonOptions;
   automatonOptions.forEach((option)=> {
     const process = option.label;
     const processDef = 'process:' + process + '\n';
@@ -46,6 +47,7 @@ const createFile = async (automatonOptions: AutomatonOptionType[]) => {
     });
     ta.switches.forEach((edge) => {
       let newEdge = 'edge:' + process + ':' + edge.source.name + ':' + edge.target.name + ':' + edge.actionLabel + '{';
+      let needColon: boolean = false;
       if (edge.guard != undefined) {
         let first: boolean = true;
         edge.guard.clauses.forEach((clause) => {
@@ -61,10 +63,12 @@ const createFile = async (automatonOptions: AutomatonOptionType[]) => {
           } else {
             newEdge += '&&' + newClause;
           }
+          needColon = true;
         });
       }
-      if (edge.guard != undefined && edge.reset.length > 0) {
+      if (needColon && edge.reset.length > 0) {
         newEdge += ':';
+        console.log("ich war hier");
       }
       edge.reset.forEach((reset) => {
         newEdge += 'do:' + reset.name + '=0';
@@ -81,18 +85,19 @@ const createFile = async (automatonOptions: AutomatonOptionType[]) => {
 };
 
 const DownloadButton: React.FC<ActiveModel> = (props) => {
-  const { viewModel, openedProcesses } = props;
+  const { viewModel, openedSystems } = props;
   //console.log(viewModel);
-  const automatonOptions = openedProcesses.automatonOptions;
+  const currentSystem = openedSystems.selectedSystem;
+  const fileName = currentSystem.label + '.tck';
 
   const downloadModel = async () => {
     try {
-      const file = await createFile(automatonOptions);
+      const file = await createFile(currentSystem);
 
       const blob = new Blob([file]);
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'file.tck';
+      a.download = fileName;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

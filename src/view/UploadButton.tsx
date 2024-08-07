@@ -11,7 +11,7 @@ import {ClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {Button} from "@mui/material";
 import { useMathUtils } from '../utils/mathUtils';
-import {AutomatonOptionType, OpenedProcesses} from "./ProcessSelection.tsx";
+import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel;//für update Locations iwie?
@@ -187,7 +187,9 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
         const automatonOptions = await convertToTa(parsedData, viewModel, avgRounded);
 
         console.log("AutomatonOptions:", automatonOptions);
+        openedProcesses.automatonOptions = automatonOptions; //<-- sollte eig nicht notwendig sein, aber wird benötigt...
         openedProcesses.setAutomatonOptions(openedProcesses, automatonOptions);
+        console.log("options set in opened Processes", openedProcesses);
         viewModel.setAutomaton(viewModel, automatonOptions[0].automaton);
         console.log("processes created in Selection bar!!");
 
