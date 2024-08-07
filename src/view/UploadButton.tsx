@@ -11,11 +11,13 @@ import {ClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {Button} from "@mui/material";
 import { useMathUtils } from '../utils/mathUtils';
-import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
+import {AutomatonOptionType, OpenedProcesses, useOpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
+import {useClockConstraintUtils} from "../utils/clockConstraintUtils.ts";
+import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel;//für update Locations iwie?
-  openedProcesses : OpenedProcesses;
+  openedSystems : OpenedSystems;
   // brauche dann noch so ne "mapParsedDataToTA" Funktion und kann dann aus mappingUtils die Fkt aufrufen
   //fileContents: string; //<-- brauch ich sowas???
 }
@@ -28,8 +30,9 @@ const parseFile = async (fileContent: string) => {
   return parsedData;
 };
 
-const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<AutomatonOptionType[]> => {
-  const taModel: AutomatonOptionType[] = []; //TODO das abändern, oder Namen in timedAutomaton.ts packen?
+const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesClock ):Promise<[string, AutomatonOptionType[]]> => {
+  const systemName: string = parsedData.system.name;
+  const taProcesses: AutomatonOptionType[] = []; //TODO das abändern, oder Namen in timedAutomaton.ts packen?
 
   parsedData.items.forEach((item) => {
     if (item.type == 'process') {
@@ -39,7 +42,7 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<Automaton
         clocks: [],
         switches: [],
       };
-      taModel.push({label:name, automaton:TA});
+      taProcesses.push({label:name, automaton:TA});
     }
   });
   parsedData.items.forEach((item) => {
@@ -49,12 +52,12 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<Automaton
     if(item.type == 'clock') {
       if (item.amount == 1) {
         const newClock: Clock = { name: item.name };
-        taModel.forEach((option) => {option.automaton.clocks.push(newClock) });
+        taProcesses.forEach((option) => {option.automaton.clocks.push(newClock) });
       } else {
         for (let i = 0; i < item.amount; i++) {
-          const clockName: string = item.name + String(item.amount);
+          const clockName: string = item.name + '[' + String(item.amount) + ']';
           const newClock: Clock = {name: clockName};
-          taModel.forEach((option) => { option.automaton.clocks.push(newClock) });
+          taProcesses.forEach((option) => { option.automaton.clocks.push(newClock) });
         }
       }
     }
@@ -93,7 +96,7 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<Automaton
       const xCoordAvg = avgRounded(locations.map((l) => l.xCoordinate));
       const yCoordAvg = avgRounded(locations.map((l) => l.yCoordinate));
       const newLocation: Location = {name: locName, isInitial: isInitial, invariant: invariants, xCoordinate: xCoordAvg, yCoordinate: yCoordAvg };
-      taModel.forEach((option) => {
+      taProcesses.forEach((option) => {
         if(option.label == processName){
           option.automaton.locations.push(newLocation);
         }
@@ -106,7 +109,7 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<Automaton
       const targetName : string = item.target;
       let source : Location;
       let target : Location;
-      taModel.forEach((option) => {
+      taProcesses.forEach((option) => {
         if(option.label == processName){
           source = option.automaton.locations.filter((location) => location.name === sourceName)[0];
           target = option.automaton.locations.filter((location) => location.name === targetName)[0];
@@ -147,7 +150,7 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<Automaton
         }
       });
       const newSwitch : Switch = {source: source, guard: guard, actionLabel: actionLabel, reset: setClocks, target: target};
-      taModel.forEach((option) => {
+      taProcesses.forEach((option) => {
         if(option.label == processName){
           option.automaton.switches.push(newSwitch);
         }
@@ -157,13 +160,27 @@ const convertToTa = async (parsedData, viewModel, avgRounded ):Promise<Automaton
     }
 
   });
-  console.log("All processes:", taModel);
-  return taModel;
+
+  //Filter unnecessary clocks
+  taProcesses.forEach((ta)=> {
+    const guards = ta.automaton.switches.map((sw) => sw.guard);
+    const invariants = ta.automaton.locations.map((loc) => loc.invariant);
+    const guardsAndInvars = [...guards, ...invariants].filter((constraint) => {return constraint !== undefined});
+    ta.automaton.clocks = ta.automaton.clocks.filter((clock) => {
+      return guardsAndInvars.filter((cc) => { return constraintUsesClock(clock.name, cc)}).length > 0;
+    });
+  });
+
+  console.log("All processes:", taProcesses);
+  return [systemName, taProcesses];
 }
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
-  const { viewModel, openedProcesses } = props;
+  const { viewModel, openedSystems } = props;
   const { avgRounded } = useMathUtils();
+  const { constraintUsesClock } = useClockConstraintUtils();
+  const newProcesses = useOpenedProcesses();
+
   const handleClick = (uploadedFileEvent: React.ChangeEvent<HTMLInputElement>) => {
     const inputElem = uploadedFileEvent.target as HTMLInputElement & {
       files: FileList;
@@ -184,14 +201,25 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
       try {
         const parsedData = await parseFile(fileContent);
         console.log("parsed Data:", parsedData);
-        const automatonOptions = await convertToTa(parsedData, viewModel, avgRounded);
+        let [systemName, automatonOptions] = await convertToTa(parsedData, viewModel, avgRounded, constraintUsesClock);
+
+        let one = 1;
+        openedSystems.systemOptions.forEach(option => {
+          if(option.label === systemName){
+            systemName += '(' + String(one) + ')';
+          }
+        })
+        const processes = newProcesses;
+        const newSystem : SystemOptionType = {label: systemName, processes: processes};
+        openedSystems.addSystemOption(openedSystems, newSystem);
 
         console.log("AutomatonOptions:", automatonOptions);
-        openedProcesses.automatonOptions = automatonOptions; //<-- sollte eig nicht notwendig sein, aber wird benötigt...
-        openedProcesses.setAutomatonOptions(openedProcesses, automatonOptions);
-        console.log("options set in opened Processes", openedProcesses);
-        viewModel.setAutomaton(viewModel, automatonOptions[0].automaton);
-        console.log("processes created in Selection bar!!");
+        processes.automatonOptions = automatonOptions; //<-- sollte eig nicht notwendig sein, aber wird benötigt...
+        processes.setAutomatonOptions(processes, automatonOptions);
+        console.log("options set in opened Processes", processes);
+
+        //viewModel.setAutomaton(viewModel, automatonOptions[0].automaton);
+        //console.log("processes created in Selection bar!!");
 
       } catch (error) {
         console.error(error);
