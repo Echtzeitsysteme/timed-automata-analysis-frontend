@@ -37,9 +37,10 @@ export function useOpenedProcesses(): OpenedProcesses {
       const options = openedProcesses.automatonOptions;
       const newOptions = options.filter((option) => option !== automatonOption);
       console.log('newoptions', newOptions);
-      //openedProcesses.selectedOption = newOptions[0];
-      //setOptions(newOptions);
-      openedProcesses.setAutomatonOptions(openedProcesses, newOptions);
+      openedProcesses.selectedOption = newOptions[0]; //<- sollte eig unnötig sein...
+      openedProcesses.automatonOptions = newOptions; //<- sollte eig unnötig sein...
+      setOpenedProcesses({ ...openedProcesses, openedProcesses: openedProcesses, automatonOptions: newOptions });
+      //openedProcesses.setAutomatonOptions(openedProcesses, newOptions);
     },
     []
   );

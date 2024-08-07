@@ -33,6 +33,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
       openedProcesses.addAutomatonOption(openedProcesses, newOption);
       //value.automaton = viewModel.ta;
       console.log('new Value:', newProcessName);
+      openedProcesses.selectedOption = newOption;
       openedProcesses.setSelectedAutomaton(newOption);
       value = newOption;
       //setValue(newOption);

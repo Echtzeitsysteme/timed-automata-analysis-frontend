@@ -30,6 +30,7 @@ export function useOpenedSystems(): OpenedSystems {
         (openedSystems: OpenedSystems, systemOption: SystemOptionType) => {
             const options = openedSystems.systemOptions;
             const newOptions = options.filter((option) => option !== systemOption);
+            openedSystems.selectedSystem = newOptions[0];
             //oder so eine setSystemOptions Methode kreieren und dann hier openedSystems.setSystemsOptions(openedSystems, newOptions); ???
             setOpenedSystems({...openedSystems, openedSystems: openedSystems, systemOptions: newOptions});
         },

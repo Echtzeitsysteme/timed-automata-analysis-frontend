@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React from 'react';
 import {
     Autocomplete,
     Box,
@@ -13,8 +13,7 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
-import {AutomatonOptionType, useOpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
-import {INIT_AUTOMATON} from "../utils/initAutomaton.ts";
+import {useOpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
 
 
 export interface SystemSelectionProps {
@@ -27,9 +26,9 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
     const options = openedSystems.systemOptions;
     let value = openedSystems.selectedSystem;
     let optionLabels = openedSystems.getLabels(openedSystems.systemOptions)
-
+    console.log("opened systems:", openedSystems);
     const initialProcess = useOpenedProcesses();
-    console.log(initialProcess);
+    //console.log("initial process:", initialProcess);
     let newSystemName: string = '';
     const addSystem = () => {
         const isExisting = options.some((option) => newSystemName === option.label);
@@ -37,9 +36,10 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
             const newProcess = initialProcess;
             const newOption : SystemOptionType = {label: newSystemName, processes: newProcess};
             openedSystems.addSystemOption(openedSystems, newOption);
-            newProcess.setSelectedAutomaton(newProcess.selectedOption);
+            newOption.processes.setSelectedAutomaton(newProcess.selectedOption);
             value = newOption;
             optionLabels = openedSystems.getLabels(openedSystems.systemOptions);
+            console.log("system after addition", openedSystems);
         }
     };
     const handleInput = (inputEvent) => {
