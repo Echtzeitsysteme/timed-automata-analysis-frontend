@@ -27,7 +27,7 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
     let value = openedSystems.selectedSystem;
     let optionLabels = openedSystems.getLabels(openedSystems.systemOptions)
     console.log("opened systems:", openedSystems);
-    const initialProcess = useOpenedProcesses();
+    const initialProcess = useOpenedProcesses(); //<-- das ist ein Problem. ich will ja für jedes neu erstellte System ein eigenes OpenedProcesses
     //console.log("initial process:", initialProcess);
     let newSystemName: string = '';
     const addSystem = () => {

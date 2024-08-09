@@ -36,7 +36,6 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const [openedAutomata, setOpenedAutomata] = React.useState<TimedAutomaton[]>([viewModel.ta]);
-    const [currentAutomaton, setCurrentAutomaton] = React.useState<TimedAutomaton>(openedAutomata[0]);
 
     const handleDrawerOpen = () => {
         setOpen(true);
