@@ -21,7 +21,7 @@ export function useOpenedProcesses(): OpenedProcesses {
   const addAutomatonOption = useCallback((openedProcesses: OpenedProcesses, automatonOption: AutomatonOptionType) => {
     const automatonOptions = openedProcesses.automatonOptions;
     automatonOptions.push(automatonOption);
-    setOpenedProcesses({ ...openedProcesses, openedProcesses: openedProcesses, automatonOptions: automatonOptions });
+    setOpenedProcesses({ ...openedProcesses, openedProcesses: openedProcesses, automatonOptions: automatonOptions, selectedOption: automatonOption });
   }, []);
 
   const setAutomatonOptions = useCallback(
@@ -54,7 +54,7 @@ export function useOpenedProcesses(): OpenedProcesses {
     return labels;
   }, []);
 
-  const initialOption: AutomatonOptionType[] = [{ label: 'init_Automaton', automaton: INIT_AUTOMATON }];
+  const initialOption: AutomatonOptionType[] = [{ label: 'init_Process', automaton: INIT_AUTOMATON }];
   const [selectedOption, setSelectedOption] = React.useState<AutomatonOptionType>(initialOption[0]);
 
   const [openedProcesses, setOpenedProcesses] = useState<OpenedProcesses>({

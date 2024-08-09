@@ -9,11 +9,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import {AnalysisViewModel} from "../viewmodel/AnalysisViewModel.ts";
-import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
 import SystemSelection from "./SystemSelection.tsx";
 import {OpenedSystems} from "../viewmodel/OpenedSystems.ts";
 import UploadButton from "./UploadButton.tsx";
 import DownloadButton from "./DownloadButton.tsx";
+import {OpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
 
 const drawerWidth = '20%';
 
@@ -29,13 +29,13 @@ const DrawerHeader = styled('div')(({theme}) => ({
 export interface AutomatonDrawerProps {
     viewModel: AnalysisViewModel;
     openedSystems: OpenedSystems;
+    openedProcesses: OpenedProcesses;
 }
 
 const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
-    const { viewModel, openedSystems } = props;
+    const { viewModel, openedSystems, openedProcesses } = props;
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const [openedAutomata, setOpenedAutomata] = React.useState<TimedAutomaton[]>([viewModel.ta]);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -79,12 +79,12 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
                 </DrawerHeader>
                 <Divider/>
                 <Box sx={{display: 'inline-flex', alignItems: 'center', mt: 1, mb: 1}}>
-                    <UploadButton viewModel={viewModel} openedSystems={openedSystems}></UploadButton>
+                    <UploadButton viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses}></UploadButton>
                     <DownloadButton openedSystems={openedSystems}></DownloadButton>
                 </Box>
                 <Divider/>
                 <Box sx={{display: 'inline-flex', mt: 1, mb: 1}}>
-                    <SystemSelection viewModel={viewModel} openedSystems={openedSystems}></SystemSelection>
+                    <SystemSelection viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses}></SystemSelection>
                 </Box>
             </Drawer>
         </Box>

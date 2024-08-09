@@ -16,27 +16,18 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
   const { viewModel, openedProcesses } = props;
   const options = openedProcesses.automatonOptions;
   let value = openedProcesses.selectedOption;
-  /**
-    const [options, setOptions] = React.useState<AutomatonOptionType[]>([
-        { label: 'init_Automaton', automaton: automaton },
-    ]);
-        **/
   let optionLabels = openedProcesses.getLabels(openedProcesses.automatonOptions);
-  //const [value, setValue] = React.useState<AutomatonOptionType>(options[0]);
 
   let newProcessName: string = '';
   const addProcess = () => {
     const isExisting = options.some((option) => newProcessName === option.label);
     if (!isExisting && newProcessName.length > 0) {
       const newOption: AutomatonOptionType = { label: newProcessName, automaton: INIT_AUTOMATON };
+      openedProcesses.selectedOption.automaton = viewModel.ta;
       openedProcesses.addAutomatonOption(openedProcesses, newOption);
-      //value.automaton = viewModel.ta;
       console.log('new Value:', newProcessName);
-      openedProcesses.selectedOption = newOption;
-      openedProcesses.setSelectedAutomaton(newOption);
       value = newOption;
-      //setValue(newOption);
-      //viewModel.setAutomaton(viewModel, newOption.automaton);
+      viewModel.setAutomaton(viewModel, newOption.automaton);
       console.log('automaton set!!!');
       optionLabels = openedProcesses.getLabels(openedProcesses.automatonOptions);
     }
@@ -48,13 +39,9 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
   const deleteProcess = () => {
     if (options.length > 1) {
       openedProcesses.deleteAutomatonOption(openedProcesses, openedProcesses.selectedOption);
-      //value.automaton = viewModel.ta;
-      //openedProcesses.selectedOption = openedProcesses.
       console.log('options', options);
       value = openedProcesses.selectedOption;
       console.log('value', value);
-      //openedProcesses.selectedOption = openedProcesses.automatonOptions[0];
-      //setValue(newOptions[0]);
       viewModel.setAutomaton(viewModel, openedProcesses.selectedOption.automaton);
     }
   };
@@ -91,7 +78,6 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
                 value.automaton = viewModel.ta;
                 console.log('new Value:', newValue);
                 openedProcesses.selectedOption = option;
-                //setValue(option);
                 viewModel.setAutomaton(viewModel, option.automaton);
                 console.log('automaton set!!!');
               }

@@ -13,31 +13,34 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
-import {useOpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
+import {OpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
+import {INIT_AUTOMATON} from "../utils/initAutomaton.ts";
 
 
 export interface SystemSelectionProps {
     viewModel: AnalysisViewModel;
     openedSystems: OpenedSystems;
+    openedProcesses: OpenedProcesses;
 }
 
 const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
-    const { viewModel, openedSystems } = props;
+    const { viewModel, openedSystems, openedProcesses } = props;
     const options = openedSystems.systemOptions;
     let value = openedSystems.selectedSystem;
     let optionLabels = openedSystems.getLabels(openedSystems.systemOptions)
     console.log("opened systems:", openedSystems);
-    const initialProcess = useOpenedProcesses(); //<-- das ist ein Problem. ich will ja für jedes neu erstellte System ein eigenes OpenedProcesses
     //console.log("initial process:", initialProcess);
     let newSystemName: string = '';
     const addSystem = () => {
         const isExisting = options.some((option) => newSystemName === option.label);
         if (!isExisting && newSystemName.length > 0) {
-            const newProcess = initialProcess;
-            const newOption : SystemOptionType = {label: newSystemName, processes: newProcess};
+            const newOption : SystemOptionType = {label: newSystemName, processes: [{label:'init_Process' , automaton:INIT_AUTOMATON }]};
+            openedProcesses.selectedOption.automaton = viewModel.ta;
+            openedSystems.selectedSystem.processes = openedProcesses.automatonOptions;
             openedSystems.addSystemOption(openedSystems, newOption);
-            newOption.processes.setSelectedAutomaton(newProcess.selectedOption);
             value = newOption;
+            openedProcesses.setAutomatonOptions(openedProcesses, value.processes);
+            viewModel.setAutomaton(viewModel, value.processes[0].automaton);
             optionLabels = openedSystems.getLabels(openedSystems.systemOptions);
             console.log("system after addition", openedSystems);
         }
@@ -50,7 +53,8 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
         if (options.length > 1) {
             openedSystems.deleteSystemOption(openedSystems, openedSystems.selectedSystem);
             value = openedSystems.selectedSystem;
-            viewModel.setAutomaton(viewModel, openedSystems.selectedSystem.processes.selectedOption.automaton);
+            openedProcesses.setAutomatonOptions(openedProcesses, value.processes);
+            viewModel.setAutomaton(viewModel, value.processes[0].automaton);
         }
     };
 
@@ -84,12 +88,15 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
                         //set value and automaton to existing option
                         options.forEach((option) => {
                             if (option.label === newValue) {
-                                value.processes.selectedOption.automaton = viewModel.ta;
+                                openedProcesses.selectedOption.automaton = viewModel.ta;
+                                value.processes = openedProcesses.automatonOptions;
                                 openedSystems.selectedSystem = option;
                                 //setValue(option);
-                                openedSystems.selectedSystem.processes.setAutomatonOptions(openedSystems.selectedSystem.processes, openedSystems.selectedSystem.processes.automatonOptions);
-                                viewModel.setAutomaton(viewModel, option.processes.selectedOption.automaton);
+                                openedSystems.setSelectedSystem(option);
+                                openedProcesses.setAutomatonOptions(openedProcesses, openedSystems.selectedSystem.processes);
+                                viewModel.setAutomaton(viewModel, option.processes[0].automaton);
                                 console.log("openedSystems after change:",openedSystems);
+                                console.log("openedProcesses after change:", openedProcesses);
                             }
                         });
                     }}

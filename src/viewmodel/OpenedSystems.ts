@@ -1,27 +1,35 @@
-import {OpenedProcesses, useOpenedProcesses} from "./OpenedProcesses.ts";
+import {AutomatonOptionType} from "./OpenedProcesses.ts";
 import React, {useCallback, useState} from "react";
+import {INIT_AUTOMATON} from "../utils/initAutomaton.ts";
 
 export interface SystemOptionType {
     label: string;
-    processes: OpenedProcesses;
+    processes: AutomatonOptionType[];
 }
 
 export interface OpenedSystems {
     systemOptions : SystemOptionType[];
     selectedSystem: SystemOptionType;
+    setSelectedSystem: (systemOption: SystemOptionType) => void;
     addSystemOption :(openedSystems: OpenedSystems, systemOption: SystemOptionType) => void;
     deleteSystemOption :(openedSystems: OpenedSystems, systemOption: SystemOptionType) => void;
     getLabels: (systemOptions: SystemOptionType[]) => string[];
 }
 
 export function useOpenedSystems(): OpenedSystems {
-    const initProcesses = useOpenedProcesses();
+
+    const setSelectedSystem = useCallback(
+        (systemOption: SystemOptionType) => {
+            setSelectedOption(systemOption);
+        },
+        []
+    );
 
     const addSystemOption = useCallback(
         (openedSystems: OpenedSystems, systemOption: SystemOptionType) => {
             const systemOptions = openedSystems.systemOptions;
             systemOptions.push(systemOption);
-            setOpenedSystems({...openedSystems, openedSystems: openedSystems, systemOptions: systemOptions});
+            setOpenedSystems({...openedSystems, openedSystems: openedSystems, systemOptions: systemOptions, selectedSystem: systemOption});
         },
         []
     );
@@ -47,13 +55,14 @@ export function useOpenedSystems(): OpenedSystems {
 
     const initialOption : SystemOptionType[] =
         [
-            {label: 'init_System', processes: initProcesses}
+            {label: 'init_System', processes: [{label:'init_Process' , automaton:INIT_AUTOMATON }]}
         ];
     const [selectedOption, setSelectedOption] = React.useState<SystemOptionType>(initialOption[0]);
 
     const [openedSystems, setOpenedSystems] = useState<OpenedSystems>({
         systemOptions: initialOption,
         selectedSystem: selectedOption,
+        setSelectedSystem: setSelectedSystem,
         addSystemOption: addSystemOption,
         deleteSystemOption: deleteSystemOption,
         getLabels: getLabels,

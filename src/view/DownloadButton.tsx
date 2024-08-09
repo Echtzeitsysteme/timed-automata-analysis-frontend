@@ -15,7 +15,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
   let events = '';
   let existingEvents: string[] = [];
 
-  const automatonOptions = currentSystem.processes.automatonOptions;
+  const automatonOptions = currentSystem.processes;
   automatonOptions.forEach((option)=> {
     const process = option.label;
     const processDef = 'process:' + process + '\n';

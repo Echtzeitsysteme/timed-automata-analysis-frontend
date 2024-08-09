@@ -11,13 +11,14 @@ import {ClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {Button} from "@mui/material";
 import { useMathUtils } from '../utils/mathUtils';
-import {AutomatonOptionType, useOpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
+import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
 import {useClockConstraintUtils} from "../utils/clockConstraintUtils.ts";
 import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
 
 export interface OpenedDocs {
-  viewModel: AnalysisViewModel;//für update Locations iwie?
+  viewModel: AnalysisViewModel; //für update Locations iwie?
   openedSystems : OpenedSystems;
+  openedProcesses: OpenedProcesses;
 }
 
 const parseFile = async (fileContent: string) => {
@@ -30,7 +31,7 @@ const parseFile = async (fileContent: string) => {
 
 const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesClock ):Promise<[string, AutomatonOptionType[]]> => {
   const systemName: string = parsedData.system.name;
-  const taProcesses: AutomatonOptionType[] = []; //TODO das abändern, oder Namen in timedAutomaton.ts packen?
+  const taProcesses: AutomatonOptionType[] = [];
 
   parsedData.items.forEach((item) => {
     if (item.type == 'process') {
@@ -116,7 +117,6 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
 
       const guard :ClockConstraint = { clauses: [] };
       const setClocks : Clock[] = [];
-      //const clockNames : string[] = [];
       item.attributes.forEach((attribute) => {
 
         if (attribute.hasOwnProperty('provided')) {
@@ -141,7 +141,6 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
             //for now only really resets clocks?
             if(set == '=' && rhs == 0){
               setClocks.push(lhs);
-              //clockNames.push(lhs.name);
             }
           });
           //TODO was wenn nicht zB x=0? das ist ja glaub ich noch nicht möglich
@@ -174,10 +173,9 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
 }
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
-  const { viewModel, openedSystems } = props;
+  const { viewModel, openedSystems, openedProcesses } = props;
   const { avgRounded } = useMathUtils();
   const { constraintUsesClock } = useClockConstraintUtils();
-  const newProcesses = useOpenedProcesses();
 
   const handleClick = (uploadedFileEvent: React.ChangeEvent<HTMLInputElement>) => {
     const inputElem = uploadedFileEvent.target as HTMLInputElement & {
@@ -207,17 +205,13 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
             systemName += '(' + String(one) + ')';
           }
         })
-        const processes = newProcesses;
+        const processes: AutomatonOptionType[] = automatonOptions;
         const newSystem : SystemOptionType = {label: systemName, processes: processes};
         openedSystems.addSystemOption(openedSystems, newSystem);
 
-        //console.log("AutomatonOptions:", automatonOptions);
-        processes.automatonOptions = automatonOptions; //<-- sollte eig nicht notwendig sein, aber wird benötigt...
-        processes.setAutomatonOptions(processes, automatonOptions);
-        //console.log("options set in opened Processes", processes);
-
-        //viewModel.setAutomaton(viewModel, automatonOptions[0].automaton);
-        //console.log("processes created in Selection bar!!");
+        openedSystems.selectedSystem = newSystem;
+        openedProcesses.setAutomatonOptions(openedProcesses, automatonOptions);
+        viewModel.setAutomaton(viewModel, openedProcesses.selectedOption.automaton);
 
       } catch (error) {
         console.error(error);
