@@ -10,13 +10,12 @@ export interface OpenedSystems {
     systemOptions : SystemOptionType[];
     selectedSystem: SystemOptionType;
     addSystemOption :(openedSystems: OpenedSystems, systemOption: SystemOptionType) => void;
-    setSystemOption: (openedSystems: OpenedSystems, systemOption: SystemOptionType) => void;
     deleteSystemOption :(openedSystems: OpenedSystems, systemOption: SystemOptionType) => void;
     getLabels: (systemOptions: SystemOptionType[]) => string[];
 }
 
 export function useOpenedSystems(): OpenedSystems {
-    const automatonOptions = useOpenedProcesses();
+    const initProcesses = useOpenedProcesses();
 
     const addSystemOption = useCallback(
         (openedSystems: OpenedSystems, systemOption: SystemOptionType) => {
@@ -48,7 +47,7 @@ export function useOpenedSystems(): OpenedSystems {
 
     const initialOption : SystemOptionType[] =
         [
-            {label: 'init_System', processes: automatonOptions}
+            {label: 'init_System', processes: initProcesses}
         ];
     const [selectedOption, setSelectedOption] = React.useState<SystemOptionType>(initialOption[0]);
 
