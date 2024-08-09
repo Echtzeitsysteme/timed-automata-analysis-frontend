@@ -5,7 +5,7 @@ import { INIT_AUTOMATON } from '../utils/initAutomaton.ts';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {AutomatonOptionType, OpenedProcesses} from '../viewmodel/OpenedProcesses.ts';
+import { AutomatonOptionType, OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
 
 export interface ProcessSelectionProps {
   viewModel: AnalysisViewModel;
@@ -25,8 +25,8 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
       const newOption: AutomatonOptionType = { label: newProcessName, automaton: INIT_AUTOMATON };
       openedProcesses.selectedOption.automaton = viewModel.ta;
       openedProcesses.addAutomatonOption(openedProcesses, newOption);
-      console.log('new Value:', newProcessName);
-      value = newOption;
+      console.log('newProcessOptions:', openedProcesses.automatonOptions);
+      //value = newOption;
       viewModel.setAutomaton(viewModel, newOption.automaton);
       console.log('automaton set!!!');
       optionLabels = openedProcesses.getLabels(openedProcesses.automatonOptions);
