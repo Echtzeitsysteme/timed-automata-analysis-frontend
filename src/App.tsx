@@ -8,12 +8,12 @@ import { AutomatonManipulation } from './view/AutomatonManipulation';
 import ProcessSelection from './view/ProcessSelection.tsx';
 import AutomatonDrawer from './view/AutomationDrawer.tsx';
 import { useOpenedSystems } from './viewmodel/OpenedSystems.ts';
+import {useOpenedProcesses} from "./viewmodel/OpenedProcesses.ts";
 
 function App() {
   const viewModel = useAnalysisViewModel();
   const openedSystems = useOpenedSystems();
-  //TODO passt das hier so?
-  const currentProcesses = openedSystems.selectedSystem.processes;
+  const openedProcesses = useOpenedProcesses();
   const { t } = useTranslation();
 
   // calculate size of content elements so that content always fits the window size
@@ -43,8 +43,8 @@ function App() {
       <h1 style={{ paddingLeft: '16px' }} ref={headerRef}>
         ⏰ {t('app.title')}
       </h1>
-      <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems}></AutomatonDrawer>
-      <ProcessSelection viewModel={viewModel} openedProcesses={currentProcesses}></ProcessSelection>
+      <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses}></AutomatonDrawer>
+      <ProcessSelection viewModel={viewModel} openedProcesses={openedProcesses}></ProcessSelection>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid
