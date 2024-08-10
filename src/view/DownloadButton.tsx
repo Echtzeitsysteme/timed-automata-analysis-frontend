@@ -1,9 +1,9 @@
 import React from 'react';
-import Button from "@mui/material/Button";
-import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
+import Button from '@mui/material/Button';
+import { OpenedSystems, SystemOptionType } from '../viewmodel/OpenedSystems.ts';
 
 interface ActiveModel {
-  openedSystems : OpenedSystems;
+  openedSystems: OpenedSystems;
 }
 
 const createFile = async (currentSystem: SystemOptionType) => {
@@ -13,11 +13,11 @@ const createFile = async (currentSystem: SystemOptionType) => {
   let taFile = systemDef;
   let processes = '';
   let events = '';
-  let existingEvents: string[] = [];
-  let existingClocks: string[] = [];
+  const existingEvents: string[] = [];
+  const existingClocks: string[] = [];
 
   const automatonOptions = currentSystem.processes;
-  automatonOptions.forEach((option)=> {
+  automatonOptions.forEach((option) => {
     const process = option.label;
     const processDef = 'process:' + process + '\n';
 
@@ -30,7 +30,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
     ta.clocks.forEach((clock) => {
       //clocks are global variables, don't write them multiple times
       const alreadyWritten = existingClocks.some((existingClock) => existingClock == clock.name);
-      if(!alreadyWritten){
+      if (!alreadyWritten) {
         const newClock = 'clock:' + '1' + ':' + clock.name + '\n';
         clocks += newClock;
         existingClocks.push(clock.name);
@@ -41,7 +41,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
       if (location.isInitial) {
         newLocation += 'initial:';
       }
-      if (location.isInitial && location.invariant != undefined && location.invariant.clauses.length > 0){
+      if (location.isInitial && location.invariant != undefined && location.invariant.clauses.length > 0) {
         newLocation += ' : ';
       }
       if (location.invariant != undefined) {
@@ -55,7 +55,11 @@ const createFile = async (currentSystem: SystemOptionType) => {
     });
     ta.switches.forEach((edge) => {
       //check for events
-      if(existingEvents.filter((event)  => {return event === edge.actionLabel}).length == 0){
+      if (
+        existingEvents.filter((event) => {
+          return event === edge.actionLabel;
+        }).length == 0
+      ) {
         existingEvents.push(edge.actionLabel);
         const newEvent = 'event:' + edge.actionLabel + '\n';
         events += newEvent;
@@ -66,10 +70,10 @@ const createFile = async (currentSystem: SystemOptionType) => {
       if (edge.guard != undefined) {
         let first: boolean = true;
         edge.guard.clauses.forEach((clause) => {
-          let newClause = "";
-          if(clause.op.toString() == "="){
-            newClause = clause.lhs.name.toString() + "==" + clause.rhs.toString();
-          } else{
+          let newClause = '';
+          if (clause.op.toString() == '=') {
+            newClause = clause.lhs.name.toString() + '==' + clause.rhs.toString();
+          } else {
             newClause = clause.lhs.name.toString() + clause.op.toString() + clause.rhs.toString();
           }
           if (first) {
@@ -82,7 +86,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
         });
       }
       if (needColon && edge.reset.length > 0) {
-        newEdge += ':';
+        newEdge += ' : ';
       }
       let first: boolean = true;
       edge.reset.forEach((reset) => {
@@ -98,7 +102,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
     });
     const singularProcess = processDef + clocks + locations + edges;
     processes += singularProcess;
-  })
+  });
   taFile += events;
   taFile += processes;
   //console.log(taFile);
@@ -107,7 +111,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
 };
 
 const DownloadButton: React.FC<ActiveModel> = (props) => {
-  const {openedSystems } = props;
+  const { openedSystems } = props;
   const currentSystem = openedSystems.selectedSystem;
   const fileName = currentSystem.label + '.tck';
 
@@ -130,7 +134,7 @@ const DownloadButton: React.FC<ActiveModel> = (props) => {
   //TODO hier noch das "Download Model" in diese Localization file tun
   return (
     <label htmlFor="downloadModel">
-      <Button variant='contained' onClick={downloadModel} sx={{mr: 0.15, mb: 0.2}}>
+      <Button variant="contained" onClick={downloadModel} sx={{ mr: 0.15, mb: 0.2 }}>
         Download System
       </Button>
     </label>
