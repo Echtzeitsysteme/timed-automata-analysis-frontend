@@ -6,14 +6,16 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { AutomatonOptionType, OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
+import {OpenedSystems} from "../viewmodel/OpenedSystems.ts";
 
 export interface ProcessSelectionProps {
   viewModel: AnalysisViewModel;
   openedProcesses: OpenedProcesses;
+  openedSystems: OpenedSystems;
 }
 
 const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
-  const { viewModel, openedProcesses } = props;
+  const { viewModel, openedProcesses, openedSystems} = props;
   const options = openedProcesses.automatonOptions;
   let value = openedProcesses.selectedOption;
   let optionLabels = openedProcesses.getLabels(openedProcesses.automatonOptions);
@@ -26,6 +28,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
       openedProcesses.selectedOption.automaton = viewModel.ta;
       openedProcesses.addAutomatonOption(openedProcesses, newOption);
       console.log('newProcessOptions:', openedProcesses.automatonOptions);
+      openedSystems.selectedSystem.processes = openedProcesses.automatonOptions;
       //value = newOption;
       viewModel.setAutomaton(viewModel, newOption.automaton);
       console.log('automaton set!!!');
@@ -41,6 +44,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
       openedProcesses.deleteAutomatonOption(openedProcesses, openedProcesses.selectedOption);
       console.log('options', options);
       value = openedProcesses.selectedOption;
+      openedSystems.selectedSystem.processes = openedProcesses.automatonOptions;
       console.log('value', value);
       viewModel.setAutomaton(viewModel, openedProcesses.selectedOption.automaton);
     }

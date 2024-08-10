@@ -207,6 +207,9 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
         })
         const processes: AutomatonOptionType[] = automatonOptions;
         const newSystem : SystemOptionType = {label: systemName, processes: processes};
+
+        openedProcesses.selectedOption.automaton = viewModel.ta;
+        openedSystems.selectedSystem.processes =openedProcesses.automatonOptions;
         openedSystems.addSystemOption(openedSystems, newSystem);
 
         openedSystems.selectedSystem = newSystem;

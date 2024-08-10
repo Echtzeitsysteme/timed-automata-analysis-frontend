@@ -44,7 +44,7 @@ function App() {
         ⏰ {t('app.title')}
       </h1>
       <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses}></AutomatonDrawer>
-      <ProcessSelection viewModel={viewModel} openedProcesses={openedProcesses}></ProcessSelection>
+      <ProcessSelection viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses}></ProcessSelection>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid

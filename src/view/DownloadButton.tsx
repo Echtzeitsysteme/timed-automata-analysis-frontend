@@ -14,6 +14,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
   let processes = '';
   let events = '';
   let existingEvents: string[] = [];
+  let existingClocks: string[] = [];
 
   const automatonOptions = currentSystem.processes;
   automatonOptions.forEach((option)=> {
@@ -27,8 +28,13 @@ const createFile = async (currentSystem: SystemOptionType) => {
     let edges = '';
 
     ta.clocks.forEach((clock) => {
-      const newClock = 'clock:' + '1' + ':' + clock.name + '\n';
-      clocks += newClock;
+      //clocks are global variables, don't write them multiple times
+      const alreadyWritten = existingClocks.some((existingClock) => existingClock == clock.name);
+      if(!alreadyWritten){
+        const newClock = 'clock:' + '1' + ':' + clock.name + '\n';
+        clocks += newClock;
+        existingClocks.push(clock.name);
+      }
     });
     ta.locations.forEach((location) => {
       let newLocation = 'location:' + process + ':' + location.name + '{';
