@@ -1,9 +1,13 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import { OpenedSystems, SystemOptionType } from '../viewmodel/OpenedSystems.ts';
+import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
+import { OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
 
 interface ActiveModel {
+  viewModel: AnalysisViewModel;
   openedSystems: OpenedSystems;
+  openedProcesses: OpenedProcesses;
 }
 
 const createFile = async (currentSystem: SystemOptionType) => {
@@ -73,6 +77,10 @@ const createFile = async (currentSystem: SystemOptionType) => {
           let newClause = '';
           if (clause.op.toString() == '=') {
             newClause = clause.lhs.name.toString() + '==' + clause.rhs.toString();
+          } else if (clause.op.toString() == '≤') {
+            newClause = clause.lhs.name.toString() + '<=' + clause.rhs.toString();
+          } else if (clause.op.toString() == '≥') {
+            newClause = clause.lhs.name.toString() + '>=' + clause.rhs.toString();
           } else {
             newClause = clause.lhs.name.toString() + clause.op.toString() + clause.rhs.toString();
           }
@@ -111,8 +119,11 @@ const createFile = async (currentSystem: SystemOptionType) => {
 };
 
 const DownloadButton: React.FC<ActiveModel> = (props) => {
-  const { openedSystems } = props;
+  const { openedSystems, viewModel, openedProcesses } = props;
   const currentSystem = openedSystems.selectedSystem;
+  openedProcesses.selectedOption.automaton = viewModel.ta;
+  currentSystem.processes = openedProcesses.automatonOptions;
+  //console.log("Current System:", currentSystem);
   const fileName = currentSystem.label + '.tck';
 
   const downloadModel = async () => {
