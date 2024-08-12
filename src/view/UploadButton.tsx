@@ -75,7 +75,16 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
         if(attribute.hasOwnProperty('invariant')){
           attribute.constraint.forEach((constr) => {
             const lhs: Clock = {name: constr.lhs};
-            const comparator: ClockComparator = constr.comparator;
+            let comparator: ClockComparator;
+            if(constr.comparator == "=="){
+              comparator = ClockComparator.EQ;
+            } else if(constr.comparator == "≤"){
+              comparator = ClockComparator.LEQ;
+            } else if(constr.comparator == "≥"){
+              comparator = ClockComparator.GEQ;
+            } else{
+              comparator = constr.comparator;
+            }
             const rhs: number = constr.rhs;
             const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
             invariants.clauses.push(newClause);
@@ -125,7 +134,11 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
             let comparator: ClockComparator;
             if(constr.comparator == "=="){
               comparator = ClockComparator.EQ;
-            }else{
+            } else if(constr.comparator == "≤"){
+              comparator = ClockComparator.LEQ;
+            } else if(constr.comparator == "≥"){
+              comparator = ClockComparator.GEQ;
+            } else{
               comparator = constr.comparator;
             }
             const rhs: number = constr.rhs;

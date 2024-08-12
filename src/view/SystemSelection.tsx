@@ -7,6 +7,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { OpenedSystems, SystemOptionType } from '../viewmodel/OpenedSystems.ts';
 import { OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
 import { INIT_AUTOMATON } from '../utils/initAutomaton.ts';
+import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
+import {Location} from "../model/ta/location.ts";
 
 export interface SystemSelectionProps {
   viewModel: AnalysisViewModel;
@@ -25,9 +27,16 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
   const addSystem = () => {
     const isExisting = options.some((option) => newSystemName === option.label);
     if (!isExisting && newSystemName.length > 0) {
+      const startLoc:Location = {
+        name: 'start',
+        isInitial: true,
+        xCoordinate: -100,
+        yCoordinate: 100,
+      };
+      const newTA: TimedAutomaton = {locations: [startLoc], clocks: [], switches: []};
       const newOption: SystemOptionType = {
         label: newSystemName,
-        processes: [{ label: 'init_Process', automaton: INIT_AUTOMATON }],
+        processes: [{ label: 'init_Process', automaton: newTA }],
       };
       openedProcesses.selectedOption.automaton = viewModel.ta;
       openedSystems.selectedSystem.processes = openedProcesses.automatonOptions;

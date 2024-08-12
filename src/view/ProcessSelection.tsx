@@ -7,6 +7,8 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { AutomatonOptionType, OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
 import {OpenedSystems} from "../viewmodel/OpenedSystems.ts";
+import {Location} from "../model/ta/location.ts";
+import {TimedAutomaton} from "../model/ta/timedAutomaton.ts";
 
 export interface ProcessSelectionProps {
   viewModel: AnalysisViewModel;
@@ -24,7 +26,14 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
   const addProcess = () => {
     const isExisting = options.some((option) => newProcessName === option.label);
     if (!isExisting && newProcessName.length > 0) {
-      const newOption: AutomatonOptionType = { label: newProcessName, automaton: INIT_AUTOMATON };
+      const startLoc:Location = {
+        name: 'start',
+        isInitial: true,
+        xCoordinate: -100,
+        yCoordinate: 100,
+      };
+      const newTA: TimedAutomaton = {locations: [startLoc], clocks: [], switches: []};
+      const newOption: AutomatonOptionType = { label: newProcessName, automaton: newTA };
       openedProcesses.selectedOption.automaton = viewModel.ta;
       openedProcesses.addAutomatonOption(openedProcesses, newOption);
       console.log('newProcessOptions:', openedProcesses.automatonOptions);
