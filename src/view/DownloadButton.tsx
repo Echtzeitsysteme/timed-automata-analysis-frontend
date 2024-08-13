@@ -11,10 +11,12 @@ interface ActiveModel {
 }
 
 const createFile = async (currentSystem: SystemOptionType) => {
-  //TODO doesnt encompass any processes, systems or other definitions since the TA Definition only contains these types
+  //TODO doesnt encompass other definitions like int since the current TA Definition only contains these types
+  const prefix =
+    '#\n# This is a TChecker file\n# The TChecker file format is described here:\n# https://github.com/ticktac-project/tchecker/wiki/TChecker-file-format\n#\n\n';
   const systemName = currentSystem.label;
-  const systemDef = 'system:' + systemName + '\n';
-  let taFile = systemDef;
+  const systemDef = 'system:' + systemName + '\n' + '\n';
+  let taFile = prefix + systemDef;
   let processes = '';
   let events = '';
   const existingEvents: string[] = [];
@@ -109,9 +111,9 @@ const createFile = async (currentSystem: SystemOptionType) => {
       edges += newEdge;
     });
     const singularProcess = processDef + clocks + locations + edges;
-    processes += singularProcess;
+    processes += singularProcess + '\n' + '\n';
   });
-  taFile += events;
+  taFile += events + '\n';
   taFile += processes;
   //console.log(taFile);
 
