@@ -58,27 +58,6 @@ button:focus-visible {
   display: none;
 }
 
-.uploadButton {
-  display: inline-block;
-  color: #444;
-  border: 1px solid #ccc;
-  background: #ddd;
-  box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  vertical-align: middle;
-  max-width: 100px;
-  padding: 10px;
-  text-align: center;
-  margin: 2px;
-}
-.uploadButton:active {
-  color: red;
-  box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.6);
-}
-.uploadButton:hover {
-  border-color: #646cff;
-}
-
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
