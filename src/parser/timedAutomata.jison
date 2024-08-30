@@ -1,4 +1,4 @@
-/* description: transforms a .tck-File into BNF */
+    /* description: transforms a .tck-File into BNF */
 /* TODO: parser cant read certain complex formulas yet, see train_gate_3.tck file and the official documentation on valid input files */
 
 /* lexical grammar */
@@ -27,6 +27,7 @@
 "while"                     %{ return 'TOK_WHILE' %}
 "nop"                       %{ return 'TOK_NOP' %}
 "local"                     %{ return 'TOK_LOCAL' %}
+"layout"                    %{ return 'TOK_LAYOUT' %}
 [0-9]+                      %{ return 'TOK_INTEGER' %}'
 [a-zA-Z]([a-zA-Z0-9_])*     %{ return 'TOK_ID' %}
 ":"                         %{ return 'TOK_COLON' %}       
@@ -153,6 +154,7 @@ attribute
  | TOK_URGENT TOK_COLON {$$ = {urgent: $1};}
  | TOK_PROV TOK_COLON constraints {$$ = {provided: $1, constraint: $3};}
  | TOK_DO TOK_COLON statements {$$ = {do: $1, maths: $3};}
+ | TOK_LAYOUT TOK_COLON TOK_INTEGER TOK_COMMA TOK_INTEGER {$$ = {layout: $1, x: $3, y: $5};}
  ;
 
 labelsList
