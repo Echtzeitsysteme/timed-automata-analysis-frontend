@@ -1,4 +1,4 @@
-    /* description: transforms a .tck-File into BNF */
+/* description: transforms a .tck-File into a parse tree with grammar in BNF */
 /* TODO: parser cant read certain complex formulas yet, see train_gate_3.tck file and the official documentation on valid input files */
 
 /* lexical grammar */
@@ -28,12 +28,10 @@
 "nop"                       %{ return 'TOK_NOP' %}
 "local"                     %{ return 'TOK_LOCAL' %}
 "layout"                    %{ return 'TOK_LAYOUT' %}
-[0-9]+                      %{ return 'TOK_INTEGER' %}'
+[0-9]+                      %{ return 'TOK_INTEGER' %}
 [a-zA-Z]([a-zA-Z0-9_])*     %{ return 'TOK_ID' %}
 ":"                         %{ return 'TOK_COLON' %}       
 "@"                         %{ return 'TOK_AT' %}
-"!"                         %{ return 'TOK_EXMARK' %}
-"?"                         %{ return 'TOK_QMARK' %}
 "{"                         %{ return 'TOK_LBRACE' %}
 "}"                         %{ return 'TOK_RBRACE' %}
 ","                         %{ return 'TOK_COMMA' %}
@@ -50,8 +48,12 @@
 "<"                         %{ return 'TOK_LT' %}
 ">"                         %{ return 'TOK_GT' %}
 "="                         %{ return 'TOK_SET' %}
-"("                         %{ return 'TOK_LBRACKET' %}
-")"                         %{ return 'TOK_RBRACKET' %}
+"["                         %{ return 'TOK_LBRACKET' %}
+"]"                         %{ return 'TOK_RBRACKET' %}
+"("                         %{ return 'TOK_LPARENTHESES' %}
+")"                         %{ return 'TOK_RPARENTHESES' %}
+"!"                         %{ return 'TOK_EXMARK' %}
+"?"                         %{ return 'TOK_QMARK' %}
 ";"                         %{ return 'TOK_SEMICOLON' %}
 <<EOF>>                     %{ return 'TOK_EOF' %} 
 /lex
@@ -168,13 +170,40 @@ constraints
  ;
 
 constraint
- : TOK_ID cmp formula {$$ = {lhs: $1, comparator: $2, rhs: $3};}
- | formula cmp TOK_ID cmp formula {$$ = {lhs: $1, compLeft: $2, mhs: $3, comRight: $4};}
+ : TOK_LPARENTHESES constraint TOK_RPARENTHESES {$$ = $1;}
+ | int_term {$$ = {intConstraint: $1};}
+ | predicate_constraint {$$ = {predicateConstraint: $1};}
+ | clock_constraint {$$ = {clockConstraint: $1};}
  ;
 
-formula
- : TOK_INTEGER {$$ = $1;}
- | TOK_INTEGER maths formula {$$ = $1 + $2 + $3;}
+clock_constraint
+ : clock_term cmp int_term {$$ = {clockTerm: $1, comparator: $2, intTerm: $3};}
+ | int_term cmp clock_term {$$ = {intTerm: $1, comparator: $2, clockTerm: $3};}
+ | clock_value cmp clock_value {$$ = {clockValueL: $1, comparator: $2, clockValueR: $3};}
+ | int_term cmp clock_term cmp int_term {$$ = {intTermL: $1, comparatorL: $2, clock_term: $3, comparatorR: $4, intTermR: $5};}
+ ;
+
+clock_term
+ : clock_value {$$ = {clockValue: $1};}
+ | clock_value TOK_MINUS clock_value {$$ = {clockValueL: $1, minus: $2, clockValueR: $3};}
+ ;
+
+clock_value
+ : TOK_ID {$$ = {clock: $1};}
+ | TOK_ID TOK_LBRACKET int_term TOK_RBRACKET {$$ = {clock: $1, intTerm: $3};}
+ ;
+
+predicate_constraint
+ : int_term cmp int_term {$$ = {intTermL: $1, comparator: $2, intTermR: $3};}
+ | int_term cmp int_term cmp int_term {$$ = {intTermL: $1, comparatorL: $2, intTermM: $3, comparatorR: $4, intTermR: $5};}
+ ;
+
+int_term
+ : TOK_INTEGER {$$ = {value: $1};}
+ | TOK_ID {$$ = {int: $1};}
+ | TOK_ID TOK_LBRACKET int_term TOK_RBRACKET {$$ = {int: $1, insideBrackets: $3};}
+ | TOK_LPARENTHESES int_term maths int_term TOK_RPARENTHESES {$$ = {intTermL: $1, maths: $2, intTermR: $3};}
+ | int_term maths int_term {$$ = {intTermL: $1, maths: $2, intTermR: $3};}
  ;
 
 statements

@@ -96,29 +96,42 @@ var timedAutomata = (function () {
     $Vh = [1, 61],
     $Vi = [1, 62],
     $Vj = [1, 63],
-    $Vk = [17, 34],
-    $Vl = [1, 90],
-    $Vm = [1, 92],
+    $Vk = [1, 64],
+    $Vl = [17, 34],
+    $Vm = [1, 97],
     $Vn = [1, 96],
-    $Vo = [17, 34, 46],
-    $Vp = [1, 100],
-    $Vq = [17, 34, 48],
-    $Vr = [1, 102],
-    $Vs = [1, 103],
-    $Vt = [1, 104],
-    $Vu = [1, 105],
-    $Vv = [1, 106],
-    $Vw = [1, 107],
-    $Vx = [17, 34, 48, 56, 57, 58, 59, 60, 61],
-    $Vy = [1, 110],
-    $Vz = [1, 111],
-    $VA = [1, 112],
+    $Vo = [1, 92],
+    $Vp = [1, 103],
+    $Vq = [17, 34, 47],
+    $Vr = [1, 108],
+    $Vs = [17, 34, 49],
+    $Vt = [2, 49],
+    $Vu = [1, 114],
+    $Vv = [1, 118],
+    $Vw = [1, 119],
+    $Vx = [1, 120],
+    $Vy = [1, 121],
+    $Vz = [1, 122],
+    $VA = [1, 123],
     $VB = [1, 113],
-    $VC = [1, 114],
-    $VD = [17, 34, 53],
-    $VE = [18, 23],
-    $VF = [1, 126],
-    $VG = [1, 127];
+    $VC = [1, 115],
+    $VD = [1, 116],
+    $VE = [1, 117],
+    $VF = [17, 34, 49, 51],
+    $VG = [17, 34, 49, 51, 58, 60, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75],
+    $VH = [17, 34, 49, 51, 58, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75],
+    $VI = [2, 63],
+    $VJ = [1, 127],
+    $VK = [17, 34, 63],
+    $VL = [1, 138],
+    $VM = [1, 139],
+    $VN = [18, 23, 50],
+    $VO = [1, 146],
+    $VP = [1, 150],
+    $VQ = [1, 151],
+    $VR = [2, 66],
+    $VS = [17, 34, 49, 51, 66, 67, 68, 69, 70, 71],
+    $VT = [2, 64];
   var parser = {
     trace: function trace() {},
     yy: {},
@@ -167,27 +180,36 @@ var timedAutomata = (function () {
       TOK_PROV: 43,
       TOK_DO: 44,
       statements: 45,
-      TOK_COMMA: 46,
-      constraint: 47,
-      TOK_AND: 48,
-      cmp: 49,
-      formula: 50,
-      maths: 51,
-      statement: 52,
-      TOK_SEMICOLON: 53,
-      TOK_SET: 54,
-      doFormula: 55,
-      TOK_EQ: 56,
-      TOK_LT: 57,
-      TOK_LEQ: 58,
-      TOK_GEQ: 59,
-      TOK_GT: 60,
-      TOK_NEQ: 61,
-      TOK_PLUS: 62,
-      TOK_MINUS: 63,
-      TOK_MUL: 64,
-      TOK_DIV: 65,
-      TOK_PERCENT: 66,
+      TOK_LAYOUT: 46,
+      TOK_COMMA: 47,
+      constraint: 48,
+      TOK_AND: 49,
+      TOK_LPARENTHESES: 50,
+      TOK_RPARENTHESES: 51,
+      int_term: 52,
+      predicate_constraint: 53,
+      clock_constraint: 54,
+      clock_term: 55,
+      cmp: 56,
+      clock_value: 57,
+      TOK_MINUS: 58,
+      TOK_LBRACKET: 59,
+      TOK_RBRACKET: 60,
+      maths: 61,
+      statement: 62,
+      TOK_SEMICOLON: 63,
+      TOK_SET: 64,
+      doFormula: 65,
+      TOK_EQ: 66,
+      TOK_LT: 67,
+      TOK_LEQ: 68,
+      TOK_GEQ: 69,
+      TOK_GT: 70,
+      TOK_NEQ: 71,
+      TOK_PLUS: 72,
+      TOK_MUL: 73,
+      TOK_DIV: 74,
+      TOK_PERCENT: 75,
       $accept: 0,
       $end: 1,
     },
@@ -216,21 +238,26 @@ var timedAutomata = (function () {
       42: 'TOK_URGENT',
       43: 'TOK_PROV',
       44: 'TOK_DO',
-      46: 'TOK_COMMA',
-      48: 'TOK_AND',
-      53: 'TOK_SEMICOLON',
-      54: 'TOK_SET',
-      56: 'TOK_EQ',
-      57: 'TOK_LT',
-      58: 'TOK_LEQ',
-      59: 'TOK_GEQ',
-      60: 'TOK_GT',
-      61: 'TOK_NEQ',
-      62: 'TOK_PLUS',
-      63: 'TOK_MINUS',
-      64: 'TOK_MUL',
-      65: 'TOK_DIV',
-      66: 'TOK_PERCENT',
+      46: 'TOK_LAYOUT',
+      47: 'TOK_COMMA',
+      49: 'TOK_AND',
+      50: 'TOK_LPARENTHESES',
+      51: 'TOK_RPARENTHESES',
+      58: 'TOK_MINUS',
+      59: 'TOK_LBRACKET',
+      60: 'TOK_RBRACKET',
+      63: 'TOK_SEMICOLON',
+      64: 'TOK_SET',
+      66: 'TOK_EQ',
+      67: 'TOK_LT',
+      68: 'TOK_LEQ',
+      69: 'TOK_GEQ',
+      70: 'TOK_GT',
+      71: 'TOK_NEQ',
+      72: 'TOK_PLUS',
+      73: 'TOK_MUL',
+      74: 'TOK_DIV',
+      75: 'TOK_PERCENT',
     },
     productions_: [
       0,
@@ -276,32 +303,48 @@ var timedAutomata = (function () {
       [35, 2],
       [35, 3],
       [35, 3],
+      [35, 5],
       [38, 1],
       [38, 3],
       [40, 1],
       [40, 3],
-      [47, 3],
-      [47, 5],
-      [50, 1],
-      [50, 3],
+      [48, 3],
+      [48, 1],
+      [48, 1],
+      [48, 1],
+      [54, 3],
+      [54, 3],
+      [54, 3],
+      [54, 5],
+      [55, 1],
+      [55, 3],
+      [57, 1],
+      [57, 4],
+      [53, 3],
+      [53, 5],
+      [52, 1],
+      [52, 1],
+      [52, 4],
+      [52, 5],
+      [52, 3],
       [45, 1],
       [45, 3],
-      [52, 3],
-      [55, 1],
-      [55, 1],
-      [55, 3],
-      [55, 3],
-      [49, 1],
-      [49, 1],
-      [49, 1],
-      [49, 1],
-      [49, 1],
-      [49, 1],
-      [51, 1],
-      [51, 1],
-      [51, 1],
-      [51, 1],
-      [51, 1],
+      [62, 3],
+      [65, 1],
+      [65, 1],
+      [65, 3],
+      [65, 3],
+      [56, 1],
+      [56, 1],
+      [56, 1],
+      [56, 1],
+      [56, 1],
+      [56, 1],
+      [61, 1],
+      [61, 1],
+      [61, 1],
+      [61, 1],
+      [61, 1],
     ],
     performAction: function anonymous(
       yytext,
@@ -337,20 +380,19 @@ var timedAutomata = (function () {
         case 9:
         case 10:
         case 11:
-        case 49:
-        case 54:
-        case 55:
-        case 58:
-        case 59:
-        case 60:
-        case 61:
-        case 62:
-        case 63:
-        case 64:
-        case 65:
-        case 66:
-        case 67:
-        case 68:
+        case 70:
+        case 71:
+        case 74:
+        case 75:
+        case 76:
+        case 77:
+        case 78:
+        case 79:
+        case 80:
+        case 81:
+        case 82:
+        case 83:
+        case 84:
           this.$ = $$[$0];
           break;
         case 12:
@@ -417,9 +459,9 @@ var timedAutomata = (function () {
           break;
         case 29:
         case 35:
-        case 44:
-        case 46:
-        case 52:
+        case 45:
+        case 47:
+        case 68:
           $$[$0 - 2].push($$[$0]);
           this.$ = $$[$0 - 2];
           break;
@@ -436,9 +478,9 @@ var timedAutomata = (function () {
           this.$ = [];
           break;
         case 34:
-        case 43:
-        case 45:
-        case 51:
+        case 44:
+        case 46:
+        case 67:
           this.$ = [$$[$0]];
           break;
         case 36:
@@ -462,19 +504,84 @@ var timedAutomata = (function () {
         case 42:
           this.$ = { do: $$[$0 - 2], maths: $$[$0] };
           break;
-        case 47:
-          this.$ = { lhs: $$[$0 - 2], comparator: $$[$0 - 1], rhs: $$[$0] };
+        case 43:
+          this.$ = { layout: $$[$0 - 4], x: $$[$0 - 2], y: $$[$0] };
           break;
         case 48:
-          this.$ = { lhs: $$[$0 - 4], compLeft: $$[$0 - 3], mhs: $$[$0 - 2], comRight: $$[$0 - 1] };
+          this.$ = $$[$0 - 2];
+          break;
+        case 49:
+          this.$ = { intConstraint: $$[$0] };
           break;
         case 50:
-        case 56:
-        case 57:
-          this.$ = $$[$0 - 2] + $$[$0 - 1] + $$[$0];
+          this.$ = { predicateConstraint: $$[$0] };
+          break;
+        case 51:
+          this.$ = { clockConstraint: $$[$0] };
+          break;
+        case 52:
+          this.$ = { clockTerm: $$[$0 - 2], comparator: $$[$0 - 1], intTerm: $$[$0] };
           break;
         case 53:
+          this.$ = { intTerm: $$[$0 - 2], comparator: $$[$0 - 1], clockTerm: $$[$0] };
+          break;
+        case 54:
+          this.$ = { clockValueL: $$[$0 - 2], comparator: $$[$0 - 1], clockValueR: $$[$0] };
+          break;
+        case 55:
+          this.$ = {
+            intTermL: $$[$0 - 4],
+            comparatorL: $$[$0 - 3],
+            clock_term: $$[$0 - 2],
+            comparatorR: $$[$0 - 1],
+            intTermR: $$[$0],
+          };
+          break;
+        case 56:
+          this.$ = { clockValue: $$[$0] };
+          break;
+        case 57:
+          this.$ = { clockValueL: $$[$0 - 2], minus: $$[$0 - 1], clockValueR: $$[$0] };
+          break;
+        case 58:
+          this.$ = { clock: $$[$0] };
+          break;
+        case 59:
+          this.$ = { clock: $$[$0 - 3], intTerm: $$[$0 - 1] };
+          break;
+        case 60:
+          this.$ = { intTermL: $$[$0 - 2], comparator: $$[$0 - 1], intTermR: $$[$0] };
+          break;
+        case 61:
+          this.$ = {
+            intTermL: $$[$0 - 4],
+            comparatorL: $$[$0 - 3],
+            intTermM: $$[$0 - 2],
+            comparatorR: $$[$0 - 1],
+            intTermR: $$[$0],
+          };
+          break;
+        case 62:
+          this.$ = { value: $$[$0] };
+          break;
+        case 63:
+          this.$ = { int: $$[$0] };
+          break;
+        case 64:
+          this.$ = { int: $$[$0 - 3], insideBrackets: $$[$0 - 1] };
+          break;
+        case 65:
+          this.$ = { intTermL: $$[$0 - 4], maths: $$[$0 - 3], intTermR: $$[$0 - 2] };
+          break;
+        case 66:
+          this.$ = { intTermL: $$[$0 - 2], maths: $$[$0 - 1], intTermR: $$[$0] };
+          break;
+        case 69:
           this.$ = { lhs: $$[$0 - 2], set: $$[$0 - 1], rhs: $$[$0] };
+          break;
+        case 72:
+        case 73:
+          this.$ = $$[$0 - 2] + $$[$0 - 1] + $$[$0];
           break;
       }
     },
@@ -556,102 +663,182 @@ var timedAutomata = (function () {
       { 30: [1, 52] },
       { 30: [1, 53] },
       o($Va, [2, 12]),
-      { 33: 54, 34: [1, 55], 35: 56, 36: $Vd, 37: $Ve, 39: $Vf, 41: $Vg, 42: $Vh, 43: $Vi, 44: $Vj },
+      { 33: 54, 34: [1, 55], 35: 56, 36: $Vd, 37: $Ve, 39: $Vf, 41: $Vg, 42: $Vh, 43: $Vi, 44: $Vj, 46: $Vk },
       o($V7, [2, 14]),
       o($V7, [2, 16]),
-      { 18: [1, 64] },
-      { 23: [1, 65] },
-      { 18: [1, 66] },
+      { 18: [1, 65] },
+      { 23: [1, 66] },
       { 18: [1, 67] },
+      { 18: [1, 68] },
       o($V7, [2, 26]),
-      { 18: $V8, 20: $V9, 29: 68 },
-      { 18: [1, 69] },
+      { 18: $V8, 20: $V9, 29: 69 },
       { 18: [1, 70] },
-      { 17: [1, 72], 34: [1, 71] },
+      { 18: [1, 71] },
+      { 17: [1, 73], 34: [1, 72] },
       o($V7, [2, 33]),
-      o($Vk, [2, 34]),
-      { 17: [1, 73] },
+      o($Vl, [2, 34]),
       { 17: [1, 74] },
       { 17: [1, 75] },
       { 17: [1, 76] },
       { 17: [1, 77] },
       { 17: [1, 78] },
       { 17: [1, 79] },
-      o($V7, [2, 19], { 19: 80, 32: $Vb }),
+      { 17: [1, 80] },
       { 17: [1, 81] },
-      o($V7, [2, 23], { 19: 82, 32: $Vb }),
+      o($V7, [2, 19], { 19: 82, 32: $Vb }),
       { 17: [1, 83] },
+      o($V7, [2, 23], { 19: 84, 32: $Vb }),
+      { 17: [1, 85] },
       o($Vc, [2, 29]),
       o($Vc, [2, 30]),
-      { 31: [1, 84] },
+      { 31: [1, 86] },
       o($V7, [2, 32]),
-      { 35: 85, 36: $Vd, 37: $Ve, 39: $Vf, 41: $Vg, 42: $Vh, 43: $Vi, 44: $Vj },
-      o($Vk, [2, 36]),
-      { 18: [1, 87], 38: 86 },
-      { 18: $Vl, 23: $Vm, 40: 88, 47: 89, 50: 91 },
-      o($Vk, [2, 39]),
-      o($Vk, [2, 40]),
-      { 18: $Vl, 23: $Vm, 40: 93, 47: 89, 50: 91 },
-      { 18: $Vn, 45: 94, 52: 95 },
+      { 35: 87, 36: $Vd, 37: $Ve, 39: $Vf, 41: $Vg, 42: $Vh, 43: $Vi, 44: $Vj, 46: $Vk },
+      o($Vl, [2, 36]),
+      { 18: [1, 89], 38: 88 },
+      { 18: $Vm, 23: $Vn, 40: 90, 48: 91, 50: $Vo, 52: 93, 53: 94, 54: 95, 55: 98, 57: 99 },
+      o($Vl, [2, 39]),
+      o($Vl, [2, 40]),
+      { 18: $Vm, 23: $Vn, 40: 100, 48: 91, 50: $Vo, 52: 93, 53: 94, 54: 95, 55: 98, 57: 99 },
+      { 18: $Vp, 45: 101, 62: 102 },
+      { 23: [1, 104] },
       o($V7, [2, 18]),
-      { 23: [1, 97] },
+      { 23: [1, 105] },
       o($V7, [2, 22]),
-      { 18: [1, 98] },
+      { 18: [1, 106] },
       o($Vc, [2, 31]),
-      o($Vk, [2, 35]),
-      o($Vk, [2, 37], { 46: [1, 99] }),
-      o($Vo, [2, 43]),
-      o($Vk, [2, 38], { 48: $Vp }),
+      o($Vl, [2, 35]),
+      o($Vl, [2, 37], { 47: [1, 107] }),
+      o($Vq, [2, 44]),
+      o($Vl, [2, 38], { 49: $Vr }),
+      o($Vs, [2, 46]),
+      { 18: $Vm, 23: $Vn, 48: 109, 50: $Vo, 52: 110, 53: 94, 54: 95, 55: 98, 57: 99 },
+      o($Vs, $Vt, {
+        61: 111,
+        56: 112,
+        58: $Vu,
+        66: $Vv,
+        67: $Vw,
+        68: $Vx,
+        69: $Vy,
+        70: $Vz,
+        71: $VA,
+        72: $VB,
+        73: $VC,
+        74: $VD,
+        75: $VE,
+      }),
+      o($VF, [2, 50]),
+      o($VF, [2, 51]),
+      o($VG, [2, 62]),
+      o($VH, $VI, { 59: [1, 124] }),
+      { 56: 125, 66: $Vv, 67: $Vw, 68: $Vx, 69: $Vy, 70: $Vz, 71: $VA },
+      { 56: 126, 58: $VJ, 66: $Vv, 67: $Vw, 68: $Vx, 69: $Vy, 70: $Vz, 71: $VA },
+      o($Vl, [2, 41], { 49: $Vr }),
+      o($Vl, [2, 42], { 63: [1, 128] }),
+      o($VK, [2, 67]),
+      { 64: [1, 129] },
+      { 47: [1, 130] },
+      { 17: [1, 131] },
+      { 17: [1, 132] },
+      { 18: [1, 133] },
+      { 18: $Vm, 23: $Vn, 48: 134, 50: $Vo, 52: 93, 53: 94, 54: 95, 55: 98, 57: 99 },
+      { 51: [1, 135] },
+      {
+        51: $Vt,
+        56: 112,
+        58: $Vu,
+        61: 136,
+        66: $Vv,
+        67: $Vw,
+        68: $Vx,
+        69: $Vy,
+        70: $Vz,
+        71: $VA,
+        72: $VB,
+        73: $VC,
+        74: $VD,
+        75: $VE,
+      },
+      { 18: $VL, 23: $Vn, 50: $VM, 52: 137 },
+      { 18: $Vm, 23: $Vn, 50: $VM, 52: 140, 55: 141, 57: 142 },
+      o($VN, [2, 80]),
+      o($VN, [2, 81]),
+      o($VN, [2, 82]),
+      o($VN, [2, 83]),
+      o($VN, [2, 84]),
+      o($VN, [2, 74]),
+      o($VN, [2, 75]),
+      o($VN, [2, 76]),
+      o($VN, [2, 77]),
+      o($VN, [2, 78]),
+      o($VN, [2, 79]),
+      { 18: $VL, 23: $Vn, 50: $VM, 52: 143 },
+      { 18: $VL, 23: $Vn, 50: $VM, 52: 144 },
+      { 18: $VO, 57: 145 },
+      { 18: $VO, 57: 147 },
+      { 18: $Vp, 62: 148 },
+      { 18: $VP, 23: $VQ, 65: 149 },
+      { 23: [1, 152] },
+      { 23: [1, 153] },
+      { 18: [1, 154] },
       o($Vq, [2, 45]),
-      { 49: 101, 56: $Vr, 57: $Vs, 58: $Vt, 59: $Vu, 60: $Vv, 61: $Vw },
-      { 49: 108, 56: $Vr, 57: $Vs, 58: $Vt, 59: $Vu, 60: $Vv, 61: $Vw },
-      o($Vx, [2, 49], { 51: 109, 62: $Vy, 63: $Vz, 64: $VA, 65: $VB, 66: $VC }),
-      o($Vk, [2, 41], { 48: $Vp }),
-      o($Vk, [2, 42], { 53: [1, 115] }),
-      o($VD, [2, 51]),
-      { 54: [1, 116] },
-      { 17: [1, 117] },
-      { 17: [1, 118] },
-      { 18: [1, 119] },
-      { 18: $Vl, 23: $Vm, 47: 120, 50: 91 },
-      { 23: $Vm, 50: 121 },
-      o($VE, [2, 58]),
-      o($VE, [2, 59]),
-      o($VE, [2, 60]),
-      o($VE, [2, 61]),
-      o($VE, [2, 62]),
-      o($VE, [2, 63]),
-      { 18: [1, 122] },
-      { 23: $Vm, 50: 123 },
-      o($VE, [2, 64]),
-      o($VE, [2, 65]),
-      o($VE, [2, 66]),
-      o($VE, [2, 67]),
-      o($VE, [2, 68]),
-      { 18: $Vn, 52: 124 },
-      { 18: $VF, 23: $VG, 55: 125 },
-      { 23: [1, 128] },
-      { 18: [1, 129] },
-      o($Vo, [2, 44]),
-      o($Vq, [2, 46]),
-      o($Vq, [2, 47]),
-      { 49: 130, 56: $Vr, 57: $Vs, 58: $Vt, 59: $Vu, 60: $Vv, 61: $Vw },
-      o($Vx, [2, 50]),
-      o($VD, [2, 52]),
-      o($VD, [2, 53]),
-      o($VD, [2, 54], { 51: 131, 62: $Vy, 63: $Vz, 64: $VA, 65: $VB, 66: $VC }),
-      o($VD, [2, 55], { 51: 132, 62: $Vy, 63: $Vz, 64: $VA, 65: $VB, 66: $VC }),
-      { 17: [1, 133] },
-      o($V7, [2, 25], { 19: 134, 32: $Vb }),
-      { 23: $Vm, 50: 135 },
-      { 18: $VF, 23: $VG, 55: 136 },
-      { 18: $VF, 23: $VG, 55: 137 },
-      { 18: [1, 138] },
+      o($Vs, [2, 47]),
+      o($VF, [2, 48]),
+      { 18: $VL, 23: $Vn, 50: $VM, 52: 155 },
+      o([17, 34, 49, 51, 60, 66, 67, 68, 69, 70, 71], $VR, { 61: 111, 58: $Vu, 72: $VB, 73: $VC, 74: $VD, 75: $VE }),
+      o($VG, $VI, { 59: [1, 156] }),
+      { 18: $VL, 23: $Vn, 50: $VM, 52: 157 },
+      o($VF, [2, 60], {
+        61: 111,
+        56: 158,
+        58: $Vu,
+        66: $Vv,
+        67: $Vw,
+        68: $Vx,
+        69: $Vy,
+        70: $Vz,
+        71: $VA,
+        72: $VB,
+        73: $VC,
+        74: $VD,
+        75: $VE,
+      }),
+      o($VF, [2, 53], { 56: 159, 66: $Vv, 67: $Vw, 68: $Vx, 69: $Vy, 70: $Vz, 71: $VA }),
+      o($VS, [2, 56], { 58: $VJ }),
+      { 58: $Vu, 60: [1, 160], 61: 111, 72: $VB, 73: $VC, 74: $VD, 75: $VE },
+      o($VF, [2, 52], { 61: 111, 58: $Vu, 72: $VB, 73: $VC, 74: $VD, 75: $VE }),
+      o($VF, [2, 54]),
+      o($VS, [2, 58], { 59: [1, 161] }),
+      o($VS, [2, 57]),
+      o($VK, [2, 68]),
+      o($VK, [2, 69]),
+      o($VK, [2, 70], { 61: 162, 58: $Vu, 72: $VB, 73: $VC, 74: $VD, 75: $VE }),
+      o($VK, [2, 71], { 61: 163, 58: $Vu, 72: $VB, 73: $VC, 74: $VD, 75: $VE }),
+      o($Vl, [2, 43]),
+      { 17: [1, 164] },
+      o($V7, [2, 25], { 19: 165, 32: $Vb }),
+      o([66, 67, 68, 69, 70, 71], $VR, { 61: 111, 51: [1, 166], 58: $Vu, 72: $VB, 73: $VC, 74: $VD, 75: $VE }),
+      { 18: $VL, 23: $Vn, 50: $VM, 52: 167 },
+      { 58: $Vu, 61: 136, 72: $VB, 73: $VC, 74: $VD, 75: $VE },
+      { 18: $VL, 23: $Vn, 50: $VM, 52: 168 },
+      { 18: $VL, 23: $Vn, 50: $VM, 52: 169 },
+      o($VH, $VT),
+      { 18: $VL, 23: $Vn, 50: $VM, 52: 170 },
+      { 18: $VP, 23: $VQ, 65: 171 },
+      { 18: $VP, 23: $VQ, 65: 172 },
+      { 18: [1, 173] },
       o($V7, [2, 24]),
-      o($Vq, [2, 48]),
-      o($VD, [2, 56]),
-      o($VD, [2, 57]),
-      o($V7, [2, 21], { 19: 139, 32: $Vb }),
+      o($VG, [2, 65]),
+      { 58: $Vu, 60: [1, 174], 61: 111, 72: $VB, 73: $VC, 74: $VD, 75: $VE },
+      o($VF, [2, 61], { 61: 111, 58: $Vu, 72: $VB, 73: $VC, 74: $VD, 75: $VE }),
+      o($VF, [2, 55], { 61: 111, 58: $Vu, 72: $VB, 73: $VC, 74: $VD, 75: $VE }),
+      { 58: $Vu, 60: [1, 175], 61: 111, 72: $VB, 73: $VC, 74: $VD, 75: $VE },
+      o($VK, [2, 72]),
+      o($VK, [2, 73]),
+      o($V7, [2, 21], { 19: 176, 32: $Vb }),
+      o($VG, $VT),
+      o($VS, [2, 59]),
       o($V7, [2, 20]),
     ],
     defaultActions: { 5: [2, 1] },
@@ -1229,81 +1416,90 @@ var timedAutomata = (function () {
             return 'TOK_LOCAL';
             break;
           case 22:
-            return 23;
-            break;
-          case 23:
-            return 18;
-            break;
-          case 24:
-            return 17;
-            break;
-          case 25:
-            return 30;
-            break;
-          case 26:
-            return 'TOK_EXMARK';
-            break;
-          case 27:
-            return 31;
-            break;
-          case 28:
-            return 32;
-            break;
-          case 29:
-            return 34;
-            break;
-          case 30:
             return 46;
             break;
+          case 23:
+            return 23;
+            break;
+          case 24:
+            return 18;
+            break;
+          case 25:
+            return 17;
+            break;
+          case 26:
+            return 30;
+            break;
+          case 27:
+            return 32;
+            break;
+          case 28:
+            return 34;
+            break;
+          case 29:
+            return 47;
+            break;
+          case 30:
+            return 49;
+            break;
           case 31:
-            return 48;
+            return 72;
             break;
           case 32:
-            return 62;
+            return 58;
             break;
           case 33:
-            return 63;
+            return 73;
             break;
           case 34:
-            return 64;
+            return 74;
             break;
           case 35:
-            return 65;
+            return 75;
             break;
           case 36:
             return 66;
             break;
           case 37:
-            return 56;
+            return 71;
             break;
           case 38:
-            return 61;
+            return 68;
             break;
           case 39:
-            return 58;
+            return 69;
             break;
           case 40:
-            return 59;
+            return 67;
             break;
           case 41:
-            return 57;
+            return 70;
             break;
           case 42:
-            return 60;
+            return 64;
             break;
           case 43:
-            return 54;
+            return 59;
             break;
           case 44:
-            return 'TOK_LBRACKET';
+            return 60;
             break;
           case 45:
-            return 'TOK_RBRACKET';
+            return 50;
             break;
           case 46:
-            return 53;
+            return 51;
             break;
           case 47:
+            return 'TOK_EXMARK';
+            break;
+          case 48:
+            return 31;
+            break;
+          case 49:
+            return 63;
+            break;
+          case 50:
             return 5;
             break;
         }
@@ -1331,12 +1527,11 @@ var timedAutomata = (function () {
         /^(?:while\b)/,
         /^(?:nop\b)/,
         /^(?:local\b)/,
+        /^(?:layout\b)/,
         /^(?:[0-9]+)/,
         /^(?:[a-zA-Z]([a-zA-Z0-9_])*)/,
         /^(?::)/,
         /^(?:@)/,
-        /^(?:!)/,
-        /^(?:\?)/,
         /^(?:\{)/,
         /^(?:\})/,
         /^(?:,)/,
@@ -1353,8 +1548,12 @@ var timedAutomata = (function () {
         /^(?:<)/,
         /^(?:>)/,
         /^(?:=)/,
+        /^(?:\[)/,
+        /^(?:\])/,
         /^(?:\()/,
         /^(?:\))/,
+        /^(?:!)/,
+        /^(?:\?)/,
         /^(?:;)/,
         /^(?:$)/,
       ],
@@ -1362,7 +1561,7 @@ var timedAutomata = (function () {
         INITIAL: {
           rules: [
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
-            29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+            29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
           ],
           inclusive: true,
         },
