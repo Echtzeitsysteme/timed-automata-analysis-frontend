@@ -156,7 +156,12 @@ attribute
  | TOK_URGENT TOK_COLON {$$ = {urgent: $1};}
  | TOK_PROV TOK_COLON constraints {$$ = {provided: $1, constraint: $3};}
  | TOK_DO TOK_COLON statements {$$ = {do: $1, maths: $3};}
- | TOK_LAYOUT TOK_COLON TOK_INTEGER TOK_COMMA TOK_INTEGER {$$ = {layout: $1, x: $3, y: $5};}
+ | TOK_LAYOUT TOK_COLON coordinate TOK_COLON coordinate {$$ = {layout: $1, x: $3, y: $5};}
+ ;
+
+coordinate
+ : TOK_INTEGER {$$ = $1;}
+ | TOK_MINUS TOK_INTEGER {$$ = $1 + $2;}
  ;
 
 labelsList
@@ -171,39 +176,21 @@ constraints
 
 constraint
  : TOK_LPARENTHESES constraint TOK_RPARENTHESES {$$ = $1;}
- | int_term {$$ = {intConstraint: $1};}
- | predicate_constraint {$$ = {predicateConstraint: $1};}
- | clock_constraint {$$ = {clockConstraint: $1};}
+ | term {$$ = $1;}
+ | compare_term {$$ = $1;}
  ;
 
-clock_constraint
- : clock_term cmp int_term {$$ = {clockTerm: $1, comparator: $2, intTerm: $3};}
- | int_term cmp clock_term {$$ = {intTerm: $1, comparator: $2, clockTerm: $3};}
- | clock_value cmp clock_value {$$ = {clockValueL: $1, comparator: $2, clockValueR: $3};}
- | int_term cmp clock_term cmp int_term {$$ = {intTermL: $1, comparatorL: $2, clock_term: $3, comparatorR: $4, intTermR: $5};}
+compare_term
+ : term cmp term cmp term {$$ = {termL: $1, comparatorL: $2, termM: $3, comparatorR: $4, termR: $5};}
+ | term cmp term {$$ = {termL: $1, comparator: $2, termR: $3};}
  ;
 
-clock_term
- : clock_value {$$ = {clockValue: $1};}
- | clock_value TOK_MINUS clock_value {$$ = {clockValueL: $1, minus: $2, clockValueR: $3};}
- ;
-
-clock_value
- : TOK_ID {$$ = {clock: $1};}
- | TOK_ID TOK_LBRACKET int_term TOK_RBRACKET {$$ = {clock: $1, intTerm: $3};}
- ;
-
-predicate_constraint
- : int_term cmp int_term {$$ = {intTermL: $1, comparator: $2, intTermR: $3};}
- | int_term cmp int_term cmp int_term {$$ = {intTermL: $1, comparatorL: $2, intTermM: $3, comparatorR: $4, intTermR: $5};}
- ;
-
-int_term
+term
  : TOK_INTEGER {$$ = {value: $1};}
- | TOK_ID {$$ = {int: $1};}
- | TOK_ID TOK_LBRACKET int_term TOK_RBRACKET {$$ = {int: $1, insideBrackets: $3};}
- | TOK_LPARENTHESES int_term maths int_term TOK_RPARENTHESES {$$ = {intTermL: $1, maths: $2, intTermR: $3};}
- | int_term maths int_term {$$ = {intTermL: $1, maths: $2, intTermR: $3};}
+ | TOK_ID {$$ = {identifier: $1};}
+ | TOK_ID TOK_LBRACKET term TOK_RBRACKET {$$ = {identifier: $1, insideBrackets: $3};}
+ | TOK_LPARENTHESES term maths term TOK_RPARENTHESES {$$ = {termL: $1, maths: $2, termR: $3};}
+ | term maths term {$$ = {termL: $1, maths: $2, termR: $3};}
  ;
 
 statements
@@ -212,14 +199,7 @@ statements
  ;
 
 statement
- : TOK_ID TOK_SET doFormula {$$ = {lhs: $1, set: $2, rhs: $3};}
- ;
-
-doFormula
- : TOK_ID {$$ = $1;}
- | TOK_INTEGER {$$ = $1;}
- | TOK_ID maths doFormula {$$ = $1 + $2 + $3;}
- | TOK_INTEGER maths doFormula {$$ = $1 + $2 + $3;}
+ : term TOK_SET term {$$ = {lhs: $1, set: $2, rhs: $3};}
  ;
 
 cmp

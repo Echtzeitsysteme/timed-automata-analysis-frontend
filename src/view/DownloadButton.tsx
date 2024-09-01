@@ -52,18 +52,36 @@ const createFile = async (currentSystem: SystemOptionType) => {
     });
     ta.locations.forEach((location) => {
       let newLocation = 'location:' + process + ':' + location.name + '{';
+      let hasPrevElem = false;
       if (location.isInitial) {
         newLocation += 'initial:';
+        hasPrevElem = true;
       }
-      if (location.isInitial && location.invariant != undefined && location.invariant.clauses.length > 0) {
+      if (hasPrevElem && location.invariant != undefined && location.invariant.clauses.length > 0) {
         newLocation += ' : ';
+        hasPrevElem = false;
       }
       if (location.invariant != undefined) {
         location.invariant.clauses.forEach((clause) => {
-          const newClause = clause.lhs.name.toString() + clause.op.toString() + clause.rhs.toString();
+          let newClause = '';
+          if (clause.op.toString() == '=') {
+            newClause = clause.lhs.name.toString() + '==' + clause.rhs.toString();
+          } else if (clause.op.toString() == '≤') {
+            newClause = clause.lhs.name.toString() + '<=' + clause.rhs.toString();
+          } else if (clause.op.toString() == '≥') {
+            newClause = clause.lhs.name.toString() + '>=' + clause.rhs.toString();
+          } else {
+            newClause = clause.lhs.name.toString() + clause.op.toString() + clause.rhs.toString();
+          }
           newLocation += 'invariant:' + newClause;
+          hasPrevElem = true;
         });
       }
+      if (hasPrevElem) {
+        newLocation += ' : ';
+        hasPrevElem = false;
+      }
+      newLocation += 'layout:' + location.xCoordinate.toString() + ":" + location.yCoordinate.toString();
       newLocation += '}' + '\n';
       locations += newLocation;
     });

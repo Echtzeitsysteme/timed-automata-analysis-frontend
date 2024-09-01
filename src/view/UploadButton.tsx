@@ -53,6 +53,11 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
         const newClock: Clock = { name: item.name };
         taProcesses.forEach((option) => {option.automaton.clocks.push(newClock) });
       } else {
+        //TODO das probably noch mal anders überarbeiten...
+        //statt for-Schleife maybe
+        // const clockName: string = item.name + '[' + '0..' + String(item.amount) + ']';
+        // aber dann wie mit dem clocks-Filtern am Ende? das wird als eine Clock angesehen und die wird nirgends genutzt
+        // oder Clocks-Filtern erstmal rausnehmen...
         for (let i = 0; i < item.amount; i++) {
           const clockName: string = item.name + '[' + String(item.amount) + ']';
           const newClock: Clock = {name: clockName};
@@ -67,43 +72,52 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
       const processName : string = item.processName;
       const locName: string = item.name;
       let isInitial: boolean = false;
+      let xCoord: number = 0;
+      let yCoord: number = 0;
       const invariants : ClockConstraint = { clauses: [] };
-      item.attributes.forEach((attribute) => {
-        if(attribute.hasOwnProperty('initial')){
-          isInitial = true;
-        }
-        if(attribute.hasOwnProperty('invariant')){
-          attribute.constraint.forEach((constr) => {
-            const lhs: Clock = {name: constr.lhs};
-            let comparator: ClockComparator;
-            if(constr.comparator == "=="){
-              comparator = ClockComparator.EQ;
-            } else if(constr.comparator == "≤"){
-              comparator = ClockComparator.LEQ;
-            } else if(constr.comparator == "≥"){
-              comparator = ClockComparator.GEQ;
-            } else{
-              comparator = constr.comparator;
-            }
-            const rhs: number = constr.rhs;
-            const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
-            invariants.clauses.push(newClause);
-          });
-        }
-        if(attribute.hasOwnProperty('labels')){
+      if(item.hasOwnProperty('attributes')){
+        item.attributes.forEach((attribute) => {
+          if(attribute.hasOwnProperty('initial')){
+            isInitial = true;
+          }
+          if(attribute.hasOwnProperty('invariant')){
+            attribute.constraint.forEach((constr) => {
+              //TODO was wenn es so ein 3 < x < 5 ist? Ist ja aktuell nicht möglich...
+              const lhs: Clock = {name: constr.termL.identifier};
+              const rhs: number = constr.termR.value;
+              let comparator: ClockComparator;
+              if(constr.comparator == "=="){
+                comparator = ClockComparator.EQ;
+              } else if(constr.comparator == "≤" || constr.comparator == "<="){
+                comparator = ClockComparator.LEQ;
+              } else if(constr.comparator == "≥" || constr.comparator == ">="){
+                comparator = ClockComparator.GEQ;
+              } else{
+                comparator = constr.comparator;
+              }
+              const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
+              invariants.clauses.push(newClause);
+            });
+          }
+          if(attribute.hasOwnProperty('layout')){
+            xCoord = attribute.x;
+            yCoord = attribute.y;
+          } else {
+            xCoord = 0;
+            yCoord = 0;
+          }
+          if(attribute.hasOwnProperty('labels')){
 
-        }
-        if(attribute.hasOwnProperty('commited')){
+          }
+          if(attribute.hasOwnProperty('commited')){
 
-        }
-        if(attribute.hasOwnProperty('urgent')){
+          }
+          if(attribute.hasOwnProperty('urgent')){
 
-        }
-      })
-      const locations = viewModel.ta.locations;
-      const xCoordAvg = avgRounded(locations.map((l) => l.xCoordinate));
-      const yCoordAvg = avgRounded(locations.map((l) => l.yCoordinate));
-      const newLocation: Location = {name: locName, isInitial: isInitial, invariant: invariants, xCoordinate: xCoordAvg, yCoordinate: yCoordAvg };
+          }
+        })
+      }
+      const newLocation: Location = {name: locName, isInitial: isInitial, invariant: invariants, xCoordinate: xCoord, yCoordinate: yCoord };
       taProcesses.forEach((option) => {
         if(option.label == processName){
           option.automaton.locations.push(newLocation);
@@ -126,39 +140,41 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
 
       const guard :ClockConstraint = { clauses: [] };
       const setClocks : Clock[] = [];
-      item.attributes.forEach((attribute) => {
+      if(item.hasOwnProperty('attributes')){
+        item.attributes.forEach((attribute) => {
 
-        if (attribute.hasOwnProperty('provided')) {
-          attribute.constraint.forEach((constr) => {
-            const lhs: Clock = {name: constr.lhs};
-            let comparator: ClockComparator;
-            if(constr.comparator == "=="){
-              comparator = ClockComparator.EQ;
-            } else if(constr.comparator == "≤"){
-              comparator = ClockComparator.LEQ;
-            } else if(constr.comparator == "≥"){
-              comparator = ClockComparator.GEQ;
-            } else{
-              comparator = constr.comparator;
-            }
-            const rhs: number = constr.rhs;
-            const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
-            guard.clauses.push(newClause);
-          });
-        }
-        if(attribute.hasOwnProperty('do')){
-          attribute.maths.forEach((math) => {
-            const lhs: Clock = {name: math.lhs};
-            const set: ClockComparator = math.set;
-            const rhs: number = math.rhs;
-            //for now only really resets clocks?
-            if(set == '=' && rhs == 0){
-              setClocks.push(lhs);
-            }
-          });
-          //TODO was wenn nicht zB x=0? das ist ja glaub ich noch nicht möglich
-        }
-      });
+          if (attribute.hasOwnProperty('provided')) {
+            attribute.constraint.forEach((constr) => {
+              const lhs: Clock = {name: constr.termL.identifier};
+              const rhs: number = constr.termR.value;
+              let comparator: ClockComparator;
+              if(constr.comparator == "=="){
+                comparator = ClockComparator.EQ;
+              } else if(constr.comparator == "≤" || constr.comparator == "<="){
+                comparator = ClockComparator.LEQ;
+              } else if(constr.comparator == "≥" || constr.comparator == ">="){
+                comparator = ClockComparator.GEQ;
+              } else{
+                comparator = constr.comparator;
+              }
+              const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
+              guard.clauses.push(newClause);
+            });
+          }
+          if(attribute.hasOwnProperty('do')){
+            attribute.maths.forEach((math) => {
+              const lhs: Clock = {name: math.lhs.identifier};
+              const set: ClockComparator = math.set;
+              const rhs: number = math.rhs.value;
+              //for now only really resets clocks?
+              if(set == '=' && rhs == 0){
+                setClocks.push(lhs);
+              }
+            });
+            //TODO was wenn ich Wert eines INTs ändern will? das ist ja glaub ich noch nicht möglich
+          }
+        });
+      }
       const newSwitch : Switch = {source: source, guard: guard, actionLabel: actionLabel, reset: setClocks, target: target};
       taProcesses.forEach((option) => {
         if(option.label == processName){
@@ -187,6 +203,7 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
   const { viewModel, openedSystems, openedProcesses } = props;
+  console.log(viewModel.ta);
   const { avgRounded } = useMathUtils();
   const { constraintUsesClock } = useClockConstraintUtils();
 
