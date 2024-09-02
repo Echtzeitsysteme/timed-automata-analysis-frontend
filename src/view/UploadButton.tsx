@@ -29,7 +29,7 @@ const parseFile = async (fileContent: string) => {
   return parsedData;
 };
 
-const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesClock ):Promise<[string, AutomatonOptionType[]]> => {
+const convertToTa = async (parsedData, constraintUsesClock ):Promise<[string, AutomatonOptionType[]]> => {
   const systemName: string = parsedData.system.name;
   const taProcesses: AutomatonOptionType[] = [];
 
@@ -185,7 +185,6 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
   const { viewModel, openedSystems, openedProcesses } = props;
-  const { avgRounded } = useMathUtils();
   const { constraintUsesClock } = useClockConstraintUtils();
 
   const handleClick = (uploadedFileEvent: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,7 +207,7 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
       try {
         const parsedData = await parseFile(fileContent);
         console.log("parsed Data:", parsedData);
-        let [systemName, automatonOptions] = await convertToTa(parsedData, viewModel, avgRounded, constraintUsesClock);
+        let [systemName, automatonOptions] = await convertToTa(parsedData, constraintUsesClock);
 
         const one = 1;
         openedSystems.systemOptions.forEach(option => {
