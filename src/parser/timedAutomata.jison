@@ -19,7 +19,7 @@
 "initial"                   %{ return 'TOK_INIT' %}
 "labels"                    %{ return 'TOK_LABELS' %}
 "invariant"                 %{ return 'TOK_INVAR' %}
-"committed"                  %{ return 'TOK_COMMIT' %}
+"committed"                 %{ return 'TOK_COMMIT' %}
 "urgent"                    %{ return 'TOK_URGENT' %}
 "provided"                  %{ return 'TOK_PROV' %}
 "do"                        %{ return 'TOK_DO' %}
