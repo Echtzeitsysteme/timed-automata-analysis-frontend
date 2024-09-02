@@ -10,9 +10,15 @@ export function parseClockComparator(input: string): ClockComparator {
   switch (input) {
     case '=':
       return ClockComparator.EQ;
+    case '==':
+      return ClockComparator.EQ;
     case '≤':
       return ClockComparator.LEQ;
+    case '<=':
+      return ClockComparator.LEQ;
     case '≥':
+      return ClockComparator.GEQ;
+    case '>=':
       return ClockComparator.GEQ;
     case '<':
       return ClockComparator.LESSER;
