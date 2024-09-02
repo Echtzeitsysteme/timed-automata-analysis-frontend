@@ -81,7 +81,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
         newLocation += ' : ';
         hasPrevElem = false;
       }
-      newLocation += 'layout:' + location.xCoordinate.toString() + ":" + location.yCoordinate.toString();
+      newLocation += 'layout:' + location.xCoordinate.toString() + "," + location.yCoordinate.toString();
       newLocation += '}' + '\n';
       locations += newLocation;
     });

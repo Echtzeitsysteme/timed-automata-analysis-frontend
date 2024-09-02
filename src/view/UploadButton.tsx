@@ -7,7 +7,7 @@ import {Clock} from "../model/ta/clock.ts";
 import {Location} from "../model/ta/location.ts";
 import {ClockConstraint} from "../model/ta/clockConstraint.ts";
 import {Clause} from "../model/ta/clause.ts";
-import {ClockComparator} from "../model/ta/clockComparator.ts";
+import {ClockComparator, parseClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {Button} from "@mui/material";
 import { useMathUtils } from '../utils/mathUtils';
@@ -83,18 +83,9 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
           if(attribute.hasOwnProperty('invariant')){
             attribute.constraint.forEach((constr) => {
               //TODO was wenn es so ein 3 < x < 5 ist? Ist ja aktuell nicht möglich...
-              const lhs: Clock = {name: constr.termL.identifier};
-              const rhs: number = constr.termR.value;
-              let comparator: ClockComparator;
-              if(constr.comparator == "=="){
-                comparator = ClockComparator.EQ;
-              } else if(constr.comparator == "≤" || constr.comparator == "<="){
-                comparator = ClockComparator.LEQ;
-              } else if(constr.comparator == "≥" || constr.comparator == ">="){
-                comparator = ClockComparator.GEQ;
-              } else{
-                comparator = constr.comparator;
-              }
+              const lhs: Clock = {name: constr.lhs.term.identifier};
+              const rhs: number = constr.rhs.term.value;
+              const comparator: ClockComparator = parseClockComparator(constr.comparator);
               const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
               invariants.clauses.push(newClause);
             });
@@ -145,18 +136,9 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
 
           if (attribute.hasOwnProperty('provided')) {
             attribute.constraint.forEach((constr) => {
-              const lhs: Clock = {name: constr.termL.identifier};
-              const rhs: number = constr.termR.value;
-              let comparator: ClockComparator;
-              if(constr.comparator == "=="){
-                comparator = ClockComparator.EQ;
-              } else if(constr.comparator == "≤" || constr.comparator == "<="){
-                comparator = ClockComparator.LEQ;
-              } else if(constr.comparator == "≥" || constr.comparator == ">="){
-                comparator = ClockComparator.GEQ;
-              } else{
-                comparator = constr.comparator;
-              }
+              const lhs: Clock = {name: constr.lhs.term.identifier};
+              const rhs: number = constr.rhs.term.value;
+              const comparator: ClockComparator = parseClockComparator(constr.comparator);
               const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
               guard.clauses.push(newClause);
             });
@@ -203,7 +185,6 @@ const convertToTa = async (parsedData, viewModel, avgRounded, constraintUsesCloc
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
   const { viewModel, openedSystems, openedProcesses } = props;
-  console.log(viewModel.ta);
   const { avgRounded } = useMathUtils();
   const { constraintUsesClock } = useClockConstraintUtils();
 

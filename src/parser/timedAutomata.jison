@@ -159,6 +159,7 @@ attribute
  | TOK_LAYOUT TOK_COLON coordinate TOK_COMMA coordinate {$$ = {layout: $1, x: $3, y: $5};}
  ;
 
+
 coordinate
  : TOK_INTEGER {$$ = $1;}
  | TOK_MINUS TOK_INTEGER {$$ = $1 + $2;}
@@ -176,9 +177,9 @@ constraints
 
 constraint
  : TOK_LPARENTHESES constraint TOK_RPARENTHESES {$$ = $1;}
- | term {$$ = $1;}
  | compare_term {$$ = $1;}
  ;
+
 
 compare_term
  : term cmp term cmp term {$$ = {lhs: $1, comparatorL: $2, mhs: $3, comparatorR: $4, rhs: $5};}
@@ -186,12 +187,11 @@ compare_term
  ;
 
 term
- : TOK_INTEGER {$$ = {value: $1};}
- | TOK_ID {$$ = {identifier: $1};}
- | TOK_ID TOK_LBRACKET term TOK_RBRACKET {$$ = {identifier: $1, insideBrackets: $3};}
+ : atomic_term {$$ = {term: $1};}
  | TOK_MINUS term {$$ = {minus: $1, value: $2};}
- | TOK_LPARENTHESES term maths term TOK_RPARENTHESES {$$ = {termL: $2, maths: $3, termR: $4};}
- | term maths term {$$ = {termL: $1, maths: $2, termR: $3};}
+ | TOK_LPARENTHESES term TOK_RPARENTHESES {$$ = {term: $2};}
+ | TOK_LPARENTHESES term TOK_RPARENTHESES maths term {$$ = {termL: $2, maths: $4, termR: $5};}
+ | atomic_term maths term {$$ = {termL: $1, maths: $2, termR: $3};}
  ;
 
 atomic_term
