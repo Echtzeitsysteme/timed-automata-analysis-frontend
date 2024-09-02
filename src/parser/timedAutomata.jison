@@ -156,7 +156,7 @@ attribute
  | TOK_URGENT TOK_COLON {$$ = {urgent: $1};}
  | TOK_PROV TOK_COLON constraints {$$ = {provided: $1, constraint: $3};}
  | TOK_DO TOK_COLON statements {$$ = {do: $1, maths: $3};}
- | TOK_LAYOUT TOK_COLON coordinate TOK_COLON coordinate {$$ = {layout: $1, x: $3, y: $5};}
+ | TOK_LAYOUT TOK_COLON coordinate TOK_COMMA coordinate {$$ = {layout: $1, x: $3, y: $5};}
  ;
 
 coordinate
@@ -181,16 +181,23 @@ constraint
  ;
 
 compare_term
- : term cmp term cmp term {$$ = {termL: $1, comparatorL: $2, termM: $3, comparatorR: $4, termR: $5};}
- | term cmp term {$$ = {termL: $1, comparator: $2, termR: $3};}
+ : term cmp term cmp term {$$ = {lhs: $1, comparatorL: $2, mhs: $3, comparatorR: $4, rhs: $5};}
+ | term cmp term {$$ = {lhs: $1, comparator: $2, rhs: $3};}
  ;
 
 term
  : TOK_INTEGER {$$ = {value: $1};}
  | TOK_ID {$$ = {identifier: $1};}
  | TOK_ID TOK_LBRACKET term TOK_RBRACKET {$$ = {identifier: $1, insideBrackets: $3};}
- | TOK_LPARENTHESES term maths term TOK_RPARENTHESES {$$ = {termL: $1, maths: $2, termR: $3};}
+ | TOK_MINUS term {$$ = {minus: $1, value: $2};}
+ | TOK_LPARENTHESES term maths term TOK_RPARENTHESES {$$ = {termL: $2, maths: $3, termR: $4};}
  | term maths term {$$ = {termL: $1, maths: $2, termR: $3};}
+ ;
+
+atomic_term
+ : TOK_INTEGER {$$ = {value: $1};}
+ | TOK_ID {$$ = {identifier: $1};}
+ | TOK_ID TOK_LBRACKET term TOK_RBRACKET {$$ = {identifier: $1, insideBrackets: $3};}
  ;
 
 statements
