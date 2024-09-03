@@ -36,6 +36,7 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
       const newOption: SystemOptionType = {
         label: newSystemName,
         processes: [{ label: 'init_Process', automaton: newTA }],
+        integers: []
       };
       openedProcesses.selectedOption.automaton = viewModel.ta;
       openedSystems.selectedSystem.processes = openedProcesses.automatonOptions;

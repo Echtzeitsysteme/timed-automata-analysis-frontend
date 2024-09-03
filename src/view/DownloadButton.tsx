@@ -27,8 +27,14 @@ const createFile = async (currentSystem: SystemOptionType) => {
   let taFile = prefix + systemDef;
   let processes = '';
   let events = '';
+  let integers = '';
   const existingEvents: string[] = [];
   const existingClocks: string[] = [];
+
+  currentSystem.integers.forEach((int) => {
+    const integer = 'int:' + int.size + ':' + int.min + ':' + int.max + ':' + int.init + ':' + int.name + '\n';
+    integers += integer;
+  })
 
   const automatonOptions = currentSystem.processes;
   automatonOptions.forEach((option) => {
@@ -140,6 +146,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
     processes += singularProcess + '\n' + '\n';
   });
   taFile += events + '\n';
+  taFile += integers + '\n';
   taFile += processes;
   //console.log(taFile);
 

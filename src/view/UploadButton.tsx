@@ -10,10 +10,10 @@ import {Clause} from "../model/ta/clause.ts";
 import {ClockComparator, parseClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {Button} from "@mui/material";
-import { useMathUtils } from '../utils/mathUtils';
 import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
 import {useClockConstraintUtils} from "../utils/clockConstraintUtils.ts";
 import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
+import {Integer} from "../model/ta/integer.ts";
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel; //für update Locations iwie?
@@ -29,9 +29,10 @@ const parseFile = async (fileContent: string) => {
   return parsedData;
 };
 
-const convertToTa = async (parsedData, constraintUsesClock ):Promise<[string, AutomatonOptionType[]]> => {
+const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptionType> => {
   const systemName: string = parsedData.system.name;
   const taProcesses: AutomatonOptionType[] = [];
+  const integers: Integer[] = [];
 
   parsedData.items.forEach((item) => {
     if (item.type == 'process') {
@@ -66,7 +67,13 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<[string, Au
       }
     }
     if(item.type == 'int'){
-
+      const name: string = item.name;
+      const size: number = item.size;
+      const min: number = item.min;
+      const max: number = item.max;
+      const init: number = item.init;
+      const newInteger: Integer = {name: name, size: size, min: min, max: max, init: init};
+      integers.push(newInteger);
     }
     if(item.type == 'location'){
       const processName : string = item.processName;
@@ -145,9 +152,9 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<[string, Au
           }
           if(attribute.hasOwnProperty('do')){
             attribute.maths.forEach((math) => {
-              const lhs: Clock = {name: math.lhs.identifier};
+              const lhs: Clock = {name: math.lhs.term.identifier};
               const set: ClockComparator = math.set;
-              const rhs: number = math.rhs.value;
+              const rhs: number = math.rhs.term.value;
               //for now only really resets clocks?
               if(set == '=' && rhs == 0){
                 setClocks.push(lhs);
@@ -179,8 +186,9 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<[string, Au
     });
   });
 
+  const systemOption = {label: systemName, processes: taProcesses, integers: integers};
   console.log("All processes:", taProcesses);
-  return [systemName, taProcesses];
+  return systemOption;
 }
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
@@ -207,24 +215,28 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
       try {
         const parsedData = await parseFile(fileContent);
         console.log("parsed Data:", parsedData);
-        let [systemName, automatonOptions] = await convertToTa(parsedData, constraintUsesClock);
+        const systemOption = await convertToTa(parsedData, constraintUsesClock);
+        let systemName = systemOption.label;
 
         const one = 1;
         openedSystems.systemOptions.forEach(option => {
           if(option.label === systemName){
             systemName += '(' + String(one) + ')';
           }
-        })
-        const processes: AutomatonOptionType[] = automatonOptions;
-        const newSystem : SystemOptionType = {label: systemName, processes: processes};
+        });
+        const processes: AutomatonOptionType[] = systemOption.processes;
+        const integers: Integer[] = systemOption.integers;
+        const newSystem : SystemOptionType = {label: systemName, processes: processes, integers: integers};
 
         openedProcesses.selectedOption.automaton = viewModel.ta;
         openedSystems.selectedSystem.processes =openedProcesses.automatonOptions;
         openedSystems.addSystemOption(openedSystems, newSystem);
 
         openedSystems.selectedSystem = newSystem;
-        openedProcesses.setAutomatonOptions(openedProcesses, automatonOptions);
+        openedProcesses.setAutomatonOptions(openedProcesses, newSystem.processes);
         viewModel.setAutomaton(viewModel, openedProcesses.selectedOption.automaton);
+
+        console.log("openedSystems:", openedSystems);
 
       } catch (error) {
         console.error(error);
