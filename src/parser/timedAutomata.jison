@@ -177,7 +177,8 @@ constraints
 
 constraint
  : TOK_LPARENTHESES constraint TOK_RPARENTHESES {$$ = $1;}
- | compare_term {$$ = $1;}
+ | compare_term {$$ = {term: $1};}
+ | TOK_EXMARK compare_term {$$ = {not: $1, term: $2};}
  ;
 
 
