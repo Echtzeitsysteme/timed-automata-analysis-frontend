@@ -8,7 +8,7 @@ import { AutomatonManipulation } from './view/AutomatonManipulation';
 import ProcessSelection from './view/ProcessSelection.tsx';
 import AutomatonDrawer from './view/AutomationDrawer.tsx';
 import { useOpenedSystems } from './viewmodel/OpenedSystems.ts';
-import {useOpenedProcesses} from "./viewmodel/OpenedProcesses.ts";
+import { useOpenedProcesses } from './viewmodel/OpenedProcesses.ts';
 
 function App() {
   const viewModel = useAnalysisViewModel();
@@ -43,8 +43,16 @@ function App() {
       <h1 style={{ paddingLeft: '16px' }} ref={headerRef}>
         ⏰ {t('app.title')}
       </h1>
-      <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses}></AutomatonDrawer>
-      <ProcessSelection viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses}></ProcessSelection>
+      <AutomatonDrawer
+        viewModel={viewModel}
+        openedSystems={openedSystems}
+        openedProcesses={openedProcesses}
+      ></AutomatonDrawer>
+      <ProcessSelection
+        viewModel={viewModel}
+        openedSystems={openedSystems}
+        openedProcesses={openedProcesses}
+      ></ProcessSelection>
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid
@@ -55,7 +63,7 @@ function App() {
             lg={3}
             sx={{ borderRight: '1px solid #ccc', paddingLeft: '16px', overflowY: 'auto', height: '100%' }}
           >
-            <AutomatonManipulation viewModel={viewModel} />
+            <AutomatonManipulation viewModel={viewModel} openedSystems={openedSystems} />
           </Grid>
           <Grid item xs={12} sm={8} md={9} lg={9} sx={{ overflowY: 'hidden', height: '100%' }}>
             <AutomatonVisualization viewModel={viewModel} />

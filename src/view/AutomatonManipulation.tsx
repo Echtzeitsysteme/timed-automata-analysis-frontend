@@ -14,13 +14,17 @@ import { Clock } from '../model/ta/clock';
 import { useClockConstraintUtils } from '../utils/clockConstraintUtils';
 import ClockDeleteConfirmDialog from './ClockDeleteConfirmDialog';
 import ManipulateClockDialog from './ManipulateClockDialog';
+import { OpenedSystems } from '../viewmodel/OpenedSystems.ts';
+import { Integer } from '../model/ta/integer.ts';
+import ManipulateIntegerDialog from './ManipulateIntegerDialog.tsx';
 
 interface ManipulationProps {
   viewModel: AnalysisViewModel;
+  openedSystems: OpenedSystems;
 }
 
 export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
-  const { viewModel } = props;
+  const { viewModel, openedSystems } = props;
   const {
     ta,
     addLocation,
@@ -34,6 +38,8 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
     removeClock,
   } = viewModel;
   const { locations, switches, clocks } = ta;
+  const { selectedSystem, addInteger, editInteger, removeInteger } = openedSystems;
+  const { integers } = selectedSystem;
   const { t } = useTranslation();
   const { formatLocationLabelTable, formatSwitchTable } = useFormattingUtils();
   const { taUsesClockInAnyConstraint } = useClockConstraintUtils();
@@ -49,6 +55,12 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   const [clockNameToEdit, setClockNameToEdit] = useState<string | undefined>(undefined);
   const [clockDeleteConfirmOpen, setClockDeleteConfirmOpen] = useState(false);
   const [clockToDelete, setClockToDelete] = useState<Clock | undefined>(undefined);
+  const [integerAddOpen, setIntegerAddOpen] = useState(false);
+  const [integerEditOpen, setIntegerEditOpen] = useState(false);
+  const [integerToEdit, setIntegerToEdit] = useState<Integer | undefined>(undefined);
+  //const [syncAddOpen, setSyncAddOpen] = useState(false);
+  //const [syncEditOpen, setSyncEditOpen] = useState(false);
+  //const [syncToEdit, setSyncToEdit] = useState(false);
 
   // ===== manipulate locations ================================================
 
@@ -251,16 +263,83 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
     );
   }, [clocks, t, handleClockEditOpen, handleClockDelete]);
 
+  // ===== manipulate Integers ===================================================
+  //TODO
+  const handleIntegerAddOpen = () => setIntegerAddOpen(true);
+  const handleIntegerAddClose = () => setIntegerAddOpen(false);
+
+  const handleIntegerEditOpen = useCallback(
+    (id: number) => {
+      setIntegerToEdit(integers[id]);
+      setIntegerEditOpen(true);
+    },
+    [integers]
+  );
+  const handleIntegerEditClose = () => setIntegerEditOpen(false);
+
+  const handleIntegerAdd = (name: string, size: number, min: number, max: number, init: number) => {
+    addInteger(openedSystems, name, size, min, max, init);
+    setIntegerAddOpen(false);
+  };
+
+  const handleIntegerEdit = (
+    name: string,
+    size: number,
+    min: number,
+    max: number,
+    init,
+    number,
+    prevIntegerName?: string
+  ) => {
+    if (!prevIntegerName) {
+      throw Error('handleIntegerEdit: prevIntegerName is empty or undefined');
+    }
+    editInteger(openedSystems, name, prevIntegerName, size, min, max, init);
+    setIntegerEditOpen(false);
+  };
+
+  const handleIntegerDelete = useCallback(
+    (id: number) => {
+      const integerName = integers[id].name;
+      removeInteger(openedSystems, integerName);
+    },
+    [integers, openedSystems, removeInteger]
+  );
+
+  const integerTable: JSX.Element = useMemo(() => {
+    const integerRows = integers.map<ElementRowData>((int, index) => {
+      const displayName =
+        int.name + ', ' + '[' + String(int.min) + ', ' + String(int.max) + ']' + ', ' + 'init:' + String(int.init);
+      const rowData: ElementRowData = { id: index, displayName: displayName };
+      return rowData;
+    });
+
+    return (
+      <ElementTable
+        rows={integerRows}
+        contentSingular={'Integer' /*irgendeine t()-sache*/}
+        contentPlural={'Integer' /*irgendeine t()-sache*/}
+        typeForTestId={'integer'}
+        onAddOpen={handleIntegerAddOpen}
+        onEditOpen={handleIntegerEditOpen}
+        onDelete={handleIntegerDelete}
+      />
+    );
+  }, [integers, handleIntegerDelete, handleIntegerEditOpen]);
+
+  // ===== manipulate Syncs ===================================================
+  //TODO
+
   // ===========================================================================
 
   const allTables: JSX.Element[] = useMemo(() => {
-    const tables = [locationTable, switchTable, clockTable];
+    const tables = [locationTable, switchTable, clockTable, integerTable];
     return tables.map((table, index) => (
       <div key={index} style={{ marginBottom: '16px' }}>
         {table}
       </div>
     ));
-  }, [locationTable, switchTable, clockTable]);
+  }, [locationTable, switchTable, clockTable, integerTable]);
 
   return (
     <>
@@ -318,6 +397,20 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
         open={clockDeleteConfirmOpen}
         onClose={handleClockDeleteClose}
         onDelete={deleteClock}
+      />
+      <ManipulateIntegerDialog
+        open={integerAddOpen}
+        integers={integers}
+        handleClose={handleIntegerAddClose}
+        handleSubmit={handleIntegerAdd}
+        intPrevVersion={undefined}
+      />
+      <ManipulateIntegerDialog
+        open={integerEditOpen}
+        integers={integers}
+        handleClose={handleIntegerEditClose}
+        handleSubmit={handleIntegerEdit}
+        intPrevVersion={integerToEdit}
       />
     </>
   );
