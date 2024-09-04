@@ -134,8 +134,8 @@ syncConstraints
  ;
 
 syncConstraint
- : TOK_ID TOK_AT TOK_ID { $$ = $1 + $2 + $3;}
- | TOK_PROCESS TOK_AT TOK_ID TOK_QMARK { $$ = $1 + $2 + $3 + $4;}
+ : TOK_ID TOK_AT TOK_ID { $$ = {process:$1, event: $3};}
+ | TOK_ID TOK_AT TOK_ID TOK_QMARK { $$ = {process:$1, event: $3, weakSync: $4};}
  ;
 
 attributeList
