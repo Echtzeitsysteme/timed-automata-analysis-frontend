@@ -195,7 +195,7 @@ case 54:
 this.$ = {lhs: $$[$0-2], comparator: $$[$0-1], rhs: $$[$0]};
 break;
 case 55:
-this.$ = {atomicTerm: $$[$0]};
+this.$ = {term: $$[$0]};
 break;
 case 56:
 this.$ = {minus: $$[$0-1], term: $$[$0]};

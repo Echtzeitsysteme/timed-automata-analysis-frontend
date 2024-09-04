@@ -188,7 +188,7 @@ compare_term
  ;
 
 term
- : atomic_term {$$ = {atomicTerm: $1};}
+ : atomic_term {$$ = {term: $1};}
  | TOK_MINUS term {$$ = {minus: $1, term: $2};}
  | TOK_LPARENTHESES term TOK_RPARENTHESES {$$ = {termInParen: $2};}
  | TOK_LPARENTHESES term TOK_RPARENTHESES maths term {$$ = {termInParenL: $2, maths: $4, termR: $5};}

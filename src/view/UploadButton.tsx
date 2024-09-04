@@ -14,6 +14,7 @@ import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses
 import {useClockConstraintUtils} from "../utils/clockConstraintUtils.ts";
 import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
 import {Integer} from "../model/ta/integer.ts";
+import {handleTerm} from "../utils/uploadUtils.ts";
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel; //für update Locations iwie?
@@ -88,8 +89,16 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
             isInitial = true;
           }
           if(attribute.hasOwnProperty('invariant')){
+
             attribute.constraint.forEach((constr) => {
               //TODO was wenn es so ein 3 < x < 5 ist? Ist ja aktuell nicht möglich...
+              /** *for testing purposes*
+              const lhs = handleTerm(constr.cmpterm.lhs);
+              const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
+              const rhs = handleTerm(constr.cmpterm.rhs);
+              console.log("lhs:", lhs, "comparator:", comparator, "rhs:", rhs);
+                  **/
+
               const lhs: Clock = {name: constr.cmpterm.lhs.atomicTerm.identifier};
               const rhs: number = constr.cmpterm.rhs.atomicTerm.value;
               const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
@@ -143,6 +152,12 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
 
           if (attribute.hasOwnProperty('provided')) {
             attribute.constraint.forEach((constr) => {
+              /** * for testing purposes*
+              const lhs = handleTerm(constr.cmpterm.lhs);
+              const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
+              const rhs = handleTerm(constr.cmpterm.rhs);
+              console.log("lhs:", lhs, "comparator:", comparator, "rhs:", rhs);
+              **/
               const lhs: Clock = {name: constr.cmpterm.lhs.atomicTerm.identifier};
               const rhs: number = constr.cmpterm.rhs.atomicTerm.value;
               const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
@@ -152,6 +167,13 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
           }
           if(attribute.hasOwnProperty('do')){
             attribute.maths.forEach((math) => {
+              /** *for testing purposes*
+              const lhs = handleTerm(math.lhs);
+              const set: ClockComparator = math.set;
+              const rhs = handleTerm(math.rhs);
+              console.log("lhs:", lhs, "set:", set, "rhs:", rhs);
+                  **/
+
               const lhs: Clock = {name: math.lhs.atomicTerm.identifier};
               const set: ClockComparator = math.set;
               const rhs: number = math.rhs.atomicTerm.value;
