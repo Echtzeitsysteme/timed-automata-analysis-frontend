@@ -90,9 +90,9 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
           if(attribute.hasOwnProperty('invariant')){
             attribute.constraint.forEach((constr) => {
               //TODO was wenn es so ein 3 < x < 5 ist? Ist ja aktuell nicht möglich...
-              const lhs: Clock = {name: constr.lhs.term.identifier};
-              const rhs: number = constr.rhs.term.value;
-              const comparator: ClockComparator = parseClockComparator(constr.comparator);
+              const lhs: Clock = {name: constr.cmpterm.lhs.atomicTerm.identifier};
+              const rhs: number = constr.cmpterm.rhs.atomicTerm.value;
+              const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
               const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
               invariants.clauses.push(newClause);
             });
@@ -143,18 +143,18 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
 
           if (attribute.hasOwnProperty('provided')) {
             attribute.constraint.forEach((constr) => {
-              const lhs: Clock = {name: constr.lhs.term.identifier};
-              const rhs: number = constr.rhs.term.value;
-              const comparator: ClockComparator = parseClockComparator(constr.comparator);
+              const lhs: Clock = {name: constr.cmpterm.lhs.atomicTerm.identifier};
+              const rhs: number = constr.cmpterm.rhs.atomicTerm.value;
+              const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
               const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
               guard.clauses.push(newClause);
             });
           }
           if(attribute.hasOwnProperty('do')){
             attribute.maths.forEach((math) => {
-              const lhs: Clock = {name: math.lhs.term.identifier};
+              const lhs: Clock = {name: math.lhs.atomicTerm.identifier};
               const set: ClockComparator = math.set;
-              const rhs: number = math.rhs.term.value;
+              const rhs: number = math.rhs.atomicTerm.value;
               //for now only really resets clocks?
               if(set == '=' && rhs == 0){
                 setClocks.push(lhs);

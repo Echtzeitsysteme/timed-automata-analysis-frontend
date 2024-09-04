@@ -177,8 +177,8 @@ constraints
 
 constraint
  : TOK_LPARENTHESES constraint TOK_RPARENTHESES {$$ = $1;}
- | compare_term {$$ = {term: $1};}
- | TOK_EXMARK compare_term {$$ = {not: $1, term: $2};}
+ | compare_term {$$ = {cmpterm: $1};}
+ | TOK_EXMARK compare_term {$$ = {not: $1, cmpterm: $2};}
  ;
 
 
@@ -188,10 +188,10 @@ compare_term
  ;
 
 term
- : atomic_term {$$ = {term: $1};}
- | TOK_MINUS term {$$ = {minus: $1, value: $2};}
- | TOK_LPARENTHESES term TOK_RPARENTHESES {$$ = {term: $2};}
- | TOK_LPARENTHESES term TOK_RPARENTHESES maths term {$$ = {termL: $2, maths: $4, termR: $5};}
+ : atomic_term {$$ = {atomicTerm: $1};}
+ | TOK_MINUS term {$$ = {minus: $1, term: $2};}
+ | TOK_LPARENTHESES term TOK_RPARENTHESES {$$ = {termInParen: $2};}
+ | TOK_LPARENTHESES term TOK_RPARENTHESES maths term {$$ = {termInParenL: $2, maths: $4, termR: $5};}
  | atomic_term maths term {$$ = {termL: $1, maths: $2, termR: $3};}
  ;
 
