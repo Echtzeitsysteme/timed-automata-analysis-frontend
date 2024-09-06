@@ -99,8 +99,8 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
               console.log("lhs:", lhs, "comparator:", comparator, "rhs:", rhs);
                   **/
 
-              const lhs: Clock = {name: constr.cmpterm.lhs.atomicTerm.identifier};
-              const rhs: number = constr.cmpterm.rhs.atomicTerm.value;
+              const lhs: Clock = {name: constr.cmpterm.lhs.term.identifier};
+              const rhs: number = constr.cmpterm.rhs.term.value;
               const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
               const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
               invariants.clauses.push(newClause);
@@ -110,6 +110,7 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
             xCoord = attribute.x;
             yCoord = attribute.y;
           } else {
+            //TODO hier dann kurz mal network algorithmus anschmeißen und wieder ausmachen!!!
             xCoord = 0;
             yCoord = 0;
           }
@@ -158,8 +159,8 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
               const rhs = handleTerm(constr.cmpterm.rhs);
               console.log("lhs:", lhs, "comparator:", comparator, "rhs:", rhs);
               **/
-              const lhs: Clock = {name: constr.cmpterm.lhs.atomicTerm.identifier};
-              const rhs: number = constr.cmpterm.rhs.atomicTerm.value;
+              const lhs: Clock = {name: constr.cmpterm.lhs.term.identifier};
+              const rhs: number = constr.cmpterm.rhs.term.value;
               const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
               const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
               guard.clauses.push(newClause);
@@ -174,9 +175,9 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
               console.log("lhs:", lhs, "set:", set, "rhs:", rhs);
                   **/
 
-              const lhs: Clock = {name: math.lhs.atomicTerm.identifier};
+              const lhs: Clock = {name: math.lhs.term.identifier};
               const set: ClockComparator = math.set;
-              const rhs: number = math.rhs.atomicTerm.value;
+              const rhs: number = math.rhs.term.value;
               //for now only really resets clocks?
               if(set == '=' && rhs == 0){
                 setClocks.push(lhs);
