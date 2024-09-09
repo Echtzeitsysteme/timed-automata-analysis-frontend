@@ -173,17 +173,19 @@ labelsList
 constraints
  : constraint {$$ = [$1];}
  | constraints TOK_AND constraint {$1.push($3); $$ = $1;}
+ | TOK_LPARENTHESES constraints TOK_AND constraint TOK_RPARENTHESES {$2.push($4); $$ = $2;}
  ;
 
 constraint
- : TOK_LPARENTHESES constraint TOK_RPARENTHESES {$$ = $1;}
- | compare_term {$$ = {cmpterm: $1};}
- | TOK_EXMARK compare_term {$$ = {not: $1, cmpterm: $2};}
+ : compare_term {$$ = {constTerm: $1};}
+ | TOK_EXMARK compare_term {$$ = {not: $1, constTerm: $2};}
+ | term {$$ = {constTerm: $1};}
  ;
 
 
 compare_term
- : term cmp term cmp term {$$ = {lhs: $1, comparatorL: $2, mhs: $3, comparatorR: $4, rhs: $5};}
+ : TOK_LPARENTHESES compare_term TOK_RPARENTHESES {$$ = $2;}
+ | term cmp term cmp term {$$ = {lhs: $1, comparatorL: $2, mhs: $3, comparatorR: $4, rhs: $5};}
  | term cmp term {$$ = {lhs: $1, comparator: $2, rhs: $3};}
  ;
 
