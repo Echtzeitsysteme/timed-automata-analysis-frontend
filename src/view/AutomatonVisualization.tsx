@@ -10,8 +10,16 @@ interface VisualizationProps {
 const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
   const { viewModel } = props;
   const { ta, updateLocationCoordinates } = viewModel;
+  const { locations } = ta;
   const { mapTaToVisDataModel } = useMappingUtils();
   const networkRef = useRef<HTMLDivElement>(null);
+
+  let activatePhysics: boolean = true;
+  locations.forEach((location) => {
+    if (location.xCoordinate !== 0 || location.yCoordinate !== 0) {
+      activatePhysics = false;
+    }
+  });
 
   useEffect(() => {
     if (!networkRef.current) {
@@ -41,13 +49,48 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
       },
       physics: {
         enabled: false,
+        forceAtlas2Based: {
+          gravitationalConstant: -26,
+          centralGravity: 0.005,
+          springLength: 230,
+          springConstant: 0.18,
+          avoidOverlap: 1.5,
+        },
+        maxVelocity: 146,
+        solver: 'forceAtlas2Based',
+        stabilization: {
+          enabled: true,
+          iterations: 1000,
+          updateInterval: 25,
+        },
+        timestep: 0.35,
       },
     };
 
     const network = new Network(networkRef.current, data, options);
 
+    console.log(activatePhysics);
+    if (activatePhysics) {
+      network.setOptions({
+        physics: {
+          enabled: true,
+        },
+      });
+    }
+
+    network.on('stabilizationIterationsDone', function () {
+      network.setOptions({ physics: false });
+    });
+
     // Event listener for dragEnd event (update coordinates saved in locations if a location is moved)
     network.on('dragEnd', (params) => {
+      const nodePositions = network.getPositions();
+      locations.forEach((location) => {
+        const locationName = location.name;
+        location.xCoordinate = nodePositions[locationName].x;
+        location.yCoordinate = nodePositions[locationName].y;
+      });
+
       // Check if nodes are dragged
       if (params.nodes.length > 0) {
         const nodeId = params.nodes[0]; // Assuming single node drag (can be extended for multiple nodes)
@@ -61,7 +104,7 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
         });
       }
     });
-  }, [ta, viewModel, updateLocationCoordinates, mapTaToVisDataModel]);
+  }, [ta, viewModel, updateLocationCoordinates, mapTaToVisDataModel, activatePhysics, locations]);
 
   return <div ref={networkRef} style={{ width: '100%', height: '100%' }} />;
 };
