@@ -34,7 +34,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
   currentSystem.integers.forEach((int) => {
     const integer = 'int:' + int.size + ':' + int.min + ':' + int.max + ':' + int.init + ':' + int.name + '\n';
     integers += integer;
-  })
+  });
 
   const automatonOptions = currentSystem.processes;
   automatonOptions.forEach((option) => {
@@ -87,7 +87,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
         newLocation += ' : ';
         hasPrevElem = false;
       }
-      newLocation += 'layout:' + location.xCoordinate.toString() + "," + location.yCoordinate.toString();
+      newLocation += 'layout:' + location.xCoordinate.toString() + ',' + location.yCoordinate.toString();
       newLocation += '}' + '\n';
       locations += newLocation;
     });
@@ -169,9 +169,7 @@ const DownloadButton: React.FC<ActiveModel> = (props) => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = fileName;
-      document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
     } catch (error) {
       console.error(error);
     }

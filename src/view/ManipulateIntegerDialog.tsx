@@ -2,15 +2,7 @@ import { Integer } from '../model/ta/integer.ts';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useButtonUtils } from '../utils/buttonUtils.ts';
 import { useTranslation } from 'react-i18next';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField,
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 interface ManipulateIntegerDialog {
@@ -130,54 +122,66 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
           helperText={isNameEmpty || isNameDuplicate ? nameErrorMessage : ''}
           data-testid={'input-location-name'}
         />
-        <TextField
-          margin="dense"
-          label={'Größe'}
-          type="text"
-          fullWidth
-          variant="outlined"
-          value={size}
-          onChange={(e) => setSize(e.target.value)}
-          error={isNameEmpty || isNameDuplicate}
-          helperText={isNameEmpty || isNameDuplicate ? nameErrorMessage : ''}
-          data-testid={'input-location-name'}
-        />
-        <TextField
-          margin="dense"
-          label={'Min'}
-          type="text"
-          fullWidth
-          variant="outlined"
-          value={min}
-          onChange={(e) => setMin(e.target.value)}
-          error={isNameEmpty || isNameDuplicate}
-          helperText={isNameEmpty || isNameDuplicate ? nameErrorMessage : ''}
-          data-testid={'input-location-name'}
-        />
-        <TextField
-          margin="dense"
-          label={'Max'}
-          type="text"
-          fullWidth
-          variant="outlined"
-          value={max}
-          onChange={(e) => setMax(e.target.value)}
-          error={isNameEmpty || isNameDuplicate}
-          helperText={isNameEmpty || isNameDuplicate ? nameErrorMessage : ''}
-          data-testid={'input-location-name'}
-        />
-        <TextField
-          margin="dense"
-          label={'Startwert'}
-          type="text"
-          fullWidth
-          variant="outlined"
-          value={init}
-          onChange={(e) => setInit(e.target.value)}
-          error={isNameEmpty || isNameDuplicate}
-          helperText={isNameEmpty || isNameDuplicate ? nameErrorMessage : ''}
-          data-testid={'input-location-name'}
-        />
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={6}>
+            <TextField
+              margin="dense"
+              label={'Min' /*t('clauses.input.value')*/}
+              type="number"
+              fullWidth
+              variant="outlined"
+              value={min}
+              onChange={(e) => setMin(e.target.value)}
+              InputProps={{ inputProps: { min: 0 } }}
+              error={min.length < 1}
+              data-testid={'select-integer-min'}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              margin="dense"
+              label={'Max' /*t('clauses.input.value')*/}
+              type="number"
+              fullWidth
+              variant="outlined"
+              value={max}
+              onChange={(e) => setMax(e.target.value)}
+              InputProps={{ inputProps: { min: 0 } }}
+              error={max.length < 1}
+              data-testid={'select-integer-max'}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={6}>
+            <TextField
+              margin="dense"
+              label={'Size' /*t('clauses.input.value')*/}
+              type="number"
+              fullWidth
+              variant="outlined"
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              InputProps={{ inputProps: { min: 0 } }}
+              error={size.length < 1}
+              data-testid={'select-integer-min'}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              margin="dense"
+              label={'Init' /*t('clauses.input.value')*/}
+              type="number"
+              fullWidth
+              variant="outlined"
+              value={init}
+              onChange={(e) => setInit(e.target.value)}
+              InputProps={{ inputProps: { min: 0 } }}
+              error={init.length < 1}
+              data-testid={'select-integer-max'}
+            />
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button

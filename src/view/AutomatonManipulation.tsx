@@ -287,8 +287,7 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
     size: number,
     min: number,
     max: number,
-    init,
-    number,
+    init: number,
     prevIntegerName?: string
   ) => {
     if (!prevIntegerName) {
@@ -309,7 +308,19 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   const integerTable: JSX.Element = useMemo(() => {
     const integerRows = integers.map<ElementRowData>((int, index) => {
       const displayName =
-        int.name + ', ' + '[' + String(int.min) + ', ' + String(int.max) + ']' + ', ' + 'init:' + String(int.init);
+        int.name +
+        ', ' +
+        'size:' +
+        String(int.size) +
+        ', ' +
+        '[' +
+        String(int.min) +
+        ', ' +
+        String(int.max) +
+        ']' +
+        ', ' +
+        'init:' +
+        String(int.init);
       const rowData: ElementRowData = { id: index, displayName: displayName };
       return rowData;
     });
