@@ -29,7 +29,7 @@
 "local"                     %{ return 'TOK_LOCAL' %}
 "layout"                    %{ return 'TOK_LAYOUT' %}
 [0-9]+                      %{ return 'TOK_INTEGER' %}
-[a-zA-Z]([a-zA-Z0-9_])*     %{ return 'TOK_ID' %}
+[a-zA-Z_]([a-zA-Z0-9_.])*   %{ return 'TOK_ID' %}
 ":"                         %{ return 'TOK_COLON' %}       
 "@"                         %{ return 'TOK_AT' %}
 "{"                         %{ return 'TOK_LBRACE' %}
