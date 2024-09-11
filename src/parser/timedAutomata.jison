@@ -177,9 +177,9 @@ constraints
  ;
 
 constraint
- : compare_term {$$ = {constTerm: $1};}
- | TOK_EXMARK compare_term {$$ = {not: $1, constTerm: $2};}
- | term {$$ = {constTerm: $1};}
+ : compare_term {$$ = {cmpterm: $1};}
+ | TOK_EXMARK compare_term {$$ = {not: $1, cmpterm: $2};}
+ | term {$$ = {constterm: $1};}
  ;
 
 

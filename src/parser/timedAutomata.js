@@ -507,11 +507,13 @@ var timedAutomata = (function () {
           this.$ = $$[$0 - 3];
           break;
         case 51:
-        case 53:
-          this.$ = { constTerm: $$[$0] };
+          this.$ = { cmpterm: $$[$0] };
           break;
         case 52:
-          this.$ = { not: $$[$0 - 1], constTerm: $$[$0] };
+          this.$ = { not: $$[$0 - 1], cmpterm: $$[$0] };
+          break;
+        case 53:
+          this.$ = { constterm: $$[$0] };
           break;
         case 55:
           this.$ = { lhs: $$[$0 - 4], comparatorL: $$[$0 - 3], mhs: $$[$0 - 2], comparatorR: $$[$0 - 1], rhs: $$[$0] };
