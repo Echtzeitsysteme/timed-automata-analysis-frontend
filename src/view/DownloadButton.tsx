@@ -126,7 +126,17 @@ const createFile = async (currentSystem: SystemOptionType) => {
           }
           needColon = true;
         });
-      }
+        edge.guard.freeClauses.forEach((clause) => {
+          let newClause = clause.term;
+          if (first) {
+            newEdge += 'provided:' + newClause;
+            first = false;
+          } else {
+            newEdge += '&&' + newClause;
+          }
+          needColon = true;
+        });
+        }
       if (needColon && edge.reset.length > 0) {
         newEdge += ' : ';
       }

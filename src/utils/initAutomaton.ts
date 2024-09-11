@@ -16,6 +16,7 @@ const CLOCK_CONSTRAINT_0: ClockConstraint = {
       rhs: 5,
     },
   ],
+  freeClauses: [],
 };
 const CLOCK_CONSTRAINT_1: ClockConstraint = {
   clauses: [
@@ -30,6 +31,7 @@ const CLOCK_CONSTRAINT_1: ClockConstraint = {
       rhs: 3,
     },
   ],
+  freeClauses: [],
 };
 
 const LOC_0: Location = {
