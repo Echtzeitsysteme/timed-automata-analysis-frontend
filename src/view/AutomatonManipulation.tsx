@@ -277,23 +277,23 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   );
   const handleIntegerEditClose = () => setIntegerEditOpen(false);
 
-  const handleIntegerAdd = (name: string, size: number, min: number, max: number, init: number) => {
-    addInteger(openedSystems, name, size, min, max, init);
+  const handleIntegerAdd = (name: string, size: string, min: string, max: string, init: string) => {
+    addInteger(openedSystems, name, parseInt(size), parseInt(min), parseInt(max), parseInt(init));
     setIntegerAddOpen(false);
   };
 
   const handleIntegerEdit = (
     name: string,
-    size: number,
-    min: number,
-    max: number,
-    init: number,
+    size: string,
+    min: string,
+    max: string,
+    init: string,
     prevIntegerName?: string
   ) => {
     if (!prevIntegerName) {
       throw Error('handleIntegerEdit: prevIntegerName is empty or undefined');
     }
-    editInteger(openedSystems, name, prevIntegerName, size, min, max, init);
+    editInteger(openedSystems, name, prevIntegerName, parseInt(size), parseInt(min), parseInt(max), parseInt(init));
     setIntegerEditOpen(false);
   };
 

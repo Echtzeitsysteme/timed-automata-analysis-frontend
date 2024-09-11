@@ -12,10 +12,10 @@ interface ManipulateIntegerDialog {
   handleClose: () => void;
   handleSubmit: (
     name: string,
-    size: number,
-    min: number,
-    max: number,
-    init: number,
+    size: string,
+    min: string,
+    max: string,
+    init: string,
     prevIntegerName?: string // only for editing (not for adding)
   ) => void;
 }
@@ -34,6 +34,17 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
   const [isNameEmpty, setIsNameEmpty] = useState(false);
   const [isNameDuplicate, setIsNameDuplicate] = useState(false);
   const [nameErrorMessage, setNameErrorMessage] = useState('');
+  const [isSizeEmpty, setIsSizeEmpty] = useState(false);
+  const [isMinEmpty, setIsMinEmpty] = useState(false);
+  const [isMaxEmpty, setIsMaxEmpty] = useState(false);
+  const [isMinBiggerThanMax, setIsMinBiggerThanMax] = useState(false);
+  const [minErrorMessage, setMinErrorMessage] = useState('');
+  const [maxErrorMessage, setMaxErrorMessage] = useState('');
+  const [isSizeInvalid, setIsSizeInvalid] = useState(false);
+  const [sizeErrorMessage, setSizeErrorMessage] = useState('');
+  const [initOutsideIntervall, setInitOutsideIntervall] = useState(false);
+  const [isInitEmpty, setIsInitEmpty] = useState(false);
+  const [initErrorMessage, setInitErrorMessage] = useState('');
 
   // effect for setting initial values upon opening the dialog
   useEffect(() => {
@@ -42,8 +53,12 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
       return;
     }
     if (intPrevVersion !== undefined) {
-      // load existing location if editing (for adding, "if" prevents entering this)
+      // load existing integer if editing (for adding, "if" prevents entering this)
       setName(intPrevVersion.name);
+      setSize(intPrevVersion.size.toString());
+      setMin(intPrevVersion.min.toString());
+      setMax(intPrevVersion.max.toString());
+      setInit(intPrevVersion.init.toString());
     }
     setJustOpened(false);
   }, [open, justOpened, intPrevVersion]);
@@ -52,6 +67,13 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
   useEffect(() => {
     // check validity of name field
     setIsNameEmpty(name.trim() === '');
+    setIsSizeEmpty(size.trim() === '');
+    setIsMinEmpty(min.trim() === '');
+    setIsMaxEmpty(max.trim() === '');
+    setIsInitEmpty(init.trim() === '');
+    setIsMinBiggerThanMax(min > max);
+    setInitOutsideIntervall(init > max || init < min);
+    setIsSizeInvalid( size < 1);
     if (intPrevVersion) {
       // previous name is allowed
       const prevName = intPrevVersion.name;
@@ -61,15 +83,27 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
     } else {
       setIsNameDuplicate(integers.some((int) => int.name.toLowerCase() === name.toLowerCase()));
     }
-    isNameEmpty && setNameErrorMessage('bottom text' /*t('locDialog.errorNameEmpty')*/);
-    isNameDuplicate && setNameErrorMessage('bottom text' /*t('locDialog.errorNameExists')*/);
-  }, [name, integers, isNameEmpty, isNameDuplicate, intPrevVersion]);
+    isNameEmpty && setNameErrorMessage('Name darf nicht leer sein' /*t('locDialog.errorNameEmpty')*/);
+    isNameDuplicate && setNameErrorMessage('Name wird bereits verwendet' /*t('locDialog.errorNameExists')*/);
+    isMinBiggerThanMax && setMinErrorMessage('Min muss kleiner als Max sein');
+    isMinBiggerThanMax && setMaxErrorMessage('Max muss größer als Min sein');
+    initOutsideIntervall && setInitErrorMessage('Init muss im Intervall liegen');
+    isSizeInvalid && setSizeErrorMessage('Size must be at least 1');
 
-  const isValidationError: boolean = useMemo(() => isNameEmpty || isNameDuplicate, [isNameEmpty, isNameDuplicate]);
+  }, [name, integers, isNameEmpty, isNameDuplicate, intPrevVersion, size, min, max, init, isMinBiggerThanMax, initOutsideIntervall, isSizeInvalid]);
+
+  const isValidationError: boolean = useMemo(
+      () => isNameEmpty || isNameDuplicate || isInitEmpty || isMinEmpty || isMaxEmpty || isSizeEmpty
+          || isMinBiggerThanMax || initOutsideIntervall || isSizeInvalid,
+      [isNameEmpty, isNameDuplicate, isInitEmpty, isMinEmpty, isMaxEmpty, isSizeEmpty, isMinBiggerThanMax, initOutsideIntervall, isSizeInvalid]);
 
   const handleCloseDialog = () => {
     // reset entries when dialog is closed
     setName('');
+    setSize('');
+    setMin('');
+    setMax('');
+    setInit('');
     setJustOpened(true); // for next opening of the dialog
     handleClose();
   };
@@ -120,7 +154,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
           onChange={(e) => setName(e.target.value)}
           error={isNameEmpty || isNameDuplicate}
           helperText={isNameEmpty || isNameDuplicate ? nameErrorMessage : ''}
-          data-testid={'input-location-name'}
+          data-testid={'input-integer-name'}
         />
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={6}>
@@ -131,9 +165,10 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
               fullWidth
               variant="outlined"
               value={min}
-              onChange={(e) => setMin(e.target.value)}
+              onChange={(e) => parseInt(e.target.value) < 0 ? setMin('0') : setMin(e.target.value)}
               InputProps={{ inputProps: { min: 0 } }}
-              error={min.length < 1}
+              error={isMinEmpty || isMinBiggerThanMax}
+              helperText={isMinBiggerThanMax && !isMinEmpty ? minErrorMessage : ''}
               data-testid={'select-integer-min'}
             />
           </Grid>
@@ -145,9 +180,10 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
               fullWidth
               variant="outlined"
               value={max}
-              onChange={(e) => setMax(e.target.value)}
+              onChange={(e) => parseInt(e.target.value) < 0 ? setMax('0') : setMax(e.target.value)}
               InputProps={{ inputProps: { min: 0 } }}
-              error={max.length < 1}
+              error={isMaxEmpty || isMinBiggerThanMax}
+              helperText={isMinBiggerThanMax && !isMaxEmpty ? maxErrorMessage : ''}
               data-testid={'select-integer-max'}
             />
           </Grid>
@@ -161,9 +197,10 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
               fullWidth
               variant="outlined"
               value={size}
-              onChange={(e) => setSize(e.target.value)}
+              onChange={(e) => parseInt(e.target.value) < 0 ? setSize('0') : setSize(e.target.value)}
               InputProps={{ inputProps: { min: 0 } }}
-              error={size.length < 1}
+              error={isSizeEmpty || isSizeInvalid}
+              helperText={isSizeInvalid ? sizeErrorMessage : ''}
               data-testid={'select-integer-min'}
             />
           </Grid>
@@ -175,9 +212,10 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
               fullWidth
               variant="outlined"
               value={init}
-              onChange={(e) => setInit(e.target.value)}
+              onChange={(e) => parseInt(e.target.value) < 0 ? setInit('0') : setInit(e.target.value)}
               InputProps={{ inputProps: { min: 0 } }}
-              error={init.length < 1}
+              error={isInitEmpty || initOutsideIntervall}
+              helperText={initOutsideIntervall && !isInitEmpty ? initErrorMessage : ''}
               data-testid={'select-integer-max'}
             />
           </Grid>
@@ -190,7 +228,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
           variant="contained"
           color="error"
         >
-          {t('locDialog.button.cancel')}
+          {'Abbrechen' /*t('locDialog.button.cancel')*/}
         </Button>
         <Button
           onMouseDown={handleFormSubmit}
@@ -198,9 +236,9 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
           variant="contained"
           color="primary"
           disabled={isValidationError}
-          data-testid={'button-add-location-ok'}
+          data-testid={'button-add-integer-ok'}
         >
-          {intPrevVersion ? t('locDialog.button.edit') : t('locDialog.button.add')}
+          {intPrevVersion ? 'Speichern' /*t('locDialog.button.edit')*/ : 'Hinzufügen'/*t('locDialog.button.add')*/}
         </Button>
       </DialogActions>
     </Dialog>
