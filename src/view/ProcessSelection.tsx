@@ -35,11 +35,10 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
       const newOption: AutomatonOptionType = { label: newProcessName, automaton: newTA };
       openedProcesses.selectedOption.automaton = viewModel.ta;
       openedProcesses.addAutomatonOption(openedProcesses, newOption);
-      console.log('newProcessOptions:', openedProcesses.automatonOptions);
+      //console.log('newProcessOptions:', openedProcesses.automatonOptions);
       openedSystems.selectedSystem.processes = openedProcesses.automatonOptions;
-      //value = newOption;
       viewModel.setAutomaton(viewModel, newOption.automaton);
-      console.log('automaton set!!!');
+      //console.log('automaton set!!!');
       optionLabels = openedProcesses.getLabels(openedProcesses.automatonOptions);
     }
   };
@@ -50,10 +49,10 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
   const deleteProcess = () => {
     if (options.length > 1) {
       openedProcesses.deleteAutomatonOption(openedProcesses, openedProcesses.selectedOption);
-      console.log('options', options);
+      //console.log('options', options);
       value = openedProcesses.selectedOption;
       openedSystems.selectedSystem.processes = openedProcesses.automatonOptions;
-      console.log('value', value);
+      //console.log('value', value);
       viewModel.setAutomaton(viewModel, openedProcesses.selectedOption.automaton);
     }
   };
@@ -81,17 +80,16 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
           disableClearable
           value={value}
           onChange={(event, newValue) => {
-            console.log(event);
-            console.log('Optionen:', options);
+            //console.log('Optionen:', options);
 
             //set value and automaton to existing option
             options.forEach((option) => {
               if (option.label === newValue) {
                 value.automaton = viewModel.ta;
-                console.log('new Value:', newValue);
+                //console.log('new Value:', newValue);
                 openedProcesses.selectedOption = option;
                 viewModel.setAutomaton(viewModel, option.automaton);
-                console.log('automaton set!!!');
+                //console.log('automaton set!!!');
               }
             });
           }}
