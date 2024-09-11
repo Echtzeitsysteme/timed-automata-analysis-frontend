@@ -69,7 +69,6 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
 
     const network = new Network(networkRef.current, data, options);
 
-    console.log(activatePhysics);
     if (activatePhysics) {
       network.setOptions({
         physics: {
@@ -78,8 +77,14 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
       });
     }
 
-    network.on('stabilizationIterationsDone', function () {
+    network.on('stabilized', function () {
       network.setOptions({ physics: false });
+      const nodePositions = network.getPositions();
+      locations.forEach((location) => {
+        const locationName = location.name;
+        location.xCoordinate = nodePositions[locationName].x;
+        location.yCoordinate = nodePositions[locationName].y;
+      });
     });
 
     // Event listener for dragEnd event (update coordinates saved in locations if a location is moved)
