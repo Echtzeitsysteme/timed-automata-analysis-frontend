@@ -54,7 +54,8 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
           centralGravity: 0.005,
           springLength: 230,
           springConstant: 0.18,
-          avoidOverlap: 1.5,
+          avoidOverlap: 1,
+          theta: 0.1,
         },
         maxVelocity: 146,
         solver: 'forceAtlas2Based',
@@ -77,14 +78,14 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
       });
     }
 
-    network.on('stabilized', function () {
-      network.setOptions({ physics: false });
+    network.on('stabilizationIterationsDone', function () {
       const nodePositions = network.getPositions();
       locations.forEach((location) => {
         const locationName = location.name;
         location.xCoordinate = nodePositions[locationName].x;
         location.yCoordinate = nodePositions[locationName].y;
       });
+      network.setOptions({ physics: false });
     });
 
     // Event listener for dragEnd event (update coordinates saved in locations if a location is moved)
