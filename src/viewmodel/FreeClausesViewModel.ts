@@ -77,7 +77,7 @@ export function useFreeClausesViewModel(): FreeClausesViewModel {
         (viewModel: FreeClausesViewModel, id: number, field: keyof FreeClauseViewData, value: string) => {
             const updatedClauses = viewModel.freeClauses.map((row) => {
                 if (row.id === id) {
-                    let updatedRow = { ...row, [field]: value };
+                    const updatedRow = { ...row, [field]: value };
                     // Update validation flags based on the new value
                     if (field === 'freeInput') {
                         updatedRow.term = value;

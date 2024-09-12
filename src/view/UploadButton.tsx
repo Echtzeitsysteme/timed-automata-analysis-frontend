@@ -14,7 +14,7 @@ import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses
 import {useClockConstraintUtils} from "../utils/clockConstraintUtils.ts";
 import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
 import {Integer} from "../model/ta/integer.ts";
-import {handleTerm} from "../utils/uploadUtils.ts";
+import {handleConstr, handleTerm} from "../utils/uploadUtils.ts";
 import {FreeClause} from "../model/ta/freeClause.ts";
 
 export interface OpenedDocs {
@@ -83,7 +83,7 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
       let isInitial: boolean = false;
       let xCoord: number = 0;
       let yCoord: number = 0;
-      const invariants : ClockConstraint = { clauses: [] };
+      const invariants : ClockConstraint = { clauses: [], freeClauses: [] };
       if(item.hasOwnProperty('attributes')){
         item.attributes.forEach((attribute) => {
           if(attribute.hasOwnProperty('initial')){
@@ -92,28 +92,14 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
           if(attribute.hasOwnProperty('invariant')){
 
             attribute.constraint.forEach((constr) => {
-              if(constr.cmpterm !== undefined) {
-                //TODO was wenn es so ein 3 < x < 5 ist? Ist ja aktuell nicht möglich...
-                /** *for testing purposes*
-                 const lhs = handleTerm(constr.cmpterm.lhs);
-                 const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
-                 const rhs = handleTerm(constr.cmpterm.rhs);
-                 console.log("lhs:", lhs, "comparator:", comparator, "rhs:", rhs);
-                 **/
-
-                const lhs: Clock = {name: constr.cmpterm.lhs.term.identifier};
-                const rhs: number = constr.cmpterm.rhs.term.value;
-                const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
-                const newClause: Clause = {lhs: lhs, op: comparator, rhs: rhs};
-                invariants.clauses.push(newClause);
-              }
+              const newFreeClause: FreeClause = {term: handleConstr(constr)};
+              invariants.freeClauses.push(newFreeClause);
             });
           }
           if(attribute.hasOwnProperty('layout')){
             xCoord = attribute.x;
             yCoord = attribute.y;
           } else {
-            //TODO hier dann kurz mal network algorithmus anschmeißen und wieder ausmachen!!!
             xCoord = 0;
             yCoord = 0;
           }
@@ -156,56 +142,14 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
 
           if (attribute.hasOwnProperty('provided')) {
             attribute.constraint.forEach((constr) => {
-              if(constr.cmpterm !== undefined){
-                /** * for testing purposes*
-                 const lhs = handleTerm(constr.cmpterm.lhs);
-                 const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
-                 const rhs = handleTerm(constr.cmpterm.rhs);
-                 console.log("lhs:", lhs, "comparator:", comparator, "rhs:", rhs);
-                 **/
-                let term = '';
-                if(constr.not !== undefined){
-                  term += '!';
-                }
-                if(constr.cmpterm.lhs !== undefined){
-                  term += handleTerm(constr.cmpterm.lhs);
-                }
-                if(constr.cmpterm.comparatorL !== undefined){
-                  term += constr.cmpterm.comparatorL;
-                }
-                if(constr.cmpterm.mhs !== undefined){
-                  term += handleTerm(constr.cmpterm.mhs);
-                }
-                if(constr.cmpterm.comparatorR !== undefined){
-                  term += constr.cmpterm.comparatorR;
-                }
-                if(constr.cmpterm.comparator !== undefined){
-                  term += constr.cmpterm.comparator;
-                }
-                if(constr.cmpterm.rhs !== undefined){
-                  term += handleTerm(constr.cmpterm.rhs);
-                }
-                const newFreeClause: FreeClause = {term: term};
-                guard.freeClauses.push(newFreeClause);
-
-/*
-                const lhs: Clock = {name: constr.cmpterm.lhs.term.identifier};
-                const rhs: number = constr.cmpterm.rhs.term.value;
-                const comparator: ClockComparator = parseClockComparator(constr.cmpterm.comparator);
-                const newClause: Clause = { lhs: lhs, op: comparator, rhs: rhs};
-                guard.clauses.push(newClause);
-*/
-              }
-              if(constr.constterm !== undefined){
-                const term = handleTerm(constr.constterm);
-                const newFreeClause: FreeClause = {term: term};
-                guard.freeClauses.push(newFreeClause);
-              }
-
+              const newFreeClause: FreeClause = {term: handleConstr(constr)};
+              guard.freeClauses.push(newFreeClause);
               });
           }
           if(attribute.hasOwnProperty('do')){
             attribute.maths.forEach((math) => {
+              //TODO muss hier noch die resets der Uhren, sowie die "do-Ints anpassen,
+              // aber letzteres erst, sobald das mit den Ints im Manipulate-Switch dialog möglich ist)
                 /** *for testing purposes*
               const lhs = handleTerm(math.lhs);
               const set: ClockComparator = math.set;

@@ -16,10 +16,23 @@ export interface FormattingUtils {
 export function useFormattingUtils(): FormattingUtils {
   const formatClockConstraint = useCallback((clockConstraint?: ClockConstraint, clauseJoinStr: string = ' ∧ ') => {
     const cc = clockConstraint;
-    if (!cc || !cc.clauses || cc.clauses.length === 0) {
+    if (!cc || (!cc.clauses && !cc.freeClauses) || (cc.clauses.length === 0 && cc.freeClauses.length === 0 )) {
       return undefined;
     }
-    return cc.clauses.map((c) => `${c.lhs.name} ${c.op} ${c.rhs}`).join(clauseJoinStr);
+    let clauses = '';
+    let freeClauses = '';
+    if (cc.clauses){
+      if (cc.clauses.length !== 0){
+        clauses = cc.clauses.map((c) => `${c.lhs.name} ${c.op} ${c.rhs}`).join(clauseJoinStr);
+        if (cc.freeClauses && cc.freeClauses.length !== 0){
+          clauses += clauseJoinStr;
+        }
+      }
+    }
+    if (cc.freeClauses && cc.freeClauses.length !== 0){
+      freeClauses = cc.freeClauses.map((c) => `${c.term}`).join(clauseJoinStr);
+    }
+    return clauses + freeClauses;
   }, []);
 
   const formatReset = useCallback((clocks?: Clock[], compact: boolean = false) => {

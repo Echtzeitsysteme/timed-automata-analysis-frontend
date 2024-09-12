@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import { OpenedSystems, SystemOptionType } from '../viewmodel/OpenedSystems.ts';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import { OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
+import {deParseClockComparator} from "../model/ta/clockComparator.ts";
 
 interface ActiveModel {
   viewModel: AnalysisViewModel;
@@ -11,7 +12,8 @@ interface ActiveModel {
 }
 
 const createFile = async (currentSystem: SystemOptionType) => {
-  //TODO doesnt encompass other definitions like int since the current TA Definition only contains these types
+  //TODO doesnt encompass other definitions like syncs and more attributes for locs and the stuff,
+  // since the current TA Definition only contains these types
   const prefix =
     '#\n' +
     '# This is a TChecker file\n' +
@@ -31,6 +33,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
   const existingEvents: string[] = [];
   const existingClocks: string[] = [];
 
+  //integers
   currentSystem.integers.forEach((int) => {
     const integer = 'int:' + int.size + ':' + int.min + ':' + int.max + ':' + int.init + ':' + int.name + '\n';
     integers += integer;
@@ -47,8 +50,9 @@ const createFile = async (currentSystem: SystemOptionType) => {
     let locations = '';
     let edges = '';
 
+    //clocks
     ta.clocks.forEach((clock) => {
-      //clocks are global variables, don't write them multiple times
+      //clocks are supposed to be global variables, don't write them multiple times
       const alreadyWritten = existingClocks.some((existingClock) => existingClock == clock.name);
       if (!alreadyWritten) {
         const newClock = 'clock:' + '1' + ':' + clock.name + '\n';
@@ -56,6 +60,8 @@ const createFile = async (currentSystem: SystemOptionType) => {
         existingClocks.push(clock.name);
       }
     });
+
+    //locations
     ta.locations.forEach((location) => {
       let newLocation = 'location:' + process + ':' + location.name + '{';
       let hasPrevElem = false;
@@ -68,18 +74,28 @@ const createFile = async (currentSystem: SystemOptionType) => {
         hasPrevElem = false;
       }
       if (location.invariant != undefined) {
+        let first: boolean = true;
         location.invariant.clauses.forEach((clause) => {
-          let newClause = '';
-          if (clause.op.toString() == '=') {
-            newClause = clause.lhs.name.toString() + '==' + clause.rhs.toString();
-          } else if (clause.op.toString() == '≤') {
-            newClause = clause.lhs.name.toString() + '<=' + clause.rhs.toString();
-          } else if (clause.op.toString() == '≥') {
-            newClause = clause.lhs.name.toString() + '>=' + clause.rhs.toString();
+          const operator = deParseClockComparator(clause.op);
+          const newClause = clause.lhs.name.toString() + operator + clause.rhs.toString();
+
+          if (first) {
+            newLocation += 'invariant:' + newClause;
+            first = false;
           } else {
-            newClause = clause.lhs.name.toString() + clause.op.toString() + clause.rhs.toString();
+            newLocation += ' && ' + newClause;
           }
-          newLocation += 'invariant:' + newClause;
+          hasPrevElem = true;
+        });
+        location.invariant.freeClauses.forEach((clause) => {
+          const newClause = clause.term;
+          if (first) {
+            newLocation += 'invariant:' + newClause;
+            first = false;
+          } else {
+            newLocation += ' && ' + newClause;
+          }
+
           hasPrevElem = true;
         });
       }
@@ -91,6 +107,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
       newLocation += '}' + '\n';
       locations += newLocation;
     });
+
     ta.switches.forEach((edge) => {
       //check for events
       if (
@@ -108,31 +125,24 @@ const createFile = async (currentSystem: SystemOptionType) => {
       if (edge.guard != undefined) {
         let first: boolean = true;
         edge.guard.clauses.forEach((clause) => {
-          let newClause = '';
-          if (clause.op.toString() == '=') {
-            newClause = clause.lhs.name.toString() + '==' + clause.rhs.toString();
-          } else if (clause.op.toString() == '≤') {
-            newClause = clause.lhs.name.toString() + '<=' + clause.rhs.toString();
-          } else if (clause.op.toString() == '≥') {
-            newClause = clause.lhs.name.toString() + '>=' + clause.rhs.toString();
-          } else {
-            newClause = clause.lhs.name.toString() + clause.op.toString() + clause.rhs.toString();
-          }
+          const operator = deParseClockComparator(clause.op);
+          const newClause = clause.lhs.name.toString() + operator + clause.rhs.toString()
+
           if (first) {
             newEdge += 'provided:' + newClause;
             first = false;
           } else {
-            newEdge += '&&' + newClause;
+            newEdge += ' && ' + newClause;
           }
           needColon = true;
         });
         edge.guard.freeClauses.forEach((clause) => {
-          let newClause = clause.term;
+          const newClause = clause.term;
           if (first) {
             newEdge += 'provided:' + newClause;
             first = false;
           } else {
-            newEdge += '&&' + newClause;
+            newEdge += ' && ' + newClause;
           }
           needColon = true;
         });

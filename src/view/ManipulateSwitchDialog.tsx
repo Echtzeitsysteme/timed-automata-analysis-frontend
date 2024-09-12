@@ -106,6 +106,7 @@ export const ManipulateSwitchDialog: React.FC<ManipulateSwitchDialogProps> = (pr
       if (switchPrevVersion.guard) {
         setGuardChecked(true);
         setClausesFromClockConstraint(clausesViewModel, switchPrevVersion.guard);
+        setFreeClausesFromClockConstraint(freeClausesViewModel, switchPrevVersion.guard);
       } else {
         setGuardChecked(false);
         clausesViewModel.resetClauses(clausesViewModel);
@@ -136,25 +137,13 @@ export const ManipulateSwitchDialog: React.FC<ManipulateSwitchDialogProps> = (pr
     const sourceLoc: Location = { name: source, xCoordinate: 0, yCoordinate: 0 };
     const targetLoc: Location = { name: target, xCoordinate: 0, yCoordinate: 0 };
     const guard: ClockConstraint | undefined =
-        guardChecked && clauses.length > 0 ? transformToClockConstraint(clauses) : undefined;
+        guardChecked && (clauses.length > 0 || freeClauses.length > 0) ? transformToClockConstraint(clauses, freeClauses) : undefined;
     const reset: Clock[] = clocks.filter((c) => resets[c.name]);
     const newSwitch: Switch = { source: sourceLoc, guard: guard, actionLabel: action, reset: reset, target: targetLoc };
 
     // Does switch already exist? Do not allow another switch being equal to an existing switch
     return existingSwitches.filter((sw) => switchesEqual(sw, newSwitch)).length > 0;
-  }, [
-    switchPrevVersion,
-    switches,
-    source,
-    target,
-    guardChecked,
-    clauses,
-    resets,
-    action,
-    clocks,
-    transformToClockConstraint,
-    switchesEqual,
-  ]);
+  }, [switchPrevVersion, source, target, guardChecked, clauses, freeClauses, transformToClockConstraint, clocks, action, switches, switchesEqual, resets]);
 
   const equalToExistingErrorMsg: JSX.Element | undefined = useMemo(() => {
     if (!isEqualToExistingSwitch) {
@@ -215,7 +204,7 @@ export const ManipulateSwitchDialog: React.FC<ManipulateSwitchDialogProps> = (pr
     if (isValidationError) {
       return;
     }
-    const guard: ClockConstraint | undefined = guardChecked ? transformToClockConstraint(clauses) : undefined;
+    const guard: ClockConstraint | undefined = guardChecked ? transformToClockConstraint(clauses, freeClauses) : undefined;
     const resetNames: string[] = clocks.filter((c) => resets[c.name]).map((c) => c.name);
     if (switchPrevVersion) {
       handleSubmit(source, action, resetNames, target, guard, switchPrevVersion);
@@ -343,7 +332,7 @@ export const ManipulateSwitchDialog: React.FC<ManipulateSwitchDialogProps> = (pr
                   variant="outlined"
                   onMouseDown={() => freeClausesViewModel.addFreeClause(freeClausesViewModel)}
                   onKeyDown={(e) => executeOnKeyboardClick(e.key, () => freeClausesViewModel.addFreeClause(freeClausesViewModel))}
-                  sx={{ marginTop: 2 }}
+                  sx={{ marginTop: 2, marginLeft: 1 }}
                   data-testid={'button-add-freeClause'}
               >
                 {'Freie Klausel hinzufügen' /*t('clauses.button.addClause')*/}

@@ -19,6 +19,8 @@ import { useTranslation } from 'react-i18next';
 import { useClausesViewModel } from '../viewmodel/ClausesViewModel';
 import { useClockConstraintUtils } from '../utils/clockConstraintUtils';
 import { useButtonUtils } from '../utils/buttonUtils';
+import {FreeClausesManipulation} from "./FreeClausesManipulation.tsx";
+import {useFreeClausesViewModel} from "../viewmodel/FreeClausesViewModel.ts";
 
 interface ManipulateLocationDialogProps {
   open: boolean;
@@ -38,6 +40,8 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
   const { open, locations, clocks, locPrevVersion, handleClose, handleSubmit } = props;
   const clausesViewModel = useClausesViewModel();
   const { clauses, setClausesFromClockConstraint } = clausesViewModel;
+  const freeClausesViewModel = useFreeClausesViewModel();
+  const { freeClauses, setFreeClausesFromClockConstraint } = freeClausesViewModel;
   const { t } = useTranslation();
   const { executeOnKeyboardClick } = useButtonUtils();
   const { transformToClockConstraint } = useClockConstraintUtils();
@@ -62,6 +66,7 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
       if (locPrevVersion.invariant) {
         setInvariantChecked(true);
         setClausesFromClockConstraint(clausesViewModel, locPrevVersion.invariant);
+        setFreeClausesFromClockConstraint(freeClausesViewModel, locPrevVersion.invariant);
       } else {
         setInvariantChecked(false);
         clausesViewModel.resetClauses(clausesViewModel);
@@ -97,6 +102,7 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
     setName('');
     setInvariantChecked(false);
     clausesViewModel.resetClauses(clausesViewModel);
+    freeClausesViewModel.resetFreeClauses(freeClausesViewModel);
     setJustOpened(true); // for next opening of the dialog
     handleClose();
   };
@@ -105,7 +111,7 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
     if (isValidationError) {
       return;
     }
-    const invariant: ClockConstraint | undefined = invariantChecked ? transformToClockConstraint(clauses) : undefined;
+    const invariant: ClockConstraint | undefined = invariantChecked ? transformToClockConstraint(clauses, freeClauses) : undefined;
     if (locPrevVersion) {
       handleSubmit(name, initialLocationChecked, invariant, locPrevVersion.name);
       // value reset not needed for editing because values are loaded from existing version
@@ -115,6 +121,7 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
       setName('');
       setInvariantChecked(false);
       clausesViewModel.resetClauses(clausesViewModel);
+      freeClausesViewModel.resetFreeClauses(freeClausesViewModel);
     }
     setJustOpened(true); // for next opening of dialog
   };
@@ -157,6 +164,7 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
           data-testid={'checkbox-location-hasInvariant'}
         />
         {invariantChecked && <ClausesManipulation viewModel={clausesViewModel} clocks={clocks} />}
+        {invariantChecked && <FreeClausesManipulation viewModel={freeClausesViewModel}/>}
         {invariantChecked && (
           <Button
             variant="outlined"
@@ -168,7 +176,18 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
             {t('clauses.button.addClause')}
           </Button>
         )}
-      </DialogContent>
+        {invariantChecked && (
+            <Button
+                variant="outlined"
+                onMouseDown={() => freeClausesViewModel.addFreeClause(freeClausesViewModel)}
+                onKeyDown={(e) => executeOnKeyboardClick(e.key, () => freeClausesViewModel.addFreeClause(freeClausesViewModel))}
+                sx={{ marginTop: 2, marginLeft: 1 }}
+                data-testid={'button-add-freeInvariant'}
+            >
+              {'Freie Klausel hinzufügen' /*t('clauses.button.addClause')*/}
+            </Button>
+        )}
+          </DialogContent>
       <DialogActions>
         <Button
           onMouseDown={handleCloseDialog}

@@ -264,7 +264,7 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   }, [clocks, t, handleClockEditOpen, handleClockDelete]);
 
   // ===== manipulate Integers ===================================================
-  //TODO
+
   const handleIntegerAddOpen = () => setIntegerAddOpen(true);
   const handleIntegerAddClose = () => setIntegerAddOpen(false);
 

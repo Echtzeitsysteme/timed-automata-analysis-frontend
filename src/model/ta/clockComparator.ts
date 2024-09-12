@@ -33,3 +33,22 @@ export function parseClockComparator(input: string): ClockComparator {
       throw Error(`parseClockComparator: input ${input} is not a valid clock comparator`);
   }
 }
+
+export function deParseClockComparator(input: ClockComparator): string{
+  switch(input){
+    case ClockComparator.NEQ:
+      return '!=';
+    case ClockComparator.EQ:
+      return '==';
+    case ClockComparator.LEQ:
+      return '<=';
+    case ClockComparator.GEQ:
+      return '>=';
+    case ClockComparator.GREATER:
+      return '>';
+    case ClockComparator.LESSER:
+      return '<';
+    default:
+      throw Error(`deParseClockComparator: input ${input} is not a valid clock comparator`);
+  }
+}
