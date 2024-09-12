@@ -26,6 +26,9 @@
 "if"                        %{ return 'TOK_IF' %}
 "while"                     %{ return 'TOK_WHILE' %}
 "nop"                       %{ return 'TOK_NOP' %}
+"then"                      %{ return 'TOK_THEN' %}
+"end"                       %{ return 'TOK_END' %}
+"else"                      %{ return 'TOK_ELSE' %}
 "local"                     %{ return 'TOK_LOCAL' %}
 "layout"                    %{ return 'TOK_LAYOUT' %}
 [0-9]+                      %{ return 'TOK_INTEGER' %}
@@ -209,7 +212,30 @@ statements
  ;
 
 statement
+ : do_term {$$ = {doTerm: $1};}
+ | TOK_NOP {$$ = {nop: $1};}
+ | local_statement {$$ = {localStatement: $1};}
+ | if_statement {$$ = {ifStatement: $1};}
+ | while_statement {$$ = {whileStatement: $1};}
+ ;
+
+do_term
  : term TOK_SET term {$$ = {lhs: $1, set: $2, rhs: $3};}
+ ;
+
+local_statement
+ : TOK_LOCAL TOK_ID {$$ = {local: $1, identifier: $2};}
+ | TOK_LOCAL TOK_ID TOK_LBRACKET term TOK_RBRACKET {$$ = {local: $1, identifier: $2, insideBrackets: $4};}
+ | TOK_LOCAL TOK_ID TOK_SET term  {$$ = {local: $1, identifier: $2, set: $3, term: 4};}
+ ;
+
+if_statement
+ : TOK_IF term TOK_THEN term end {$$ = {if: $1, ifTerm: $2, then: $3, thenTerm: $4, end: $5};}
+ | TOK_IF term TOK_THEN term TOK_ELSE term TOK_END {$$ = {if: $1, ifTerm: $2, then: $3, thenTerm: $4, else: $5, elseTerm: $6, end: $7};}
+ ;
+
+while_statement
+ : TOK_WHILE term TOK_DO term end {$$ = {while: $1, whileTerm: $2, do: $3, doTerm: $4, end: $5};}
  ;
 
 cmp
