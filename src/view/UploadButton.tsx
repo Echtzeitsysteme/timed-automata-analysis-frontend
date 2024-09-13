@@ -14,7 +14,7 @@ import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses
 import {useClockConstraintUtils} from "../utils/clockConstraintUtils.ts";
 import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
 import {Integer} from "../model/ta/integer.ts";
-import {handleConstr, handleTerm} from "../utils/uploadUtils.ts";
+import {handleConstr, handleStatement, handleTerm} from "../utils/uploadUtils.ts";
 import {FreeClause} from "../model/ta/freeClause.ts";
 
 export interface OpenedDocs {
@@ -148,24 +148,34 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
           }
           if(attribute.hasOwnProperty('do')){
             attribute.maths.forEach((math) => {
-              //TODO muss hier noch die resets der Uhren, sowie die "do-Ints anpassen,
-              // aber letzteres erst, sobald das mit den Ints im Manipulate-Switch dialog möglich ist)
-                /** *for testing purposes*
-              const lhs = handleTerm(math.lhs);
-              const set: ClockComparator = math.set;
-              const rhs = handleTerm(math.rhs);
-              console.log("lhs:", lhs, "set:", set, "rhs:", rhs);
-                  **/
 
-              const lhs: Clock = {name: math.lhs.term.identifier};
-              const set: ClockComparator = math.set;
-              const rhs: number = math.rhs.term.value;
-              //for now only really resets clocks?
-              if(set == '=' && rhs == 0){
-                setClocks.push(lhs);
+              const doStatement = handleStatement(math);
+              if(doStatement instanceof String){
+                //TODO in diesem Teil wird sowas wie ein int = int+1 hinzugefügt.
+                // das muss natürlich davor erstmal implementiert werden...
+              }
+              else{
+                //look if the do-statement is a clock-reset
+                const potentialClock = doStatement.lhs;
+                const set = doStatement.set;
+                const rhs = doStatement.rhs;
+                taProcesses.forEach((option) => {
+                  if(option.label == processName){
+                    option.automaton.clocks.forEach((clock) => {
+                      if(clock.name === potentialClock && set === '=' && parseInt(rhs) === 0){
+                        const lhs: Clock = {name: doStatement.lhs};
+                        setClocks.push(lhs)
+                      }
+                    });
+                  }
+                  //was not clock-reset, so add as normal do-statement
+                  else{
+                    const altDoStatement = potentialClock + set + rhs;
+                    //TODO und hier dann auch auf den ominösen noch fehlenden Stack pushen
+                  }
+                });
               }
             });
-            //TODO was wenn ich Wert eines INTs ändern will? das ist ja glaub ich noch nicht möglich
           }
         });
       }
