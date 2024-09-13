@@ -9,6 +9,7 @@ import { useSwitchUtils } from '../utils/switchUtils';
 import { useClockConstraintUtils } from '../utils/clockConstraintUtils';
 import { useClockUtils } from '../utils/clockUtils';
 import { INIT_AUTOMATON } from '../utils/initAutomaton';
+import {SwitchStatement} from "../model/ta/switchStatement.ts";
 
 export interface AnalysisViewModel {
   state: AnalysisState;
@@ -40,7 +41,8 @@ export interface AnalysisViewModel {
     actionLabel: string,
     resetNames: string[],
     targetName: string,
-    guard?: ClockConstraint
+    guard?: ClockConstraint,
+    statement?: SwitchStatement
   ) => void;
   editSwitch: (
     viewModel: AnalysisViewModel,
@@ -49,7 +51,8 @@ export interface AnalysisViewModel {
     action: string,
     resetNames: string[],
     targetName: string,
-    guard?: ClockConstraint
+    guard?: ClockConstraint,
+    statement?: SwitchStatement
   ) => void;
   removeSwitch: (viewModel: AnalysisViewModel, switchToRemove: Switch) => void;
   addClock: (viewModel: AnalysisViewModel, clockName: string) => void;
@@ -188,7 +191,8 @@ export function useAnalysisViewModel(): AnalysisViewModel {
       actionLabel: string,
       resetNames: string[],
       targetName: string,
-      guard?: ClockConstraint
+      guard?: ClockConstraint,
+      statement?: SwitchStatement
     ) => {
       const ta = viewModel.ta;
       const newSwitch: Switch = {
@@ -197,6 +201,7 @@ export function useAnalysisViewModel(): AnalysisViewModel {
         actionLabel: actionLabel,
         reset: ta.clocks.filter((c) => resetNames.includes(c.name)),
         guard: guard,
+        statement: statement
       };
       const updatedSwitches = [...ta.switches, newSwitch];
       const updatedTa = { ...ta, switches: updatedSwitches };
@@ -213,7 +218,8 @@ export function useAnalysisViewModel(): AnalysisViewModel {
       action: string,
       resetNames: string[],
       targetName: string,
-      guard?: ClockConstraint
+      guard?: ClockConstraint,
+      statement?: SwitchStatement
     ) => {
       const ta = viewModel.ta;
       const switches = [...ta.switches];
@@ -223,6 +229,7 @@ export function useAnalysisViewModel(): AnalysisViewModel {
       switchToEdit.actionLabel = action;
       switchToEdit.reset = ta.clocks.filter((c) => resetNames.includes(c.name));
       switchToEdit.guard = guard;
+      switchToEdit.statement = statement;
       const updatedTa = { ...ta, switches: switches };
       const updatedViewModel = { ...viewModel, ta: updatedTa };
       setViewModel(updatedViewModel);

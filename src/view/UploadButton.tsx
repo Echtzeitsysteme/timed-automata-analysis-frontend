@@ -16,6 +16,7 @@ import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
 import {Integer} from "../model/ta/integer.ts";
 import {handleConstr, handleStatement, handleTerm} from "../utils/uploadUtils.ts";
 import {FreeClause} from "../model/ta/freeClause.ts";
+import {SwitchStatement} from "../model/ta/switchStatement.ts";
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel; //für update Locations iwie?
@@ -136,6 +137,7 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
       });
 
       const guard :ClockConstraint = { clauses: [], freeClauses: [] };
+      const statement: SwitchStatement = { statements: []};
       const setClocks : Clock[] = [];
       if(item.hasOwnProperty('attributes')){
         item.attributes.forEach((attribute) => {
@@ -150,28 +152,32 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
             attribute.maths.forEach((math) => {
 
               const doStatement = handleStatement(math);
-              if(doStatement instanceof String){
-                //TODO in diesem Teil wird sowas wie ein int = int+1 hinzugefügt.
-                // das muss natürlich davor erstmal implementiert werden...
-              }
-              else{
+              if(typeof doStatement === 'string'){
+                const newTerm: FreeClause = {term: doStatement};
+                statement.statements.push(newTerm);
+              } else {
                 //look if the do-statement is a clock-reset
                 const potentialClock = doStatement.lhs;
                 const set = doStatement.set;
                 const rhs = doStatement.rhs;
                 taProcesses.forEach((option) => {
                   if(option.label == processName){
+                    let isReset : boolean = false;
                     option.automaton.clocks.forEach((clock) => {
                       if(clock.name === potentialClock && set === '=' && parseInt(rhs) === 0){
-                        const lhs: Clock = {name: doStatement.lhs};
-                        setClocks.push(lhs)
+                        isReset = true;
                       }
                     });
-                  }
-                  //was not clock-reset, so add as normal do-statement
-                  else{
-                    const altDoStatement = potentialClock + set + rhs;
-                    //TODO und hier dann auch auf den ominösen noch fehlenden Stack pushen
+                    if(isReset){
+                      const lhs: Clock = {name: doStatement.lhs};
+                      setClocks.push(lhs);
+                    }
+                    //was not clock-reset, so add as normal do-statement
+                    else{
+                      const altDoStatement = potentialClock + set + rhs;
+                      const newTerm: FreeClause = {term: altDoStatement};
+                      statement.statements.push(newTerm);
+                    }
                   }
                 });
               }
@@ -179,7 +185,13 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
           }
         });
       }
-      const newSwitch : Switch = {source: source, guard: guard, actionLabel: actionLabel, reset: setClocks, target: target};
+      const newSwitch : Switch = {source: source, actionLabel: actionLabel, reset: setClocks, target: target};
+      if(guard.clauses.length > 0 || guard.freeClauses.length > 0){
+        newSwitch.guard = guard;
+      }
+      if(statement.statements.length > 0){
+        newSwitch.statement = statement;
+      }
       taProcesses.forEach((option) => {
         if(option.label == processName){
           option.automaton.switches.push(newSwitch);

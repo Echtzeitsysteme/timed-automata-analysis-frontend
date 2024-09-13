@@ -17,6 +17,7 @@ import ManipulateClockDialog from './ManipulateClockDialog';
 import { OpenedSystems } from '../viewmodel/OpenedSystems.ts';
 import { Integer } from '../model/ta/integer.ts';
 import ManipulateIntegerDialog from './ManipulateIntegerDialog.tsx';
+import {SwitchStatement} from "../model/ta/switchStatement.ts";
 
 interface ManipulationProps {
   viewModel: AnalysisViewModel;
@@ -152,9 +153,10 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
     action: string,
     resetNames: string[],
     targetName: string,
-    guard?: ClockConstraint
+    guard?: ClockConstraint,
+    statement?: SwitchStatement
   ) => {
-    addSwitch(viewModel, sourceName, action, resetNames, targetName, guard);
+    addSwitch(viewModel, sourceName, action, resetNames, targetName, guard, statement);
     setSwitchAddOpen(false);
   };
 
@@ -164,12 +166,13 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
     resetNames: string[],
     targetName: string,
     guard?: ClockConstraint,
+    statement?: SwitchStatement,
     prevSwitch?: Switch
   ) => {
     if (!prevSwitch) {
       throw Error('handleSwitchEdit: prevSwitch is null or undefined');
     }
-    editSwitch(viewModel, prevSwitch, sourceName, action, resetNames, targetName, guard);
+    editSwitch(viewModel, prevSwitch, sourceName, action, resetNames, targetName, guard, statement);
     setSwitchEditOpen(false);
   };
 

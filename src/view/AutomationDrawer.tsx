@@ -71,7 +71,6 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
         open={open}
       >
         <DrawerHeader>
-          Select or Add System
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
