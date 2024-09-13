@@ -6,8 +6,6 @@ import timedAutomata from '../parser/timedAutomata';
 import {Clock} from "../model/ta/clock.ts";
 import {Location} from "../model/ta/location.ts";
 import {ClockConstraint} from "../model/ta/clockConstraint.ts";
-import {Clause} from "../model/ta/clause.ts";
-import {ClockComparator, parseClockComparator} from "../model/ta/clockComparator.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {Button} from "@mui/material";
 import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
@@ -26,13 +24,12 @@ export interface OpenedDocs {
 
 const parseFile = async (fileContent: string) => {
   const parser = new timedAutomata.Parser();
-  //const parser = new TsTckParser();
   const parsedData = parser.parse(fileContent);
 
   return parsedData;
 };
 
-const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptionType> => {
+const convertToTa = async (parsedData):Promise<SystemOptionType> => {
   const systemName: string = parsedData.system.name;
   const taProcesses: AutomatonOptionType[] = [];
   const integers: Integer[] = [];
@@ -84,6 +81,10 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
       let isInitial: boolean = false;
       let xCoord: number = 0;
       let yCoord: number = 0;
+      let isUrgent: boolean = false;
+      let isCommitted: boolean = false;
+      let hasLabels: boolean = false;
+      let labelList: string[] = [];
       const invariants : ClockConstraint = { clauses: [], freeClauses: [] };
       if(item.hasOwnProperty('attributes')){
         item.attributes.forEach((attribute) => {
@@ -104,18 +105,26 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
             xCoord = 0;
             yCoord = 0;
           }
-          /*TODO if(attribute.hasOwnProperty('labels')){
-
-          }*/
-          /*TODO if(attribute.hasOwnProperty('commited')){
-
-          }*/
-          /*TODO if(attribute.hasOwnProperty('urgent')){
-
-          }*/
+          if(attribute.hasOwnProperty('labels')){
+            hasLabels = true;
+            labelList = attribute.labelList;
+          }
+          if(attribute.hasOwnProperty('committed')){
+            isCommitted = true;
+          }
+          if(attribute.hasOwnProperty('urgent')){
+            isUrgent = true;
+          }
         })
       }
-      const newLocation: Location = {name: locName, isInitial: isInitial, invariant: invariants, xCoordinate: xCoord, yCoordinate: yCoord };
+      const newLocation: Location =
+          {name: locName, isInitial: isInitial, committed: isCommitted, urgent: isUrgent, xCoordinate: xCoord, yCoordinate: yCoord };
+      if(invariants.freeClauses.length > 0 || invariants.clauses.length > 0){
+        newLocation.invariant = invariants;
+      }
+      if(hasLabels){
+        newLocation.labels = labelList;
+      }
       taProcesses.forEach((option) => {
         if(option.label == processName){
           option.automaton.locations.push(newLocation);
@@ -199,7 +208,7 @@ const convertToTa = async (parsedData, constraintUsesClock ):Promise<SystemOptio
       });
     }
     if(item.type == 'sync'){
-
+      //TODO
     }
 
   });
@@ -273,7 +282,6 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
     fileReader.readAsText(inputElem.files[0]);
 
     inputElem.value = '';
-    //TODO Muss ich die File noch irgendwo anders abspeichern?
   };
 
   //TODO hier noch das "Upload file" in diese Localization file tun

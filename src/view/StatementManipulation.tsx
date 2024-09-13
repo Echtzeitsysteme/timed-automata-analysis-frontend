@@ -3,6 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslation } from 'react-i18next';
 import { useButtonUtils } from '../utils/buttonUtils';
 import {StatementsViewModel} from "../viewmodel/StatementsViewModel.ts";
+import React from "react";
 
 interface StatementManipulationProps {
     viewModel: StatementsViewModel;

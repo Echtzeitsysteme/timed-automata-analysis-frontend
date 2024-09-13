@@ -18,14 +18,20 @@ export interface AnalysisViewModel {
     viewModel: AnalysisViewModel,
     locationName: string,
     isInitial?: boolean,
-    invariant?: ClockConstraint
+    invariant?: ClockConstraint,
+    committed?: boolean,
+    urgent?: boolean,
+    labels?: string[]
   ) => void;
   editLocation: (
     viewModel: AnalysisViewModel,
     locationName: string,
     prevLocationName: string,
     isInitial?: boolean,
-    invariant?: ClockConstraint
+    invariant?: ClockConstraint,
+    committed?: boolean,
+    urgent?: boolean,
+    labels?: string[]
   ) => void;
   removeLocation: (viewModel: AnalysisViewModel, locationName: string) => void;
   setInitialLocation: (viewModel: AnalysisViewModel, locationName: string) => void;
@@ -92,7 +98,8 @@ export function useAnalysisViewModel(): AnalysisViewModel {
   }, []);
 
   const addLocation = useCallback(
-    (viewModel: AnalysisViewModel, locationName: string, isInitial?: boolean, invariant?: ClockConstraint) => {
+    (viewModel: AnalysisViewModel, locationName: string, isInitial?: boolean, invariant?: ClockConstraint, committed?: boolean,
+     urgent?: boolean, labels?: string[]) => {
       const ta = viewModel.ta;
       const locations = ta.locations;
       let newLoc: Location;
@@ -103,11 +110,14 @@ export function useAnalysisViewModel(): AnalysisViewModel {
           name: locationName,
           isInitial: isInitial,
           invariant: invariant,
+          committed: committed,
+          urgent: urgent,
+          labels: labels,
           xCoordinate: xCoordAvg,
           yCoordinate: yCoordAvg,
         };
       } else {
-        newLoc = { name: locationName, isInitial: true, invariant: invariant, xCoordinate: 0, yCoordinate: 0 };
+        newLoc = { name: locationName, isInitial: true, invariant: invariant, committed: committed, urgent: urgent, labels: labels, xCoordinate: 0, yCoordinate: 0 };
       }
       const updatedLocs = [...locations, newLoc];
       if (isInitial) {
@@ -129,13 +139,19 @@ export function useAnalysisViewModel(): AnalysisViewModel {
       locationName: string,
       prevLocationName: string,
       isInitial?: boolean,
-      invariant?: ClockConstraint
+      invariant?: ClockConstraint,
+      committed?: boolean,
+      urgent?: boolean,
+      labels?: string[]
     ) => {
       const ta = viewModel.ta;
       const locations = [...ta.locations];
       const loc = locations.filter((l) => l.name === prevLocationName)[0];
       loc.name = locationName;
       loc.invariant = invariant;
+      loc.committed = committed;
+      loc.urgent = urgent;
+      loc.labels = labels;
       const updatedTa = { ...ta, locations: locations };
       const updatedViewModel = { ...viewModel, ta: updatedTa };
       setViewModel(updatedViewModel);

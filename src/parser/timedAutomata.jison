@@ -155,7 +155,7 @@ attribute
  : TOK_INIT TOK_COLON {$$ = {initial: $1};}
  | TOK_LABELS TOK_COLON labelsList {$$ = {labels: $1, labelList: $3};}
  | TOK_INVAR TOK_COLON constraints {$$ = {invariant: $1, constraint: $3};}
- | TOK_COMMIT TOK_COLON {$$ = {commit: $1};}
+ | TOK_COMMIT TOK_COLON {$$ = {committed: $1};}
  | TOK_URGENT TOK_COLON {$$ = {urgent: $1};}
  | TOK_PROV TOK_COLON constraints {$$ = {provided: $1, constraint: $3};}
  | TOK_DO TOK_COLON statements {$$ = {do: $1, maths: $3};}

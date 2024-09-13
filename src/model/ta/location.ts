@@ -6,4 +6,7 @@ export interface Location {
   invariant?: ClockConstraint;
   xCoordinate: number;
   yCoordinate: number;
+  committed?: boolean;
+  urgent?: boolean;
+  labels?: string[];
 }

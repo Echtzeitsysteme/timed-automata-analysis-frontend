@@ -2,31 +2,31 @@ import { Grid, IconButton, TextField, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslation } from 'react-i18next';
 import { useButtonUtils } from '../utils/buttonUtils';
-import {FreeClausesViewModel} from "../viewmodel/FreeClausesViewModel.ts";
+import {LabelsViewModel} from "../viewmodel/LabelsListViewModel.ts";
 import React from "react";
 
-interface FreeClausesManipulationProps {
-    viewModel: FreeClausesViewModel;
+interface LabelsManipulationProps {
+    viewModel: LabelsViewModel;
 }
 
-export const FreeClausesManipulation: React.FC<FreeClausesManipulationProps> = (props) => {
+export const LabelsListManipulation: React.FC<LabelsManipulationProps> = (props) => {
     const { viewModel} = props;
-    const { freeClauses, deleteFreeClause, changeFreeClause } = viewModel;
+    const { labels, deleteLabel, changeLabel } = viewModel;
     const { t } = useTranslation();
     const { executeOnKeyboardClick } = useButtonUtils();
 
     return (
         <>
-            {freeClauses.map((row) => (
+            {labels.map((row) => (
                 <Grid key={row.id} container spacing={2} alignItems="center">
                     <Grid item xs={1}>
                         <IconButton
-                            disabled={freeClauses.length <= 0}
-                            onMouseDown={() => deleteFreeClause(viewModel, row.id)}
-                            onKeyDown={(e) => executeOnKeyboardClick(e.key, () => deleteFreeClause(viewModel, row.id))}
-                            data-testid={'button-delete-freeClause-row-' + row.id}
+                            disabled={labels.length <= 0}
+                            onMouseDown={() => deleteLabel(viewModel, row.id)}
+                            onKeyDown={(e) => executeOnKeyboardClick(e.key, () => deleteLabel(viewModel, row.id))}
+                            data-testid={'button-delete-label-row-' + row.id}
                         >
-                            <Tooltip title={'Klausel löschen' /*t('clauses.delete')*/}>
+                            <Tooltip title={'Label löschen' /*t('clauses.delete')*/}>
                                 <DeleteIcon />
                             </Tooltip>
                         </IconButton>
@@ -34,13 +34,13 @@ export const FreeClausesManipulation: React.FC<FreeClausesManipulationProps> = (
                     <Grid item xs={11}>
                         <TextField
                             margin="dense"
-                            label={'Freie Klausel' /*t('clauses.input.value')*/}
+                            label={'Label' /*t('clauses.input.value')*/}
                             fullWidth
                             variant="outlined"
                             value={row.term}
-                            onChange={(e) => changeFreeClause(viewModel, row.id, 'freeInput', e.target.value)}
+                            onChange={(e) => changeLabel(viewModel, row.id, 'freeInput', e.target.value)}
                             InputProps={{ inputProps: { min: 1 } }}
-                            data-testid={'enter-freeClause-row'}
+                            data-testid={'enter-label-row'}
                         />
                     </Grid>
                 </Grid>

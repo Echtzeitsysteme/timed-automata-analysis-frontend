@@ -76,8 +76,9 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   );
   const handleLocationEditClose = () => setLocationEditOpen(false);
 
-  const handleLocationAdd = (locationName: string, isInitial?: boolean, invariant?: ClockConstraint) => {
-    addLocation(viewModel, locationName, isInitial, invariant);
+  const handleLocationAdd =
+      (locationName: string, isInitial?: boolean, invariant?: ClockConstraint, committed?: boolean, urgent?: boolean, labels?: string[],) => {
+    addLocation(viewModel, locationName, isInitial, invariant, committed, urgent, labels);
     setLocationAddOpen(false);
   };
 
@@ -85,12 +86,15 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
     locationName: string,
     isInitial?: boolean,
     invariant?: ClockConstraint,
+    committed?: boolean,
+    urgent?: boolean,
+    labels?: string[],
     prevLocationName?: string
   ) => {
     if (!prevLocationName) {
       throw Error('handleLocationEdit: prevLocationName is empty or undefined');
     }
-    editLocation(viewModel, locationName, prevLocationName, isInitial, invariant);
+    editLocation(viewModel, locationName, prevLocationName, isInitial, invariant, committed, urgent, labels);
     setLocationEditOpen(false);
   };
 

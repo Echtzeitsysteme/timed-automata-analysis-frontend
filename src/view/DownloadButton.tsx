@@ -12,8 +12,8 @@ interface ActiveModel {
 }
 
 const createFile = async (currentSystem: SystemOptionType) => {
-  //TODO doesnt encompass other definitions like syncs and more attributes for locs and the stuff,
-  // since the current TA Definition only contains these types
+  //TODO doesnt encompass other sync definition
+  // since the current TA Definition only contains theis types
   const prefix =
     '#\n' +
     '# This is a TChecker file\n' +
@@ -97,6 +97,38 @@ const createFile = async (currentSystem: SystemOptionType) => {
           }
 
           hasPrevElem = true;
+        });
+      }
+      if (hasPrevElem) {
+        newLocation += ' : ';
+        hasPrevElem = false;
+      }
+      if(location.urgent){
+        newLocation += 'urgent:';
+        hasPrevElem = true;
+      }
+      if (hasPrevElem) {
+        newLocation += ' : ';
+        hasPrevElem = false;
+      }
+      if(location.committed){
+        newLocation += 'committed:';
+        hasPrevElem = true;
+      }
+      if (hasPrevElem) {
+        newLocation += ' : ';
+        hasPrevElem = false;
+      }
+      if(location.labels && location.labels.length > 0){
+        let first: boolean = true;
+        location.labels.forEach((label) => {
+          if(first){
+            newLocation += 'labels:' + label;
+            first = false;
+          }
+          else{
+            newLocation += ',' + label;
+          }
         });
       }
       if (hasPrevElem) {
