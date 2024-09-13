@@ -1,5 +1,5 @@
 export enum ClockComparator {
-  EQ = '=',
+  EQ = '==',
   NEQ = '≠',
   LEQ = '≤',
   GEQ = '≥',
@@ -34,8 +34,8 @@ export function parseClockComparator(input: string): ClockComparator {
   }
 }
 
-export function deParseClockComparator(input: ClockComparator): string{
-  switch(input){
+export function deParseClockComparator(input: ClockComparator): string {
+  switch (input) {
     case ClockComparator.NEQ:
       return '!=';
     case ClockComparator.EQ:
