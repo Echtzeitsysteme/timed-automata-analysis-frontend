@@ -8,7 +8,8 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
-  IconButton, Divider,
+  IconButton,
+  Divider,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Clock } from '../model/ta/clock';
@@ -19,11 +20,11 @@ import { useTranslation } from 'react-i18next';
 import { useClausesViewModel } from '../viewmodel/ClausesViewModel';
 import { useClockConstraintUtils } from '../utils/clockConstraintUtils';
 import { useButtonUtils } from '../utils/buttonUtils';
-import {FreeClausesManipulation} from "./FreeClausesManipulation.tsx";
-import {useFreeClausesViewModel} from "../viewmodel/FreeClausesViewModel.ts";
-import {LabelsListManipulation} from "./LabelsListManipulation.tsx";
-import {useLabelsViewModel} from "../viewmodel/LabelsListViewModel.ts";
-import {useLabelUtils} from "../utils/labelUtils.ts";
+import { FreeClausesManipulation } from './FreeClausesManipulation.tsx';
+import { useFreeClausesViewModel } from '../viewmodel/FreeClausesViewModel.ts';
+import { LabelsListManipulation } from './LabelsListManipulation.tsx';
+import { useLabelsViewModel } from '../viewmodel/LabelsListViewModel.ts';
+import { useLabelUtils } from '../utils/labelUtils.ts';
 
 interface ManipulateLocationDialogProps {
   open: boolean;
@@ -64,6 +65,8 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
   const labelsListViewModel = useLabelsViewModel();
   const { labels, setLabels } = labelsListViewModel;
   const [labelListChecked, setLabelListChecked] = useState(false);
+  const [someLabelEmpty, setSomeLabelEmpty] = useState(false);
+  const [someFreeClauseEmpty, setSomeFreeClauseEmpty] = useState(false);
 
   // effect for setting initial values upon opening the dialog
   useEffect(() => {
@@ -71,7 +74,6 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
     if (!open || !justOpened) {
       return;
     }
-    console.log(locPrevVersion); //TODO
     if (locPrevVersion !== undefined) {
       // load existing location if editing (for adding, "if" prevents entering this)
       setName(locPrevVersion.name);
@@ -84,11 +86,10 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
         setInvariantChecked(false);
         clausesViewModel.resetClauses(clausesViewModel);
       }
-      if(locPrevVersion.labels){
+      if (locPrevVersion.labels) {
         setLabelListChecked(true);
         setLabels(labelsListViewModel, locPrevVersion.labels);
-      }
-      else{
+      } else {
         setLabelListChecked(false);
         labelsListViewModel.resetLabels(labelsListViewModel);
       }
@@ -96,11 +97,23 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
       setUrgentChecked(!!locPrevVersion.urgent);
     }
     setJustOpened(false);
-  }, [open, justOpened, locPrevVersion, clausesViewModel, setClausesFromClockConstraint, setFreeClausesFromClockConstraint, freeClausesViewModel, labelsListViewModel, setLabels]);
+  }, [
+    open,
+    justOpened,
+    locPrevVersion,
+    clausesViewModel,
+    setClausesFromClockConstraint,
+    setFreeClausesFromClockConstraint,
+    freeClausesViewModel,
+    labelsListViewModel,
+    setLabels,
+  ]);
 
   // effect to update validation checks
   useEffect(() => {
     // check validity of name field
+    setSomeFreeClauseEmpty(freeClauses.some((clause) => clause.term.trim().length === 0));
+    setSomeLabelEmpty(labels.some((label) => label.term.trim().length === 0));
     setIsNameEmpty(name.trim() === '');
     if (locPrevVersion) {
       // previous name is allowed
@@ -113,11 +126,24 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
     }
     isNameEmpty && setNameErrorMessage(t('locDialog.errorNameEmpty'));
     isNameDuplicate && setNameErrorMessage(t('locDialog.errorNameExists'));
-  }, [name, locations, isNameEmpty, isNameDuplicate, locPrevVersion, t]);
+  }, [name, locations, isNameEmpty, isNameDuplicate, locPrevVersion, t, freeClauses, someFreeClauseEmpty, labels]);
 
   const isValidationError: boolean = useMemo(
-    () => isNameEmpty || isNameDuplicate || (invariantChecked && clausesViewModel.isValidationError),
-    [isNameEmpty, isNameDuplicate, invariantChecked, clausesViewModel.isValidationError]
+    () =>
+      isNameEmpty ||
+      isNameDuplicate ||
+      (invariantChecked && clausesViewModel.isValidationError) ||
+      (invariantChecked && someFreeClauseEmpty) ||
+      (labelListChecked && someLabelEmpty),
+    [
+      isNameEmpty,
+      isNameDuplicate,
+      invariantChecked,
+      clausesViewModel.isValidationError,
+      someFreeClauseEmpty,
+      labelListChecked,
+      someLabelEmpty,
+    ]
   );
 
   const handleCloseDialog = () => {
@@ -138,13 +164,23 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
     if (isValidationError) {
       return;
     }
-    const invariant: ClockConstraint | undefined = invariantChecked ? transformToClockConstraint(clauses, freeClauses) : undefined;
-    const labelsList : string[] | undefined = labelListChecked ?  transformToLabelsList(labels) : undefined;
+    const invariant: ClockConstraint | undefined = invariantChecked
+      ? transformToClockConstraint(clauses, freeClauses)
+      : undefined;
+    const labelsList: string[] | undefined = labelListChecked ? transformToLabelsList(labels) : undefined;
     if (locPrevVersion) {
-      handleSubmit(name, initialLocationChecked, invariant, committedChecked, urgentChecked, labelsList, locPrevVersion.name);
+      handleSubmit(
+        name,
+        initialLocationChecked,
+        invariant,
+        committedChecked,
+        urgentChecked,
+        labelsList,
+        locPrevVersion.name
+      );
       // value reset not needed for editing because values are loaded from existing version
     } else {
-      handleSubmit(name, initialLocationChecked, invariant, committedChecked, urgentChecked, labelsList,);
+      handleSubmit(name, initialLocationChecked, invariant, committedChecked, urgentChecked, labelsList);
       // reset values for next opening of dialog
       setName('');
       setInvariantChecked(false);
@@ -194,7 +230,7 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
           data-testid={'checkbox-location-hasInvariant'}
         />
         {invariantChecked && <ClausesManipulation viewModel={clausesViewModel} clocks={clocks} />}
-        {invariantChecked && <FreeClausesManipulation viewModel={freeClausesViewModel}/>}
+        {invariantChecked && <FreeClausesManipulation viewModel={freeClausesViewModel} />}
         {invariantChecked && (
           <Button
             variant="outlined"
@@ -207,43 +243,45 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
           </Button>
         )}
         {invariantChecked && (
-            <Button
-                variant="outlined"
-                onMouseDown={() => freeClausesViewModel.addFreeClause(freeClausesViewModel)}
-                onKeyDown={(e) => executeOnKeyboardClick(e.key, () => freeClausesViewModel.addFreeClause(freeClausesViewModel))}
-                sx={{ marginTop: 2, marginLeft: 1 }}
-                data-testid={'button-add-freeInvariant'}
-            >
-              {'Freie Klausel hinzufügen' /*t('clauses.button.addClause')*/}
-            </Button>
+          <Button
+            variant="outlined"
+            onMouseDown={() => freeClausesViewModel.addFreeClause(freeClausesViewModel)}
+            onKeyDown={(e) =>
+              executeOnKeyboardClick(e.key, () => freeClausesViewModel.addFreeClause(freeClausesViewModel))
+            }
+            sx={{ marginTop: 2, marginLeft: 1 }}
+            data-testid={'button-add-freeInvariant'}
+          >
+            {'Freie Klausel hinzufügen' /*t('clauses.button.addClause')*/}
+          </Button>
         )}
         <Divider sx={{ my: 1 }} />
         <FormControlLabel
-            control={<Checkbox checked={committedChecked} onChange={(e) => setCommittedChecked(e.target.checked)} />}
-            label={"Committed"/*t('locDialog.hasInvariant')*/}
-            data-testid={'checkbox-location-isCommitted'}
+          control={<Checkbox checked={committedChecked} onChange={(e) => setCommittedChecked(e.target.checked)} />}
+          label={'Committed' /*t('locDialog.hasInvariant')*/}
+          data-testid={'checkbox-location-isCommitted'}
         />
         <FormControlLabel
-            control={<Checkbox checked={urgentChecked} onChange={(e) => setUrgentChecked(e.target.checked)} />}
-            label={"Urgent"/*t('locDialog.hasInvariant')*/}
-            data-testid={'checkbox-location-isUrgent'}
+          control={<Checkbox checked={urgentChecked} onChange={(e) => setUrgentChecked(e.target.checked)} />}
+          label={'Urgent' /*t('locDialog.hasInvariant')*/}
+          data-testid={'checkbox-location-isUrgent'}
         />
         <FormControlLabel
-            control={<Checkbox checked={labelListChecked} onChange={(e) => setLabelListChecked(e.target.checked)} />}
-            label={"Labels"/*t('locDialog.hasInvariant')*/}
-            data-testid={'checkbox-location-hasLabels'}
+          control={<Checkbox checked={labelListChecked} onChange={(e) => setLabelListChecked(e.target.checked)} />}
+          label={'Labels' /*t('locDialog.hasInvariant')*/}
+          data-testid={'checkbox-location-hasLabels'}
         />
-        {labelListChecked && <LabelsListManipulation viewModel={labelsListViewModel}/>}
-        {labelListChecked &&(
-            <Button
-                variant="outlined"
-                onMouseDown={() => labelsListViewModel.addLabel(labelsListViewModel) }
-                onKeyDown={(e) => executeOnKeyboardClick(e.key, () => labelsListViewModel.addLabel(labelsListViewModel) )}
-                sx={{ marginTop: 2, marginLeft: 1 }}
-                data-testid={'button-add-label'}
-            >
-              {'Label hinzufügen' /*t('clauses.button.addClause')*/}
-            </Button>
+        {labelListChecked && <LabelsListManipulation viewModel={labelsListViewModel} />}
+        {labelListChecked && (
+          <Button
+            variant="outlined"
+            onMouseDown={() => labelsListViewModel.addLabel(labelsListViewModel)}
+            onKeyDown={(e) => executeOnKeyboardClick(e.key, () => labelsListViewModel.addLabel(labelsListViewModel))}
+            sx={{ marginTop: 2, marginLeft: 1 }}
+            data-testid={'button-add-label'}
+          >
+            {'Label hinzufügen' /*t('clauses.button.addClause')*/}
+          </Button>
         )}
       </DialogContent>
       <DialogActions>
