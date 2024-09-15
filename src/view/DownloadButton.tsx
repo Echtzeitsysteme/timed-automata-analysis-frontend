@@ -179,7 +179,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
           needColon = true;
         });
         }
-      if (needColon && (edge.reset.length > 0 || edge.statement?.statements.length > 0)) {
+      if (needColon && (edge.reset.length > 0 || (edge.statement && edge.statement.statements.length > 0) )) {
         newEdge += ' : ';
       }
       let first: boolean = true;

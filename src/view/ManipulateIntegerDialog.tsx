@@ -73,7 +73,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
     setIsInitEmpty(init.trim() === '');
     setIsMinBiggerThanMax(min > max);
     setInitOutsideIntervall(init > max || init < min);
-    setIsSizeInvalid( size < 1);
+    setIsSizeInvalid( parseInt(size) < 1);
     if (intPrevVersion) {
       // previous name is allowed
       const prevName = intPrevVersion.name;

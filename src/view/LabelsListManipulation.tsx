@@ -12,7 +12,7 @@ interface LabelsManipulationProps {
 export const LabelsListManipulation: React.FC<LabelsManipulationProps> = (props) => {
     const { viewModel} = props;
     const { labels, deleteLabel, changeLabel } = viewModel;
-    const { t } = useTranslation();
+    //const { t } = useTranslation();
     const { executeOnKeyboardClick } = useButtonUtils();
 
     return (

@@ -12,7 +12,7 @@ interface FreeClausesManipulationProps {
 export const FreeClausesManipulation: React.FC<FreeClausesManipulationProps> = (props) => {
     const { viewModel} = props;
     const { freeClauses, deleteFreeClause, changeFreeClause } = viewModel;
-    const { t } = useTranslation();
+    //const { t } = useTranslation();
     const { executeOnKeyboardClick } = useButtonUtils();
 
     return (
