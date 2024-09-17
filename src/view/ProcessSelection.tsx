@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import { Autocomplete, Box, FormControl, FormHelperText, Input, InputLabel, TextField } from '@mui/material';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import Button from '@mui/material/Button';
@@ -21,7 +21,11 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
   let value = openedProcesses.selectedOption;
   let optionLabels = openedProcesses.getLabels(openedProcesses.automatonOptions);
 
-  let newProcessName: string = '';
+  const [newProcessName, setNewProcessName] = useState('');
+  const [nameIsEmpty, setNameIsEmpty] = useState(false);
+  const [nameIsDuplicate, setNameIsDuplicate] = useState(false);
+  const [nameErrorMsg, setNameErrorMsg] = useState('');
+
   const addProcess = () => {
     const isExisting = options.some((option) => newProcessName === option.label);
     if (!isExisting && newProcessName.length > 0) {
@@ -40,10 +44,9 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
       viewModel.setAutomaton(viewModel, newOption.automaton);
       //console.log('automaton set!!!');
       optionLabels = openedProcesses.getLabels(openedProcesses.automatonOptions);
+
+      setNewProcessName('');
     }
-  };
-  const handleInput = (inputEvent) => {
-    newProcessName = inputEvent.target.value as string;
   };
 
   const deleteProcess = () => {
@@ -57,20 +60,43 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
     }
   };
 
+  useEffect(() => {
+    setNameIsEmpty( newProcessName.trim() === '');
+    setNameIsDuplicate( options.some((option) => option.label.toLowerCase() === newProcessName.trim().toLowerCase() ));
+
+    nameIsEmpty && setNameErrorMsg('Name darf nicht leer sein');
+    nameIsDuplicate && setNameErrorMsg('Prozess existiert bereits');
+  }, [nameIsDuplicate, nameIsEmpty, newProcessName, options]);
+  
+  const validationError: boolean = useMemo(
+      () =>
+          nameIsEmpty ||
+          nameIsDuplicate,
+      [nameIsDuplicate, nameIsEmpty]
+  );
+  
   return (
     <Box sx={{ display: 'inline-flex' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-        <FormControl sx={{ width: 200, mr: 0.2 }} id="enter-name-field" label="Model Name">
-          <InputLabel htmlFor="my-input">Enter New Process</InputLabel>
-          <Input id="my-input" aria-describedby="my-helper-text" onChange={handleInput} sx={{ ml: 0.5 }} />
-          <FormHelperText id="my-helper-text">Names can't be duplicates.</FormHelperText>
-        </FormControl>
-        <Button variant="contained" onClick={addProcess} sx={{ mb: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, mr: 0.2}}>
+        <TextField
+            sx={{ width: 200, mr: 0.2 }}
+            margin="dense"
+            label={'Enter New Process'}
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={newProcessName}
+            onChange={(e) => setNewProcessName(e.target.value)}
+            error={validationError}
+            helperText={validationError ? nameErrorMsg : ''}
+            data-testid={'input-process-name'}
+        />
+        <Button variant="contained" disabled={validationError} onClick={addProcess} sx={{ mb: 2 }}>
           <AddIcon></AddIcon>
           Add Process
         </Button>
       </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
         <Autocomplete
           sx={{ width: 200, mr: 0.2 }}
           id="select-automaton"
@@ -96,7 +122,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
           options={optionLabels}
           renderInput={(params) => <TextField {...params} label="Select Process" />}
         ></Autocomplete>
-        <Button variant="contained" onClick={deleteProcess}>
+        <Button variant="contained" disabled={options.length === 1} onClick={deleteProcess}>
           <DeleteIcon></DeleteIcon>
           Discard Process
         </Button>

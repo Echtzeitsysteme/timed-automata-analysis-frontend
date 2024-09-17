@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import { Autocomplete, Box, FormControl, FormHelperText, Input, InputLabel, TextField } from '@mui/material';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import Button from '@mui/material/Button';
@@ -20,9 +20,12 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
   const options = openedSystems.systemOptions;
   let value = openedSystems.selectedSystem;
   let optionLabels = openedSystems.getLabels(openedSystems.systemOptions);
-  //console.log("opened systems:", openedSystems);
-  //console.log("initial process:", initialProcess);
-  let newSystemName: string = '';
+
+  const [newSystemName, setNewSystemName] = useState('');
+  const [nameIsEmpty, setNameIsEmpty] = useState(false);
+  const [nameIsDuplicate, setNameIsDuplicate] = useState(false);
+  const [nameErrorMsg, setNameErrorMsg] = useState('');
+
   const addSystem = () => {
     const isExisting = options.some((option) => newSystemName === option.label);
     if (!isExisting && newSystemName.length > 0) {
@@ -47,10 +50,9 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
       viewModel.setAutomaton(viewModel, value.processes[0].automaton);
       optionLabels = openedSystems.getLabels(openedSystems.systemOptions);
       console.log('system after addition', openedSystems);
+
+      setNewSystemName('');
     }
-  };
-  const handleInput = (inputEvent) => {
-    newSystemName = inputEvent.target.value as string;
   };
 
   const deleteSystem = () => {
@@ -62,20 +64,43 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
     }
   };
 
+  useEffect(() => {
+    setNameIsEmpty( newSystemName.trim() === '');
+    setNameIsDuplicate( options.some((option) => option.label.toLowerCase() === newSystemName.trim().toLowerCase() ));
+
+    nameIsEmpty && setNameErrorMsg('Name darf nicht leer sein');
+    nameIsDuplicate && setNameErrorMsg('System existiert bereits');
+  }, [nameIsDuplicate, nameIsEmpty, newSystemName, options]);
+
+  const validationError: boolean = useMemo(
+      () =>
+          nameIsEmpty ||
+          nameIsDuplicate,
+      [nameIsDuplicate, nameIsEmpty]
+  );
+
   return (
-    <Box>
-      <Box sx={{ alignItems: 'center', mb: 1 }}>
-        <FormControl sx={{ width: 200, mr: 0.2 }} id="enter-name-field" label="Model Name">
-          <InputLabel htmlFor="my-input">Enter New System</InputLabel>
-          <Input id="my-input" aria-describedby="my-helper-text" onChange={handleInput} sx={{ ml: 0.5 }} />
-          <FormHelperText id="my-helper-text">Names can't be duplicates.</FormHelperText>
-        </FormControl>
-        <Button variant="contained" onClick={addSystem} sx={{ mb: 1 }}>
+    <Box sx={{ ml: 0.2 }}>
+      <Box sx={{ alignItems: 'center', mb: 0.2 }}>
+        <TextField
+            sx={{ width: 200, mr: 0.2 }}
+            margin="dense"
+            label={'Enter New System'}
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={newSystemName}
+            onChange={(e) => setNewSystemName(e.target.value)}
+            error={validationError}
+            helperText={validationError ? nameErrorMsg : ''}
+            data-testid={'input-system-name'}
+        />
+        <Button variant="contained" disabled={validationError} onClick={addSystem} sx={{ mb: 1 }}>
           <AddIcon></AddIcon>
           Add System
         </Button>
       </Box>
-      <Box sx={{ alignItems: 'center', mb: 1 }}>
+      <Box sx={{ alignItems: 'center', mb: 1, mt: 2 }}>
         <Autocomplete
           sx={{ width: 200, mr: 0.2 }}
           id="select-automaton"
@@ -107,7 +132,7 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
           options={optionLabels}
           renderInput={(params) => <TextField {...params} label="Select System" />}
         ></Autocomplete>
-        <Button variant="contained" onClick={deleteSystem}>
+        <Button variant="contained" disabled={options.length === 1} onClick={deleteSystem} sx={{mt:0.2}}>
           <DeleteIcon></DeleteIcon>
           Discard System
         </Button>

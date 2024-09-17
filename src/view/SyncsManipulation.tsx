@@ -66,6 +66,7 @@ export const SyncsManipulation: React.FC<SyncsManipulationProps> = (props) => {
               value={row.actionValue}
               onChange={(e) => changeSync(viewModel, row.id, 'actionValue', e.target.value)}
               InputProps={{ inputProps: { min: 1 } }}
+              error={row.isActionInvalid}
               data-testid={'enter-action-row'}
             />
           </Grid>

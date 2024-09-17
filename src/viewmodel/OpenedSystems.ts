@@ -102,7 +102,6 @@ export function useOpenedSystems(): OpenedSystems {
         []
     );
 
-    //TODO
     const addSync = useCallback((openedSystems: OpenedSystems, syncConstraints: Sync[]) => {
         const system = openedSystems.selectedSystem;
         const synchronizations = [...system.synchronizations];
@@ -114,7 +113,6 @@ export function useOpenedSystems(): OpenedSystems {
         }
     }, []);
 
-    //TODO
     const editSync = useCallback((openedSystems: OpenedSystems, newSyncs: Sync[], prevConstraint: SyncConstraint) => {
         const system = openedSystems.selectedSystem;
         const synchronizations = [...system.synchronizations];
@@ -124,7 +122,6 @@ export function useOpenedSystems(): OpenedSystems {
         setOpenedSystems({...openedSystems, selectedSystem: updatedSystem});
     }, []);
 
-    //TODO
     const removeSync = useCallback((openedSystems: OpenedSystems, syncConstraint: SyncConstraint) => {
         const system = openedSystems.selectedSystem;
         const synchronizations = system.synchronizations;

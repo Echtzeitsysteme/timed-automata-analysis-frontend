@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useButtonUtils } from '../utils/buttonUtils.ts';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import {SyncConstraint} from "../model/ta/syncConstraint.ts";
 import { useSyncConstraintViewModel } from "../viewmodel/SyncConstraintViewModel.ts";
 import {AutomatonOptionType} from "../viewmodel/OpenedProcesses.ts";
 import {SyncsManipulation} from "./SyncsManipulation.tsx";
 import {useSyncConstraintUtils} from "../utils/syncConstraintUtils.ts";
-import {Sync} from "../model/ta/sync.ts";
 
 interface ManipulateSyncDialog {
     open: boolean;
