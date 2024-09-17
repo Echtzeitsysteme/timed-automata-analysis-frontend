@@ -105,7 +105,6 @@ export function useFormattingUtils(): FormattingUtils {
     }
     let first = true;
     let formattedSync = '<'
-    console.log(syncs);
     syncs.forEach((sync) => {
       if(!first){
         formattedSync += ', ';

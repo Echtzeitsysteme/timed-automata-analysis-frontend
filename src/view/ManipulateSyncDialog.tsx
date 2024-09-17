@@ -7,6 +7,7 @@ import { useSyncConstraintViewModel } from "../viewmodel/SyncConstraintViewModel
 import {AutomatonOptionType} from "../viewmodel/OpenedProcesses.ts";
 import {SyncsManipulation} from "./SyncsManipulation.tsx";
 import {useSyncConstraintUtils} from "../utils/syncConstraintUtils.ts";
+import {Sync} from "../model/ta/sync.ts";
 
 interface ManipulateSyncDialog {
     open: boolean;
@@ -15,7 +16,7 @@ interface ManipulateSyncDialog {
     syncPrevVersion?: SyncConstraint;
     handleClose: () => void;
     handleSubmit: (
-        syncs: Syncs[],
+        syncs: SyncConstraint,
         prevSync?: SyncConstraint,
     ) => void;
 }

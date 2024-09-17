@@ -362,19 +362,19 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   );
   const handleSyncEditClose = () => setSyncEditOpen(false);
 
-  const handleSyncAdd = (syncConstraints: Sync[]) => {
-    addSync(openedSystems, syncConstraints);
+  const handleSyncAdd = (syncConstraint: SyncConstraint) => {
+    addSync(openedSystems, syncConstraint.syncs);
     setSyncAddOpen(false);
   };
 
   const handleSyncEdit = (
-      syncConstraints: Sync[],
+      syncConstraint: SyncConstraint,
       prevSync?: SyncConstraint,
   ) => {
      if(!prevSync) {
       throw Error('handleSyncEdit: prevSyncId is empty or undefined');
     }
-    editSync(openedSystems, syncConstraints, prevSync);
+    editSync(openedSystems, syncConstraint.syncs, prevSync);
     setSyncEditOpen(false);
   };
 

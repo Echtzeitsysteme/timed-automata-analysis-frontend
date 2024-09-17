@@ -134,6 +134,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
             newLocation += ',' + label;
           }
         });
+        hasPrevElem = true;
       }
       if (hasPrevElem) {
         newLocation += ' : ';
