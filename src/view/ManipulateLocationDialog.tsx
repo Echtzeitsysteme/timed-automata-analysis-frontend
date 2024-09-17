@@ -134,7 +134,8 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
       isNameDuplicate ||
       (invariantChecked && clausesViewModel.isValidationError) ||
       (invariantChecked && someFreeClauseEmpty) ||
-      (labelListChecked && someLabelEmpty),
+      (labelListChecked && someLabelEmpty) ||
+      (committedChecked && urgentChecked),
     [
       isNameEmpty,
       isNameDuplicate,
@@ -143,6 +144,8 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
       someFreeClauseEmpty,
       labelListChecked,
       someLabelEmpty,
+      committedChecked,
+      urgentChecked,
     ]
   );
 

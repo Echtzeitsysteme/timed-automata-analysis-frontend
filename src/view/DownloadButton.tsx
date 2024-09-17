@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import { OpenedSystems, SystemOptionType } from '../viewmodel/OpenedSystems.ts';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import { OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
-import {deParseClockComparator} from "../model/ta/clockComparator.ts";
+import { deParseClockComparator } from '../model/ta/clockComparator.ts';
 
 interface ActiveModel {
   viewModel: AnalysisViewModel;
@@ -87,6 +87,10 @@ const createFile = async (currentSystem: SystemOptionType) => {
           }
           hasPrevElem = true;
         });
+        if (hasPrevElem) {
+          newLocation += ' : ';
+          hasPrevElem = false;
+        }
         location.invariant.freeClauses.forEach((clause) => {
           const newClause = clause.term;
           if (first) {
@@ -103,7 +107,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
         newLocation += ' : ';
         hasPrevElem = false;
       }
-      if(location.urgent){
+      if (location.urgent) {
         newLocation += 'urgent:';
         hasPrevElem = true;
       }
@@ -111,7 +115,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
         newLocation += ' : ';
         hasPrevElem = false;
       }
-      if(location.committed){
+      if (location.committed) {
         newLocation += 'committed:';
         hasPrevElem = true;
       }
@@ -119,14 +123,13 @@ const createFile = async (currentSystem: SystemOptionType) => {
         newLocation += ' : ';
         hasPrevElem = false;
       }
-      if(location.labels && location.labels.length > 0){
+      if (location.labels && location.labels.length > 0) {
         let first: boolean = true;
         location.labels.forEach((label) => {
-          if(first){
+          if (first) {
             newLocation += 'labels:' + label;
             first = false;
-          }
-          else{
+          } else {
             newLocation += ',' + label;
           }
         });
@@ -158,7 +161,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
         let first: boolean = true;
         edge.guard.clauses.forEach((clause) => {
           const operator = deParseClockComparator(clause.op);
-          const newClause = clause.lhs.name.toString() + operator + clause.rhs.toString()
+          const newClause = clause.lhs.name.toString() + operator + clause.rhs.toString();
 
           if (first) {
             newEdge += 'provided:' + newClause;
@@ -178,8 +181,8 @@ const createFile = async (currentSystem: SystemOptionType) => {
           }
           needColon = true;
         });
-        }
-      if (needColon && (edge.reset.length > 0 || (edge.statement && edge.statement.statements.length > 0) )) {
+      }
+      if (needColon && (edge.reset.length > 0 || (edge.statement && edge.statement.statements.length > 0))) {
         newEdge += ' : ';
       }
       let first: boolean = true;
@@ -191,7 +194,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
           newEdge += ';' + reset.name + '=0';
         }
       });
-      if(edge.statement != undefined){
+      if (edge.statement != undefined) {
         edge.statement.statements.forEach((stmt) => {
           if (first) {
             newEdge += 'do:' + stmt.term;
