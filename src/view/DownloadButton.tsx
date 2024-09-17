@@ -12,8 +12,6 @@ interface ActiveModel {
 }
 
 const createFile = async (currentSystem: SystemOptionType) => {
-  //TODO doesnt encompass other sync definition
-  // since the current TA Definition only contains theis types
   const prefix =
     '#\n' +
     '# This is a TChecker file\n' +
@@ -30,7 +28,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
   let processes = '';
   let events = '';
   let integers = '';
-  let synchronizations = ''
+  let synchronizations = '';
   const existingEvents: string[] = [];
   const existingClocks: string[] = [];
 
@@ -220,9 +218,8 @@ const createFile = async (currentSystem: SystemOptionType) => {
     let newSyncConstr = '';
     let first: boolean = true;
     syncConstr.syncs.forEach((sync) => {
-
       let newSync = sync.process + '@' + sync.event;
-      if(sync.weakSynchronisation){
+      if (sync.weakSynchronisation) {
         newSync += '?';
       }
 
@@ -235,7 +232,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
     });
     newSyncConstr += '\n';
     synchronizations += newSyncConstr;
-  })
+  });
 
   taFile += synchronizations;
   //console.log(taFile);
