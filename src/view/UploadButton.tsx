@@ -9,10 +9,9 @@ import {ClockConstraint} from "../model/ta/clockConstraint.ts";
 import {Switch} from "../model/ta/switch.ts";
 import {Button} from "@mui/material";
 import {AutomatonOptionType, OpenedProcesses} from "../viewmodel/OpenedProcesses.ts";
-import {useClockConstraintUtils} from "../utils/clockConstraintUtils.ts";
 import {OpenedSystems, SystemOptionType} from "../viewmodel/OpenedSystems.ts";
 import {Integer} from "../model/ta/integer.ts";
-import {handleConstr, handleStatement, handleTerm} from "../utils/uploadUtils.ts";
+import {handleConstr, handleStatement} from "../utils/uploadUtils.ts";
 import {FreeClause} from "../model/ta/freeClause.ts";
 import {SwitchStatement} from "../model/ta/switchStatement.ts";
 import {SyncConstraint} from "../model/ta/syncConstraint.ts";
@@ -53,22 +52,10 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
 
     }*/
     if(item.type == 'clock') {
-      if (item.amount == 1) {
-        const newClock: Clock = { name: item.name };
-        taProcesses.forEach((option) => {option.automaton.clocks.push(newClock) });
-      } else {
-        //TODO das probably noch mal anders überarbeiten...
-        //statt for-Schleife maybe
-        // const clockName: string = item.name + '[' + '0..' + String(item.amount) + ']';
-        // aber dann wie mit dem clocks-Filtern am Ende? das wird als eine Clock angesehen und die wird nirgends genutzt
-        // oder Clocks-Filtern erstmal rausnehmen...
-        for (let i = 0; i < item.amount; i++) {
-          const clockName: string = item.name + '[' + String(item.amount) + ']';
-          const newClock: Clock = {name: clockName};
-          taProcesses.forEach((option) => { option.automaton.clocks.push(newClock) });
-        }
-      }
+      const newClock: Clock = { name: item.name, size: item.amount };
+      taProcesses.forEach((option) => {option.automaton.clocks.push(newClock) });
     }
+
     if(item.type == 'int'){
       const name: string = item.name;
       const size: number = item.size;
@@ -78,6 +65,7 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
       const newInteger: Integer = {name: name, size: size, min: min, max: max, init: init};
       integers.push(newInteger);
     }
+
     if(item.type == 'location'){
       const processName : string = item.processName;
       const locName: string = item.name;
@@ -134,6 +122,7 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
         }
       });
     }
+
     if(item.type == 'edge'){
       const processName : string = item.processName;
       const actionLabel : string = item.event;
@@ -175,14 +164,15 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
                 taProcesses.forEach((option) => {
                   if(option.label == processName){
                     let isReset : boolean = false;
+                    let setClock: Clock;
                     option.automaton.clocks.forEach((clock) => {
                       if(clock.name === potentialClock && set === '=' && parseInt(rhs) === 0){
                         isReset = true;
+                        setClock = clock;
                       }
                     });
                     if(isReset){
-                      const lhs: Clock = {name: doStatement.lhs};
-                      setClocks.push(lhs);
+                      setClocks.push(setClock);
                     }
                     //was not clock-reset, so add as normal do-statement
                     else{
@@ -210,6 +200,7 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
         }
       });
     }
+
     if(item.type == 'sync'){
       const newSyncConstr: SyncConstraint = {syncs: []}
       item.syncConstr.forEach((sync) => {

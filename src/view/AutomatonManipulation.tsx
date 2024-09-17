@@ -56,7 +56,7 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   const [switchToEdit, setSwitchToEdit] = useState<Switch | undefined>(undefined);
   const [clockAddOpen, setClockAddOpen] = useState(false);
   const [clockEditOpen, setClockEditOpen] = useState(false);
-  const [clockNameToEdit, setClockNameToEdit] = useState<string | undefined>(undefined);
+  const [clockToEdit, setClockToEdit] = useState<Clock | undefined>(undefined);
   const [clockDeleteConfirmOpen, setClockDeleteConfirmOpen] = useState(false);
   const [clockToDelete, setClockToDelete] = useState<Clock | undefined>(undefined);
   const [integerAddOpen, setIntegerAddOpen] = useState(false);
@@ -214,23 +214,23 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   const handleClockAddClose = () => setClockAddOpen(false);
   const handleClockEditOpen = useCallback(
     (id: number) => {
-      setClockNameToEdit(clocks[id].name);
+      setClockToEdit(clocks[id]);
       setClockEditOpen(true);
     },
     [clocks]
   );
   const handleClockEditClose = () => setClockEditOpen(false);
 
-  const handleClockAdd = (clockName: string) => {
-    addClock(viewModel, clockName);
+  const handleClockAdd = (clockName: string, size: string) => {
+    addClock(viewModel, clockName, parseInt(size));
     setClockAddOpen(false);
   };
 
-  const handleClockEdit = (clockName: string, prevClockName?: string) => {
+  const handleClockEdit = (clockName: string, size: string, prevClockName?: string) => {
     if (!prevClockName) {
       throw Error('handleClockEdit: prevClockName is null or undefined or empty');
     }
-    editClock(viewModel, clockName, prevClockName);
+    editClock(viewModel, clockName, parseInt(size), prevClockName);
     setClockEditOpen(false);
   };
 
@@ -259,7 +259,7 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   );
 
   const clockTable: JSX.Element = useMemo(() => {
-    const clockRows = clocks.map((clock, index) => ({ id: index, displayName: clock.name }));
+    const clockRows = clocks.map((clock, index) => ({ id: index, displayName: clock.name+', size:'+clock.size }));
     return (
       <ElementTable
         rows={clockRows}
@@ -458,14 +458,14 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
         clocks={clocks}
         handleClose={handleClockAddClose}
         handleSubmit={handleClockAdd}
-        prevClockName={undefined}
+        prevClock={undefined}
       />
       <ManipulateClockDialog
         open={clockEditOpen}
         clocks={clocks}
         handleClose={handleClockEditClose}
         handleSubmit={handleClockEdit}
-        prevClockName={clockNameToEdit}
+        prevClock={clockToEdit}
       />
       <ClockDeleteConfirmDialog
         clock={clockToDelete}

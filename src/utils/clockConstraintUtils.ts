@@ -92,11 +92,13 @@ export function useClockConstraintUtils(): ClockConstraintUtils {
       }
     }
 
+    //TODO assuming clock in non-free Clause can only be 1?
+    const clockSize = 1;
     if(!emptyClause){
         const guard =
             clauseData
                 .map<Clause>((c) => {
-                    const lhs: Clock = { name: c.clockValue };
+                    const lhs: Clock = { name: c.clockValue, size: clockSize };
                     const op: ClockComparator | undefined = Object.values(ClockComparator).find(
                         (value) => value === c.comparisonValue
                     );

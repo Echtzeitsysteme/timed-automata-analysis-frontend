@@ -5,8 +5,8 @@ import { ClockConstraint } from '../model/ta/clockConstraint';
 import { TimedAutomaton } from '../model/ta/timedAutomaton';
 import { Switch } from '../model/ta/switch';
 
-const CLOCK_0: Clock = { name: 'x' };
-const CLOCK_1: Clock = { name: 'y' };
+const CLOCK_0: Clock = { name: 'x', size: 1 };
+const CLOCK_1: Clock = { name: 'y', size: 1 };
 
 const CLOCK_CONSTRAINT_0: ClockConstraint = {
   clauses: [

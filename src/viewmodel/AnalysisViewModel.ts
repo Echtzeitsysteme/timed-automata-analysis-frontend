@@ -61,8 +61,8 @@ export interface AnalysisViewModel {
     statement?: SwitchStatement
   ) => void;
   removeSwitch: (viewModel: AnalysisViewModel, switchToRemove: Switch) => void;
-  addClock: (viewModel: AnalysisViewModel, clockName: string) => void;
-  editClock: (viewModel: AnalysisViewModel, clockName: string, prevClockName: string) => void;
+  addClock: (viewModel: AnalysisViewModel, clockName: string, size: number) => void;
+  editClock: (viewModel: AnalysisViewModel, clockName: string, size: number, prevClockName: string) => void;
   removeClock: (viewModel: AnalysisViewModel, clock: Clock) => void;
   setAutomaton : (viewModel: AnalysisViewModel, ta: TimedAutomaton) => void;
 }
@@ -272,17 +272,19 @@ export function useAnalysisViewModel(): AnalysisViewModel {
 
   // ===== manipulate clocks ===================================================
 
-  const addClock = useCallback((viewModel: AnalysisViewModel, clockName: string) => {
+  const addClock = useCallback((viewModel: AnalysisViewModel, clockName: string, size: number) => {
     const ta = viewModel.ta;
-    const updatedClocks = [...ta.clocks, { name: clockName }];
+    const updatedClocks = [...ta.clocks, { name: clockName, size: size }];
     const updatedTa = { ...ta, clocks: updatedClocks };
     setViewModel({ ...viewModel, ta: updatedTa });
   }, []);
 
   const editClock = useCallback(
-    (viewModel: AnalysisViewModel, clockName: string, prevClockName: string) => {
+    (viewModel: AnalysisViewModel, clockName: string, size: number, prevClockName: string) => {
       const updatedTa = { ...viewModel.ta };
       renameClock(prevClockName, clockName, updatedTa);
+      const changedClock = viewModel.ta.clocks.filter((clock)=> clock.name === clockName)[0];
+      changedClock.size = size;
       setViewModel({ ...viewModel, ta: updatedTa });
       setViewModel({ ...viewModel, ta: updatedTa });
     },

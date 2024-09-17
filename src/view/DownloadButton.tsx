@@ -54,7 +54,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
       //clocks are supposed to be global variables, don't write them multiple times
       const alreadyWritten = existingClocks.some((existingClock) => existingClock == clock.name);
       if (!alreadyWritten) {
-        const newClock = 'clock:' + '1' + ':' + clock.name + '\n';
+        const newClock = 'clock:' + clock.size + ':' + clock.name + '\n';
         clocks += newClock;
         existingClocks.push(clock.name);
       }
