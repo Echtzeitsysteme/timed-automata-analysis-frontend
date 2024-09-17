@@ -30,6 +30,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
   let processes = '';
   let events = '';
   let integers = '';
+  let synchronizations = ''
   const existingEvents: string[] = [];
   const existingClocks: string[] = [];
 
@@ -213,6 +214,29 @@ const createFile = async (currentSystem: SystemOptionType) => {
   taFile += events + '\n';
   taFile += integers + '\n';
   taFile += processes;
+
+  currentSystem.synchronizations.forEach((syncConstr) => {
+    let newSyncConstr = '';
+    let first: boolean = true;
+    syncConstr.syncs.forEach((sync) => {
+
+      let newSync = sync.process + '@' + sync.event;
+      if(sync.weakSynchronisation){
+        newSync += '?';
+      }
+
+      if (first) {
+        newSyncConstr += 'sync:' + newSync;
+        first = false;
+      } else {
+        newSyncConstr += ':' + newSync;
+      }
+    });
+    newSyncConstr += '\n';
+    synchronizations += newSyncConstr;
+  })
+
+  taFile += synchronizations;
   //console.log(taFile);
 
   return taFile;

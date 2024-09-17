@@ -4,6 +4,7 @@ import { Clock } from '../model/ta/clock';
 import { Switch } from '../model/ta/switch';
 import { Location } from '../model/ta/location';
 import { SwitchStatement } from '../model/ta/switchStatement.ts';
+import {Sync} from "../model/ta/sync.ts";
 
 export interface FormattingUtils {
   formatClockConstraint: (clockConstraint?: ClockConstraint, clauseJoinStr?: string) => string | undefined;
@@ -13,6 +14,7 @@ export interface FormattingUtils {
   formatLocationLabelVisual: (location: Location) => string;
   formatSwitchTable: (sw: Switch) => string;
   formatSwitchLabelVisual: (sw: Switch) => string;
+  formatSyncTable: (syncs: Sync[]) =>  string;
 }
 
 export function useFormattingUtils(): FormattingUtils {
@@ -97,6 +99,33 @@ export function useFormattingUtils(): FormattingUtils {
     [formatClockConstraint, formatReset, formatStatement]
   );
 
+  const formatSyncTable = useCallback( (syncs: Sync[]) => {
+    if(!syncs || syncs.length === 0){
+      return '';
+    }
+    let first = true;
+    let formattedSync = '<'
+    console.log(syncs);
+    syncs.forEach((sync) => {
+      if(!first){
+        formattedSync += ', ';
+      }
+      else{
+        first = false;
+      }
+      formattedSync += sync.process + '@' + sync.event;
+      if(sync.weakSynchronisation){
+        formattedSync += '?';
+      }
+    });
+    formattedSync += '>';
+
+    return formattedSync;
+      }, []
+  );
+
+
+
   return {
     formatClockConstraint: formatClockConstraint,
     formatReset: formatReset,
@@ -105,5 +134,6 @@ export function useFormattingUtils(): FormattingUtils {
     formatLocationLabelVisual: formatLocationLabelVisual,
     formatSwitchTable: formatSwitchTable,
     formatSwitchLabelVisual: formatSwitchLabelVisual,
+    formatSyncTable: formatSyncTable,
   };
 }

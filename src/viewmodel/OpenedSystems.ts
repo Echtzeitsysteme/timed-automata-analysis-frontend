@@ -2,11 +2,14 @@ import {AutomatonOptionType} from "./OpenedProcesses.ts";
 import React, {useCallback, useState} from "react";
 import {INIT_AUTOMATON} from "../utils/initAutomaton.ts";
 import {Integer} from "../model/ta/integer.ts";
+import {SyncConstraint} from "../model/ta/syncConstraint.ts";
+import {Sync} from "../model/ta/sync.ts";
 
 export interface SystemOptionType {
     label: string;
     processes: AutomatonOptionType[];
     integers: Integer[];
+    synchronizations: SyncConstraint[];
 }
 
 export interface OpenedSystems {
@@ -19,6 +22,9 @@ export interface OpenedSystems {
     addInteger: (openedSystems: OpenedSystems, name: string, size: number, min: number, max: number, init: number) => void;
     editInteger: (openedSystems: OpenedSystems, name: string, prevName: string, size: number, min: number, max: number, init: number) => void;
     removeInteger: (openedSystems: OpenedSystems, name: string) => void;
+    addSync: (openedSystems: OpenedSystems, syncConstraints: Sync[]) => void;
+    editSync: (openedSystems: OpenedSystems, syncConstraints: Sync[], prevConstraint: SyncConstraint) => void;
+    removeSync: (openedSystems: OpenedSystems, syncConstraint: SyncConstraint) => void;
 }
 
 export function useOpenedSystems(): OpenedSystems {
@@ -96,9 +102,40 @@ export function useOpenedSystems(): OpenedSystems {
         []
     );
 
+    //TODO
+    const addSync = useCallback((openedSystems: OpenedSystems, syncConstraints: Sync[]) => {
+        const system = openedSystems.selectedSystem;
+        const synchronizations = [...system.synchronizations];
+        const newSync: SyncConstraint = {syncs: syncConstraints};
+        if (!synchronizations.some((sync) => sync.syncs === newSync.syncs)) {
+        const updatedSynchronizations = [...synchronizations, newSync];
+        const updatedSystem = {...system, synchronizations: updatedSynchronizations};
+        setOpenedSystems({...openedSystems, selectedSystem: updatedSystem});
+        }
+    }, []);
+
+    //TODO
+    const editSync = useCallback((openedSystems: OpenedSystems, newSyncs: Sync[], prevConstraint: SyncConstraint) => {
+        const system = openedSystems.selectedSystem;
+        const synchronizations = [...system.synchronizations];
+        const synchronizationToEdit = synchronizations.filter((syncs) => syncs === prevConstraint)[0];
+        synchronizationToEdit.syncs = newSyncs;
+        const updatedSystem = {...system, synchronizations: synchronizations};
+        setOpenedSystems({...openedSystems, selectedSystem: updatedSystem});
+    }, []);
+
+    //TODO
+    const removeSync = useCallback((openedSystems: OpenedSystems, syncConstraint: SyncConstraint) => {
+        const system = openedSystems.selectedSystem;
+        const synchronizations = system.synchronizations;
+        const updatedSynchronizations = synchronizations.filter((syncs) => syncs !== syncConstraint);
+        const updatedSystem = {...system, synchronizations: updatedSynchronizations};
+        setOpenedSystems({...openedSystems, selectedSystem: updatedSystem});
+    }, []);
+
     const initialOption : SystemOptionType[] =
         [
-            {label: 'init_System', processes: [{label:'init_Process' , automaton:INIT_AUTOMATON }], integers: []}
+            {label: 'init_System', processes: [{label:'init_Process' , automaton:INIT_AUTOMATON }], integers: [], synchronizations: []}
         ];
     const [selectedOption, setSelectedOption] = React.useState<SystemOptionType>(initialOption[0]);
 
@@ -112,6 +149,9 @@ export function useOpenedSystems(): OpenedSystems {
         addInteger: addInteger,
         editInteger: editInteger,
         removeInteger: removeInteger,
+        addSync: addSync,
+        editSync: editSync,
+        removeSync: removeSync,
     });
 
     return openedSystems;

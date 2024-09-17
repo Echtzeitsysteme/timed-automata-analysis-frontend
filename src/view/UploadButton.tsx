@@ -15,6 +15,8 @@ import {Integer} from "../model/ta/integer.ts";
 import {handleConstr, handleStatement, handleTerm} from "../utils/uploadUtils.ts";
 import {FreeClause} from "../model/ta/freeClause.ts";
 import {SwitchStatement} from "../model/ta/switchStatement.ts";
+import {SyncConstraint} from "../model/ta/syncConstraint.ts";
+import {Sync} from "../model/ta/sync.ts";
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel; //für update Locations iwie?
@@ -33,6 +35,7 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
   const systemName: string = parsedData.system.name;
   const taProcesses: AutomatonOptionType[] = [];
   const integers: Integer[] = [];
+  const synchronizations: SyncConstraint[] = [];
 
   parsedData.items.forEach((item) => {
     if (item.type == 'process') {
@@ -208,7 +211,13 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
       });
     }
     if(item.type == 'sync'){
-      //TODO
+      const newSyncConstr: SyncConstraint = {syncs: []}
+      item.syncConstr.forEach((sync) => {
+        const newSync: Sync = {process: sync.process, event: sync.event}
+        newSync.weakSynchronisation = !!sync.weakSync;
+        newSyncConstr.syncs.push(newSync);
+      });
+      synchronizations.push(newSyncConstr);
     }
 
   });
@@ -223,14 +232,13 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
     });
   });*/
 
-  const systemOption = {label: systemName, processes: taProcesses, integers: integers};
+  const systemOption: SystemOptionType = {label: systemName, processes: taProcesses, integers: integers, synchronizations: synchronizations};
   console.log("All processes:", taProcesses);
   return systemOption;
 }
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
   const { viewModel, openedSystems, openedProcesses } = props;
-  const { constraintUsesClock } = useClockConstraintUtils();
 
   const handleClick = (uploadedFileEvent: React.ChangeEvent<HTMLInputElement>) => {
     const inputElem = uploadedFileEvent.target as HTMLInputElement & {
@@ -252,7 +260,7 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
       try {
         const parsedData = await parseFile(fileContent);
         console.log("parsed Data:", parsedData);
-        const systemOption = await convertToTa(parsedData, constraintUsesClock);
+        const systemOption = await convertToTa(parsedData);
         let systemName = systemOption.label;
 
         const one = 1;
@@ -263,7 +271,8 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
         });
         const processes: AutomatonOptionType[] = systemOption.processes;
         const integers: Integer[] = systemOption.integers;
-        const newSystem : SystemOptionType = {label: systemName, processes: processes, integers: integers};
+        const synchronizations: SyncConstraint[] = systemOption.synchronizations;
+        const newSystem : SystemOptionType = {label: systemName, processes: processes, integers: integers, synchronizations: synchronizations};
 
         openedProcesses.selectedOption.automaton = viewModel.ta;
         openedSystems.selectedSystem.processes =openedProcesses.automatonOptions;
