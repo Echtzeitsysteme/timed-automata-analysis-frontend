@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Clock } from '../model/ta/clock';
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTranslation } from 'react-i18next';
 import { useButtonUtils } from '../utils/buttonUtils';
@@ -39,7 +39,7 @@ export const ManipulateClockDialog: React.FC<ManipulateClockDialogProps> = (prop
       setSize('');
     } else {
       setClockName(prevClock.name);
-      setSize(prevClock.size.toString())
+      setSize(prevClock.size.toString());
     }
   }, [prevClock, open]);
 
@@ -52,16 +52,13 @@ export const ManipulateClockDialog: React.FC<ManipulateClockDialogProps> = (prop
   }, [clocks, prevClock]);
 
   useEffect(() => {
-    setIsSizeInvalid( size.trim() === ''  || parseInt(size) < 1 );
-    
+    setIsSizeInvalid(size.trim() === '' || parseInt(size) < 1);
+
     isSizeInvalid && setSizeErrorMsg('Size must be at least 1');
   }, [isSizeInvalid, size]);
-  
+
   const isValidationError = useMemo(
-    () => !clockName ||
-        otherClockNames.includes(clockName) ||
-        !size ||
-        isSizeInvalid,
+    () => !clockName || otherClockNames.includes(clockName) || !size || isSizeInvalid,
     [clockName, isSizeInvalid, otherClockNames, size]
   );
 
@@ -89,7 +86,7 @@ export const ManipulateClockDialog: React.FC<ManipulateClockDialogProps> = (prop
       return;
     }
     if (prevClock) {
-      handleSubmit(clockName, size, prevClock.name); //TODO potenziell falsch hier
+      handleSubmit(clockName, size, prevClock.name);
     } else {
       handleSubmit(clockName, size);
       // reset entries for next opening of dialog
@@ -118,8 +115,8 @@ export const ManipulateClockDialog: React.FC<ManipulateClockDialogProps> = (prop
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} alignItems="center">
-        <Grid item xs={7}>
-          <TextField
+          <Grid item xs={7}>
+            <TextField
               margin="dense"
               label={t('clockDialog.input.name')}
               type="text"
@@ -131,10 +128,10 @@ export const ManipulateClockDialog: React.FC<ManipulateClockDialogProps> = (prop
               helperText={errorMsg}
               style={{ marginBottom: '16px' }}
               data-testid={'input-clock-name'}
-          />
-        </Grid>
-        <Grid item xs={5}>
-          <TextField
+            />
+          </Grid>
+          <Grid item xs={5}>
+            <TextField
               margin="dense"
               label={'Size' /*t('clauses.input.value')*/}
               type="number"
@@ -147,8 +144,8 @@ export const ManipulateClockDialog: React.FC<ManipulateClockDialogProps> = (prop
               helperText={isSizeInvalid ? sizeErrorMsg : ''}
               style={{ marginBottom: '16px' }}
               data-testid={'select-clock-size'}
-          />
-        </Grid>
+            />
+          </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
