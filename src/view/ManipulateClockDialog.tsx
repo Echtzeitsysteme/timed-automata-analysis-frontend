@@ -86,9 +86,9 @@ export const ManipulateClockDialog: React.FC<ManipulateClockDialogProps> = (prop
       return;
     }
     if (prevClock) {
-      handleSubmit(clockName, size, prevClock.name);
+      handleSubmit(clockName.trim(), size, prevClock.name);
     } else {
-      handleSubmit(clockName, size);
+      handleSubmit(clockName.trim(), size);
       // reset entries for next opening of dialog
       setClockName('');
       setSize('');

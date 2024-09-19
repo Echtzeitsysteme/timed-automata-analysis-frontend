@@ -43,16 +43,8 @@ function App() {
       <h1 style={{ paddingLeft: '16px' }} ref={headerRef}>
         ⏰ {t('app.title')}
       </h1>
-      <AutomatonDrawer
-        viewModel={viewModel}
-        openedSystems={openedSystems}
-        openedProcesses={openedProcesses}
-      ></AutomatonDrawer>
-      <ProcessSelection
-        viewModel={viewModel}
-        openedSystems={openedSystems}
-        openedProcesses={openedProcesses}
-      ></ProcessSelection>
+      <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
+      <ProcessSelection viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
       <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid

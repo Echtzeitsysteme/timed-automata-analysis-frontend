@@ -1,5 +1,5 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import { Autocomplete, Box, FormControl, FormHelperText, Input, InputLabel, TextField } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Autocomplete, Box, TextField } from '@mui/material';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
@@ -37,7 +37,7 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
       };
       const newTA: TimedAutomaton = { locations: [startLoc], clocks: [], switches: [] };
       const newOption: SystemOptionType = {
-        label: newSystemName,
+        label: newSystemName.trim(),
         processes: [{ label: 'init_Process', automaton: newTA }],
         integers: [],
         synchronizations: [],
@@ -65,35 +65,30 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
   };
 
   useEffect(() => {
-    setNameIsEmpty( newSystemName.trim() === '');
-    setNameIsDuplicate( options.some((option) => option.label.toLowerCase() === newSystemName.trim().toLowerCase() ));
+    setNameIsEmpty(newSystemName.trim() === '');
+    setNameIsDuplicate(options.some((option) => option.label.toLowerCase() === newSystemName.trim().toLowerCase()));
 
     nameIsEmpty && setNameErrorMsg('Name darf nicht leer sein');
     nameIsDuplicate && setNameErrorMsg('System existiert bereits');
   }, [nameIsDuplicate, nameIsEmpty, newSystemName, options]);
 
-  const validationError: boolean = useMemo(
-      () =>
-          nameIsEmpty ||
-          nameIsDuplicate,
-      [nameIsDuplicate, nameIsEmpty]
-  );
+  const validationError: boolean = useMemo(() => nameIsEmpty || nameIsDuplicate, [nameIsDuplicate, nameIsEmpty]);
 
   return (
     <Box sx={{ ml: 0.2 }}>
       <Box sx={{ alignItems: 'center', mb: 0.2 }}>
         <TextField
-            sx={{ width: 200, mr: 0.2 }}
-            margin="dense"
-            label={'Enter New System'}
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={newSystemName}
-            onChange={(e) => setNewSystemName(e.target.value)}
-            error={validationError}
-            helperText={validationError ? nameErrorMsg : ''}
-            data-testid={'input-system-name'}
+          sx={{ width: 200, mr: 0.2 }}
+          margin="dense"
+          label={'Enter New System'}
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={newSystemName}
+          onChange={(e) => setNewSystemName(e.target.value)}
+          error={validationError}
+          helperText={validationError ? nameErrorMsg : ''}
+          data-testid={'input-system-name'}
         />
         <Button variant="contained" disabled={validationError} onClick={addSystem} sx={{ mb: 1 }}>
           <AddIcon></AddIcon>
@@ -132,7 +127,7 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
           options={optionLabels}
           renderInput={(params) => <TextField {...params} label="Select System" />}
         ></Autocomplete>
-        <Button variant="contained" disabled={options.length === 1} onClick={deleteSystem} sx={{mt:0.2}}>
+        <Button variant="contained" disabled={options.length === 1} onClick={deleteSystem} sx={{ mt: 0.2 }}>
           <DeleteIcon></DeleteIcon>
           Discard System
         </Button>

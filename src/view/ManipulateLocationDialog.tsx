@@ -173,7 +173,7 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
     const labelsList: string[] | undefined = labelListChecked ? transformToLabelsList(labels) : undefined;
     if (locPrevVersion) {
       handleSubmit(
-        name,
+        name.trim(),
         initialLocationChecked,
         invariant,
         committedChecked,
@@ -183,7 +183,7 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
       );
       // value reset not needed for editing because values are loaded from existing version
     } else {
-      handleSubmit(name, initialLocationChecked, invariant, committedChecked, urgentChecked, labelsList);
+      handleSubmit(name.trim(), initialLocationChecked, invariant, committedChecked, urgentChecked, labelsList);
       // reset values for next opening of dialog
       setName('');
       setInvariantChecked(false);

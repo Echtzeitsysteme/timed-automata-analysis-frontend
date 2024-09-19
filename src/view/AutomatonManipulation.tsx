@@ -17,10 +17,9 @@ import ManipulateClockDialog from './ManipulateClockDialog';
 import { OpenedSystems } from '../viewmodel/OpenedSystems.ts';
 import { Integer } from '../model/ta/integer.ts';
 import ManipulateIntegerDialog from './ManipulateIntegerDialog.tsx';
-import {SwitchStatement} from "../model/ta/switchStatement.ts";
-import {ManipulateSyncDialog} from "./ManipulateSyncDialog.tsx";
-import {SyncConstraint} from "../model/ta/syncConstraint.ts";
-import {Sync} from "../model/ta/sync.ts";
+import { SwitchStatement } from '../model/ta/switchStatement.ts';
+import { ManipulateSyncDialog } from './ManipulateSyncDialog.tsx';
+import { SyncConstraint } from '../model/ta/syncConstraint.ts';
 
 interface ManipulationProps {
   viewModel: AnalysisViewModel;
@@ -79,8 +78,14 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   );
   const handleLocationEditClose = () => setLocationEditOpen(false);
 
-  const handleLocationAdd =
-      (locationName: string, isInitial?: boolean, invariant?: ClockConstraint, committed?: boolean, urgent?: boolean, labels?: string[],) => {
+  const handleLocationAdd = (
+    locationName: string,
+    isInitial?: boolean,
+    invariant?: ClockConstraint,
+    committed?: boolean,
+    urgent?: boolean,
+    labels?: string[]
+  ) => {
     addLocation(viewModel, locationName, isInitial, invariant, committed, urgent, labels);
     setLocationAddOpen(false);
   };
@@ -259,7 +264,7 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   );
 
   const clockTable: JSX.Element = useMemo(() => {
-    const clockRows = clocks.map((clock, index) => ({ id: index, displayName: clock.name+', size:'+clock.size }));
+    const clockRows = clocks.map((clock, index) => ({ id: index, displayName: clock.name + ', size:' + clock.size }));
     return (
       <ElementTable
         rows={clockRows}
@@ -349,16 +354,16 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   }, [integers, handleIntegerDelete, handleIntegerEditOpen]);
 
   // ===== manipulate SyncConstraint ===================================================
-  //TODO
+
   const handleSyncAddOpen = () => setSyncAddOpen(true);
   const handleSyncAddClose = () => setSyncAddOpen(false);
 
   const handleSyncEditOpen = useCallback(
-      (id: number) => {
-        setSyncToEdit(synchronizations[id]);
-        setSyncEditOpen(true);
-      },
-      [synchronizations]
+    (id: number) => {
+      setSyncToEdit(synchronizations[id]);
+      setSyncEditOpen(true);
+    },
+    [synchronizations]
   );
   const handleSyncEditClose = () => setSyncEditOpen(false);
 
@@ -367,11 +372,8 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
     setSyncAddOpen(false);
   };
 
-  const handleSyncEdit = (
-      syncConstraint: SyncConstraint,
-      prevSync?: SyncConstraint,
-  ) => {
-     if(!prevSync) {
+  const handleSyncEdit = (syncConstraint: SyncConstraint, prevSync?: SyncConstraint) => {
+    if (!prevSync) {
       throw Error('handleSyncEdit: prevSyncId is empty or undefined');
     }
     editSync(openedSystems, syncConstraint.syncs, prevSync);
@@ -379,11 +381,11 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
   };
 
   const handleSyncDelete = useCallback(
-      (id: number) => {
-        const syncToDelete = synchronizations[id];
-        removeSync(openedSystems, syncToDelete);
-      },
-      [openedSystems, removeSync, synchronizations]
+    (id: number) => {
+      const syncToDelete = synchronizations[id];
+      removeSync(openedSystems, syncToDelete);
+    },
+    [openedSystems, removeSync, synchronizations]
   );
 
   const syncTable: JSX.Element = useMemo(() => {
@@ -393,15 +395,15 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
     }));
 
     return (
-        <ElementTable
-            rows={syncRows}
-            contentSingular={'Sync' /*irgendeine t()-sache*/}
-            contentPlural={'Sync' /*irgendeine t()-sache*/}
-            typeForTestId={'sync'}
-            onAddOpen={handleSyncAddOpen}
-            onEditOpen={handleSyncEditOpen}
-            onDelete={handleSyncDelete}
-        />
+      <ElementTable
+        rows={syncRows}
+        contentSingular={'Sync' /*irgendeine t()-sache*/}
+        contentPlural={'Sync' /*irgendeine t()-sache*/}
+        typeForTestId={'sync'}
+        onAddOpen={handleSyncAddOpen}
+        onEditOpen={handleSyncEditOpen}
+        onDelete={handleSyncDelete}
+      />
     );
   }, [formatSyncTable, handleSyncDelete, handleSyncEditOpen, synchronizations]);
 
@@ -488,20 +490,20 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
         intPrevVersion={integerToEdit}
       />
       <ManipulateSyncDialog
-          open={syncAddOpen}
-          synchronizations={synchronizations}
-          processes={processes}
-          handleClose={handleSyncAddClose}
-          handleSubmit={handleSyncAdd}
-          syncPrevVersion={undefined}
+        open={syncAddOpen}
+        synchronizations={synchronizations}
+        processes={processes}
+        handleClose={handleSyncAddClose}
+        handleSubmit={handleSyncAdd}
+        syncPrevVersion={undefined}
       />
       <ManipulateSyncDialog
-          open={syncEditOpen}
-          synchronizations={synchronizations}
-          processes={processes}
-          handleClose={handleSyncEditClose}
-          handleSubmit={handleSyncEdit}
-          syncPrevVersion={syncToEdit}
+        open={syncEditOpen}
+        synchronizations={synchronizations}
+        processes={processes}
+        handleClose={handleSyncEditClose}
+        handleSubmit={handleSyncEdit}
+        syncPrevVersion={syncToEdit}
       />
     </>
   );

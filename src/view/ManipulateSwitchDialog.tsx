@@ -274,10 +274,10 @@ export const ManipulateSwitchDialog: React.FC<ManipulateSwitchDialogProps> = (pr
     const statement: SwitchStatement | undefined =
       statementChecked && statements.length > 0 ? transformToSwitchStatement(statements) : undefined;
     if (switchPrevVersion) {
-      handleSubmit(source, action, resetNames, target, guard, statement, switchPrevVersion);
+      handleSubmit(source, action.trim(), resetNames, target, guard, statement, switchPrevVersion);
       // value reset not needed for editing because values are loaded from existing version
     } else {
-      handleSubmit(source, action, resetNames, target, guard, statement);
+      handleSubmit(source, action.trim(), resetNames, target, guard, statement);
       // reset values for next opening of dialog
       setAction('');
       setSource('');

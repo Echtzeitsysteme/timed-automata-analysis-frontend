@@ -53,7 +53,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
     }
     if (intPrevVersion !== undefined) {
       // load existing integer if editing (for adding, "if" prevents entering this)
-      setName(intPrevVersion.name);
+      setName(intPrevVersion.name.trim());
       setSize(intPrevVersion.size.toString());
       setMin(intPrevVersion.min.toString());
       setMax(intPrevVersion.max.toString());
@@ -143,10 +143,10 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
       return;
     }
     if (intPrevVersion) {
-      handleSubmit(name, size, min, max, init, intPrevVersion.name);
+      handleSubmit(name.trim(), size, min, max, init, intPrevVersion.name);
       // value reset not needed for editing because values are loaded from existing version
     } else {
-      handleSubmit(name, size, min, max, init);
+      handleSubmit(name.trim(), size, min, max, init);
       // reset values for next opening of dialog
       setName('');
       setSize('');

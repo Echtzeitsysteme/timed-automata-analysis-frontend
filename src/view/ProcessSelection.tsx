@@ -1,5 +1,5 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import { Autocomplete, Box, FormControl, FormHelperText, Input, InputLabel, TextField } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Autocomplete, Box, TextField } from '@mui/material';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
@@ -36,7 +36,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
         yCoordinate: 100,
       };
       const newTA: TimedAutomaton = { locations: [startLoc], clocks: [], switches: [] };
-      const newOption: AutomatonOptionType = { label: newProcessName, automaton: newTA };
+      const newOption: AutomatonOptionType = { label: newProcessName.trim(), automaton: newTA };
       openedProcesses.selectedOption.automaton = viewModel.ta;
       openedProcesses.addAutomatonOption(openedProcesses, newOption);
       //console.log('newProcessOptions:', openedProcesses.automatonOptions);
@@ -61,35 +61,30 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
   };
 
   useEffect(() => {
-    setNameIsEmpty( newProcessName.trim() === '');
-    setNameIsDuplicate( options.some((option) => option.label.toLowerCase() === newProcessName.trim().toLowerCase() ));
+    setNameIsEmpty(newProcessName.trim() === '');
+    setNameIsDuplicate(options.some((option) => option.label.toLowerCase() === newProcessName.trim().toLowerCase()));
 
     nameIsEmpty && setNameErrorMsg('Name darf nicht leer sein');
     nameIsDuplicate && setNameErrorMsg('Prozess existiert bereits');
   }, [nameIsDuplicate, nameIsEmpty, newProcessName, options]);
-  
-  const validationError: boolean = useMemo(
-      () =>
-          nameIsEmpty ||
-          nameIsDuplicate,
-      [nameIsDuplicate, nameIsEmpty]
-  );
-  
+
+  const validationError: boolean = useMemo(() => nameIsEmpty || nameIsDuplicate, [nameIsDuplicate, nameIsEmpty]);
+
   return (
     <Box sx={{ display: 'inline-flex' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, mr: 0.2}}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, mr: 0.2 }}>
         <TextField
-            sx={{ width: 200, mr: 0.2 }}
-            margin="dense"
-            label={'Enter New Process'}
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={newProcessName}
-            onChange={(e) => setNewProcessName(e.target.value)}
-            error={validationError}
-            helperText={validationError ? nameErrorMsg : ''}
-            data-testid={'input-process-name'}
+          sx={{ width: 200, mr: 0.2 }}
+          margin="dense"
+          label={'Enter New Process'}
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={newProcessName}
+          onChange={(e) => setNewProcessName(e.target.value)}
+          error={validationError}
+          helperText={validationError ? nameErrorMsg : ''}
+          data-testid={'input-process-name'}
         />
         <Button variant="contained" disabled={validationError} onClick={addProcess} sx={{ mb: 2 }}>
           <AddIcon></AddIcon>
