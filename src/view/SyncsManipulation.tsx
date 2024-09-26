@@ -1,4 +1,15 @@
-import { FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Tooltip } from '@mui/material';
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Tooltip,
+} from '@mui/material';
 import React, { useMemo } from 'react';
 import { useButtonUtils } from '../utils/buttonUtils.ts';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,7 +23,7 @@ interface SyncsManipulationProps {
 
 export const SyncsManipulation: React.FC<SyncsManipulationProps> = (props) => {
   const { viewModel, processes } = props;
-  const { syncs, deleteSync, changeSync } = viewModel;
+  const { syncs, deleteSync, changeSync, changeWeakOrNot } = viewModel;
 
   //const { t } = useTranslation();
   const { executeOnKeyboardClick } = useButtonUtils();
@@ -43,7 +54,7 @@ export const SyncsManipulation: React.FC<SyncsManipulationProps> = (props) => {
               </Tooltip>
             </IconButton>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={4}>
             <FormControl fullWidth>
               <InputLabel>{'Prozess' /*t('clauses.input.clock')*/}</InputLabel>
               <Select
@@ -57,7 +68,7 @@ export const SyncsManipulation: React.FC<SyncsManipulationProps> = (props) => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <TextField
               margin="dense"
               label={'Aktion' /*t('clauses.input.value')*/}
@@ -68,6 +79,18 @@ export const SyncsManipulation: React.FC<SyncsManipulationProps> = (props) => {
               InputProps={{ inputProps: { min: 1 } }}
               error={row.isActionInvalid}
               data-testid={'enter-action-row'}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={!!row.weakSync}
+                  onChange={(e) => changeWeakOrNot(viewModel, row.id, e.target.checked)}
+                />
+              }
+              label={'schwache Sync' /*t('locDialog.hasInvariant')*/}
+              data-testid={'checkbox-sync-is-weak'}
             />
           </Grid>
         </Grid>
