@@ -28,6 +28,9 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
 
     const data: Data = mapTaToVisDataModel(ta);
     const options: Options = {
+      groups: {
+        startGroup: { color: { background: '#d3d3d3' }, borderWidth: 2 },
+      },
       nodes: {
         shape: 'box',
         color: {
