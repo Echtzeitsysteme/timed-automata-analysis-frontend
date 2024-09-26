@@ -89,41 +89,56 @@ item
  | syncDef {$$ = $1;}
  ;
 
+identifier
+ : TOK_ID {$$ = $1;}
+ | TOK_INIT {$$ = $1;}
+ | TOK_LABELS {$$ = $1;}
+ | TOK_INVAR {$$ = $1;}
+ | TOK_COMMIT {$$ = $1;}
+ | TOK_URGENT {$$ = $1;}
+ | TOK_PROV {$$ = $1;}
+ | TOK_DO {$$ = $1;}
+ | TOK_THEN {$$ = $1;}
+ | TOK_END {$$ = $1;}
+ | TOK_ELSE {$$ = $1;}
+ | TOK_LOCAL {$$ = $1;}
+ | TOK_LAYOUT {$$ = $1;}
+ ;
 
 systemDef
- : TOK_SYSTEM TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attributes: $4};}
- | TOK_SYSTEM TOK_COLON TOK_ID { $$ = {type: $1, name: $3};}
+ : TOK_SYSTEM TOK_COLON identifier attributeList { $$ = {type: $1, name: $3, attributes: $4};}
+ | TOK_SYSTEM TOK_COLON identifier { $$ = {type: $1, name: $3};}
  ;
 
 processDef
- : TOK_PROCESS TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attributes: $4};}
- | TOK_PROCESS TOK_COLON TOK_ID { $$ = {type: $1, name: $3};}
+ : TOK_PROCESS TOK_COLON identifier attributeList { $$ = {type: $1, name: $3, attributes: $4};}
+ | TOK_PROCESS TOK_COLON identifier { $$ = {type: $1, name: $3};}
  ;
 
 eventDef
- : TOK_EVENT TOK_COLON TOK_ID attributeList { $$ = {type: $1, name: $3, attributes: $4};}
- | TOK_EVENT TOK_COLON TOK_ID { $$ = {type: $1, name: $3};}
+ : TOK_EVENT TOK_COLON identifier attributeList { $$ = {type: $1, name: $3, attributes: $4};}
+ | TOK_EVENT TOK_COLON identifier { $$ = {type: $1, name: $3};}
  ;
 
 clockDef
- : TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = {type: $1, amount: $3, name: $5, attributes: $6};}
- | TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = {type: $1, amount: $3, name: $5};}
+ : TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON identifier attributeList { $$ = {type: $1, amount: $3, name: $5, attributes: $6};}
+ | TOK_CLOCK TOK_COLON TOK_INTEGER TOK_COLON identifier { $$ = {type: $1, amount: $3, name: $5};}
  ;
 
 intDef
- : TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID attributeList { $$ = {type: $1, size: $3, min: $5, max: $7, init: $9, name: $11, attributes: $12};}
- | TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_ID { $$ = {type: $1, size: $3, min: $5, max: $7, init: $9, name: $11};}
+ : TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON identifier attributeList { $$ = {type: $1, size: $3, min: $5, max: $7, init: $9, name: $11, attributes: $12};}
+ | TOK_INT TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON TOK_INTEGER TOK_COLON identifier { $$ = {type: $1, size: $3, min: $5, max: $7, init: $9, name: $11};}
  ;
 
 locationDef
- : TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = { type: $1, processName: $3, name: $5, attributes: $6};}
- | TOK_LOCATION TOK_COLON TOK_ID TOK_COLON TOK_ID { $$ = { type: $1, processName: $3, name: $5};}
+ : TOK_LOCATION TOK_COLON identifier TOK_COLON identifier attributeList { $$ = { type: $1, processName: $3, name: $5, attributes: $6};}
+ | TOK_LOCATION TOK_COLON identifier TOK_COLON identifier { $$ = { type: $1, processName: $3, name: $5};}
  ;
 
 
 edgeDef
- : TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID attributeList { $$ = { type: $1, processName: $3, source: $5, target: $7, event: $9, attributes: $10};}
- | TOK_EDGE TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID TOK_COLON TOK_ID { $$ = { type: $1, processName: $3, source: $5, target: $7, event: $9};}
+ : TOK_EDGE TOK_COLON identifier TOK_COLON identifier TOK_COLON identifier TOK_COLON identifier attributeList { $$ = { type: $1, processName: $3, source: $5, target: $7, event: $9, attributes: $10};}
+ | TOK_EDGE TOK_COLON identifier TOK_COLON identifier TOK_COLON identifier TOK_COLON identifier { $$ = { type: $1, processName: $3, source: $5, target: $7, event: $9};}
  ;
 
 syncDef
@@ -137,8 +152,8 @@ syncConstraints
  ;
 
 syncConstraint
- : TOK_ID TOK_AT TOK_ID { $$ = {process:$1, event: $3};}
- | TOK_ID TOK_AT TOK_ID TOK_QMARK { $$ = {process:$1, event: $3, weakSync: $4};}
+ : identifier TOK_AT identifier { $$ = {process:$1, event: $3};}
+ | identifier TOK_AT identifier TOK_QMARK { $$ = {process:$1, event: $3, weakSync: $4};}
  ;
 
 attributeList
@@ -169,8 +184,8 @@ coordinate
  ;
 
 labelsList
- : TOK_ID {$$ = [$1];}
- | labelsList TOK_COMMA TOK_ID {$1.push($3); $$ = $1;}
+ : identifier {$$ = [$1];}
+ | labelsList TOK_COMMA identifier {$1.push($3); $$ = $1;}
  ;
 
 constraints
@@ -202,8 +217,8 @@ term
 
 atomic_term
  : TOK_INTEGER {$$ = {value: $1};}
- | TOK_ID {$$ = {identifier: $1};}
- | TOK_ID TOK_LBRACKET term TOK_RBRACKET {$$ = {identifier: $1, insideBrackets: $3};}
+ | identifier {$$ = {identifier: $1};}
+ | identifier TOK_LBRACKET term TOK_RBRACKET {$$ = {identifier: $1, insideBrackets: $3};}
  ;
 
 statements
@@ -224,9 +239,9 @@ do_term
  ;
 
 local_statement
- : TOK_LOCAL TOK_ID {$$ = {local: $1, identifier: $2};}
- | TOK_LOCAL TOK_ID TOK_LBRACKET term TOK_RBRACKET {$$ = {local: $1, identifier: $2, insideBrackets: $4};}
- | TOK_LOCAL TOK_ID TOK_SET term  {$$ = {local: $1, identifier: $2, set: $3, term: 4};}
+ : TOK_LOCAL identifier {$$ = {local: $1, identifier: $2};}
+ | TOK_LOCAL identifier TOK_LBRACKET term TOK_RBRACKET {$$ = {local: $1, identifier: $2, insideBrackets: $4};}
+ | TOK_LOCAL identifier TOK_SET term  {$$ = {local: $1, identifier: $2, set: $3, term: 4};}
  ;
 
 if_statement
