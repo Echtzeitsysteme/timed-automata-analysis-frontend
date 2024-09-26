@@ -96,7 +96,7 @@ export function useSyncConstraintViewModel(): SyncViewModel {
           updatedRow.isProcessInvalid = !value;
         }
         if (field === 'actionValue') {
-          updatedRow.isComparisonInvalid = !value;
+          updatedRow.isActionInvalid = !value;
         }
         return updatedRow;
       }

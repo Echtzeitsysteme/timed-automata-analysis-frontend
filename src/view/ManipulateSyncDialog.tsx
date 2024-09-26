@@ -30,6 +30,7 @@ export const ManipulateSyncDialog: React.FC<ManipulateSyncDialog> = (props) => {
     const [justOpened, setJustOpened] = useState(true);
     const [lessThanTwoSyncs, setLessThanTwoSyncs] = useState(false);
     const [sizeErrorMessage, setSizeErrorMessage] = useState('');
+    const [someFieldInvalid, setSomeFieldInvalid] = useState(false);
     
     // effect for setting initial values upon opening the dialog
     useEffect(() => {
@@ -48,13 +49,15 @@ export const ManipulateSyncDialog: React.FC<ManipulateSyncDialog> = (props) => {
     useEffect(() => {
         // check validity of name field
         setLessThanTwoSyncs(syncs.length < 2);
+        setSomeFieldInvalid( syncConstraintViewModel.isValidationError );
         
         lessThanTwoSyncs && setSizeErrorMessage('Weniger als 2 SyncConstraint vorhanden');
-    }, [lessThanTwoSyncs, syncs.length]);
+    }, [lessThanTwoSyncs, syncConstraintViewModel.isValidationError, syncs.length]);
 
     const isValidationError: boolean = useMemo(
-        () => lessThanTwoSyncs,
-        [lessThanTwoSyncs]);
+        () => lessThanTwoSyncs ||
+            someFieldInvalid,
+        [lessThanTwoSyncs, someFieldInvalid]);
 
     const handleCloseDialog = () => {
         // reset entries when dialog is closed
