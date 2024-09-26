@@ -89,7 +89,7 @@ item
  | syncDef {$$ = $1;}
  ;
 
-identifier
+stmtidentifier
  : TOK_ID {$$ = $1;}
  | TOK_INIT {$$ = $1;}
  | TOK_LABELS {$$ = $1;}
@@ -103,6 +103,25 @@ identifier
  | TOK_ELSE {$$ = $1;}
  | TOK_LOCAL {$$ = $1;}
  | TOK_LAYOUT {$$ = $1;}
+ ;
+
+identifier 
+ : TOK_ID {$$ = $1;}
+ | TOK_INIT {$$ = $1;}
+ | TOK_LABELS {$$ = $1;}
+ | TOK_INVAR {$$ = $1;}
+ | TOK_COMMIT {$$ = $1;}
+ | TOK_URGENT {$$ = $1;}
+ | TOK_PROV {$$ = $1;}
+ | TOK_DO {$$ = $1;}
+ | TOK_THEN {$$ = $1;}
+ | TOK_END {$$ = $1;}
+ | TOK_ELSE {$$ = $1;}
+ | TOK_LOCAL {$$ = $1;}
+ | TOK_LAYOUT {$$ = $1;}
+ | TOK_IF {$$ = $1;}
+ | TOK_WHILE {$$ = $1;}
+ | TOK_NOP {$$ = $1;}
  ;
 
 systemDef
@@ -234,8 +253,22 @@ statement
  | while_statement {$$ = {whileStatement: $1};}
  ;
 
+stmtterm
+ : atomic_stmtterm {$$ = {term: $1};}
+ | TOK_MINUS stmtterm {$$ = {minus: $1, term: $2};}
+ | TOK_LPARENTHESES stmtterm TOK_RPARENTHESES {$$ = {termInParen: $2};}
+ | TOK_LPARENTHESES stmtterm TOK_RPARENTHESES maths stmtterm {$$ = {termInParenL: $2, maths: $4, termR: $5};}
+ | atomic_stmtterm maths stmtterm {$$ = {termL: $1, maths: $2, termR: $3};}
+ ;
+
+atomic_stmtterm
+ : TOK_INTEGER {$$ = {value: $1};}
+ | stmtidentifier {$$ = {identifier: $1};}
+ | stmtidentifier TOK_LBRACKET stmtterm TOK_RBRACKET {$$ = {identifier: $1, insideBrackets: $3};}
+ ;
+
 do_term
- : term TOK_SET term {$$ = {lhs: $1, set: $2, rhs: $3};}
+ : stmtterm TOK_SET stmtterm {$$ = {lhs: $1, set: $2, rhs: $3};}
  ;
 
 local_statement
