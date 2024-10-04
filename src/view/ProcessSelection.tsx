@@ -71,10 +71,10 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
   const validationError: boolean = useMemo(() => nameIsEmpty || nameIsDuplicate, [nameIsDuplicate, nameIsEmpty]);
 
   return (
-    <Box sx={{ display: 'inline-flex' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, mr: 0.2 }}>
+    <Box sx={{ display: 'inline-flex', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
         <TextField
-          sx={{ width: 200, mr: 0.2 }}
+          sx={{ width: 200, mr: 0.5 }}
           margin="dense"
           label={'Enter New Process'}
           type="text"
@@ -83,17 +83,17 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
           value={newProcessName}
           onChange={(e) => setNewProcessName(e.target.value)}
           error={validationError}
-          helperText={validationError ? nameErrorMsg : ''}
+          helperText={validationError ? nameErrorMsg : ' '}
           data-testid={'input-process-name'}
         />
-        <Button variant="contained" disabled={validationError} onClick={addProcess} sx={{ mb: 2 }}>
-          <AddIcon></AddIcon>
+        <Button variant="contained" disabled={validationError} onClick={addProcess} sx={{mb: 2}}>
+          <AddIcon/>
           Add Process
         </Button>
       </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2.3 }}>
         <Autocomplete
-          sx={{ width: 200, mr: 0.2 }}
+          sx={{ width: 200, mr: 0.5 }}
           id="select-automaton"
           freeSolo
           selectOnFocus
@@ -116,9 +116,9 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
           }}
           options={optionLabels}
           renderInput={(params) => <TextField {...params} label="Select Process" />}
-        ></Autocomplete>
+        />
         <Button variant="contained" disabled={options.length === 1} onClick={deleteProcess}>
-          <DeleteIcon></DeleteIcon>
+          <DeleteIcon/>
           Discard Process
         </Button>
       </Box>

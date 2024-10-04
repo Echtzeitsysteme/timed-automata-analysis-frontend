@@ -18,11 +18,22 @@ function App() {
 
   // calculate size of content elements so that content always fits the window size
   const headerRef = useRef<HTMLHeadingElement>(null);
+  const toolRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState(window.innerHeight);
+  const [toolbarHeight, setToolbarHeight] = useState(0);
 
   useLayoutEffect(() => {
     const updateContentHeight = () => {
       const headerEl = headerRef.current;
+      const toolEl = toolRef.current;
+      if(toolEl){
+        const style = window.getComputedStyle(toolEl);
+        const marginTop = parseInt(style.marginTop, 10);
+        const marginBottom = parseInt(style.marginBottom, 10);
+        const totalToolBarHeight = toolEl.offsetHeight + marginTop + marginBottom;
+        setToolbarHeight(totalToolBarHeight);
+      }
+
       if (headerEl) {
         const style = window.getComputedStyle(headerEl);
         const marginTop = parseInt(style.marginTop, 10);
@@ -43,9 +54,11 @@ function App() {
       <h1 style={{ paddingLeft: '16px' }} ref={headerRef}>
         ⏰ {t('app.title')}
       </h1>
-      <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
-      <ProcessSelection viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
-      <Box sx={{ display: 'flex', height: `${contentHeight - 1}px`, overflow: 'hidden' }}>
+      <Box ref={toolRef} sx={{ display: 'flex', alignItems: 'center'}}>
+        <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
+        <ProcessSelection viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
+      </Box>
+      <Box sx={{ display: 'flex', height: `${contentHeight - toolbarHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid
             item

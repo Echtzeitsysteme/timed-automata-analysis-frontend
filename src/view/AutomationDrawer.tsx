@@ -46,7 +46,7 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
   };
 
   return (
-    <Box sx={{ display: 'inline-flex' }}>
+    <Box sx={{ display: 'inline-flex', mb: 2 }}>
       <CssBaseline />
       <IconButton
         color="inherit"
@@ -76,12 +76,12 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <Box sx={{ display: 'inline-flex', alignItems: 'center', mt: 1, mb: 1 }}>
+        <Box sx={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center', mt: 1, mb: 1 }}>
           <UploadButton viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
           <DownloadButton viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
         </Box>
         <Divider />
-        <Box sx={{ display: 'inline-flex', mt: 1, mb: 1 }}>
+        <Box sx={{ justifyContent: 'flex-start', display: 'inline-flex', mt: 1, mb: 1, ml: 2 }}>
           <SystemSelection viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
         </Box>
       </Drawer>
