@@ -55,7 +55,7 @@ export const ManipulateClockDialog: React.FC<ManipulateClockDialogProps> = (prop
     setIsSizeInvalid(size.trim() === '' || parseInt(size) < 1);
 
     isSizeInvalid && setSizeErrorMsg(t('clockDialog.errorSizeInvalid'));
-  }, [isSizeInvalid, size]);
+  }, [isSizeInvalid, size, t]);
 
   const isValidationError = useMemo(
     () => !clockName || otherClockNames.includes(clockName) || !size || isSizeInvalid,
