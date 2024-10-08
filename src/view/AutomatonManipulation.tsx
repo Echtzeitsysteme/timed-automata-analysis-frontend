@@ -343,15 +343,15 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
     return (
       <ElementTable
         rows={integerRows}
-        contentSingular={'Integer' /*irgendeine t()-sache*/}
-        contentPlural={'Integer' /*irgendeine t()-sache*/}
+        contentSingular={t('manipulation.table.integerSingular')}
+        contentPlural={t('manipulation.table.integerPlural')}
         typeForTestId={'integer'}
         onAddOpen={handleIntegerAddOpen}
         onEditOpen={handleIntegerEditOpen}
         onDelete={handleIntegerDelete}
       />
     );
-  }, [integers, handleIntegerDelete, handleIntegerEditOpen]);
+  }, [integers, t, handleIntegerEditOpen, handleIntegerDelete]);
 
   // ===== manipulate SyncConstraint ===================================================
 
@@ -397,15 +397,15 @@ export const AutomatonManipulation: React.FC<ManipulationProps> = (props) => {
     return (
       <ElementTable
         rows={syncRows}
-        contentSingular={'Sync' /*irgendeine t()-sache*/}
-        contentPlural={'Sync' /*irgendeine t()-sache*/}
+        contentSingular={t('manipulation.table.syncSingular')}
+        contentPlural={t('manipulation.table.syncPlural')}
         typeForTestId={'sync'}
         onAddOpen={handleSyncAddOpen}
         onEditOpen={handleSyncEditOpen}
         onDelete={handleSyncDelete}
       />
     );
-  }, [formatSyncTable, handleSyncDelete, handleSyncEditOpen, synchronizations]);
+  }, [formatSyncTable, handleSyncDelete, handleSyncEditOpen, synchronizations, t]);
 
   // ===========================================================================
 

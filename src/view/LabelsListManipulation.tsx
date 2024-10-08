@@ -3,6 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useButtonUtils } from '../utils/buttonUtils';
 import { LabelsViewModel } from '../viewmodel/LabelsListViewModel.ts';
 import React from 'react';
+import {useTranslation} from "react-i18next";
 
 interface LabelsManipulationProps {
   viewModel: LabelsViewModel;
@@ -11,7 +12,7 @@ interface LabelsManipulationProps {
 export const LabelsListManipulation: React.FC<LabelsManipulationProps> = (props) => {
   const { viewModel } = props;
   const { labels, deleteLabel, changeLabel } = viewModel;
-  //const { t } = useTranslation();
+  const { t } = useTranslation();
   const { executeOnKeyboardClick } = useButtonUtils();
 
   return (
@@ -25,7 +26,7 @@ export const LabelsListManipulation: React.FC<LabelsManipulationProps> = (props)
               onKeyDown={(e) => executeOnKeyboardClick(e.key, () => deleteLabel(viewModel, row.id))}
               data-testid={'button-delete-label-row-' + row.id}
             >
-              <Tooltip title={'Label löschen' /*t('clauses.delete')*/}>
+              <Tooltip title={t('labels.delete')}>
                 <DeleteIcon />
               </Tooltip>
             </IconButton>
@@ -33,7 +34,7 @@ export const LabelsListManipulation: React.FC<LabelsManipulationProps> = (props)
           <Grid item xs={11}>
             <TextField
               margin="dense"
-              label={'Label' /*t('clauses.input.value')*/}
+              label={t('labels.input')}
               fullWidth
               variant="outlined"
               value={row.term}

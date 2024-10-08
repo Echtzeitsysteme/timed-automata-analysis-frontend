@@ -3,6 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useButtonUtils } from '../utils/buttonUtils';
 import { StatementsViewModel } from '../viewmodel/StatementsViewModel.ts';
 import React from 'react';
+import {useTranslation} from "react-i18next";
 
 interface StatementManipulationProps {
   viewModel: StatementsViewModel;
@@ -11,7 +12,7 @@ interface StatementManipulationProps {
 export const StatementManipulation: React.FC<StatementManipulationProps> = (props) => {
   const { viewModel } = props;
   const { statements, deleteStatement, changeStatement } = viewModel;
-  //const { t } = useTranslation();
+  const { t } = useTranslation();
   const { executeOnKeyboardClick } = useButtonUtils();
 
   return (
@@ -25,7 +26,7 @@ export const StatementManipulation: React.FC<StatementManipulationProps> = (prop
               onKeyDown={(e) => executeOnKeyboardClick(e.key, () => deleteStatement(viewModel, row.id))}
               data-testid={'button-delete-statement-row-' + row.id}
             >
-              <Tooltip title={'Statement löschen' /*t('clauses.delete')*/}>
+              <Tooltip title={t('statements.delete')}>
                 <DeleteIcon />
               </Tooltip>
             </IconButton>
@@ -33,7 +34,7 @@ export const StatementManipulation: React.FC<StatementManipulationProps> = (prop
           <Grid item xs={11}>
             <TextField
               margin="dense"
-              label={'Statement' /*t('clauses.input.value')*/}
+              label={t('statements.input')}
               fullWidth
               variant="outlined"
               value={row.term}

@@ -405,7 +405,7 @@ export const ManipulateSwitchDialog: React.FC<ManipulateSwitchDialogProps> = (pr
             sx={{ marginTop: 2, marginLeft: 1 }}
             data-testid={'button-add-freeClause'}
           >
-            {'Freie Klausel hinzufügen' /*t('clauses.button.addClause')*/}
+            {t('freeClauses.button.addFreeClause')}
           </Button>
         )}
         <Divider sx={{ my: 1 }} />
@@ -417,7 +417,7 @@ export const ManipulateSwitchDialog: React.FC<ManipulateSwitchDialogProps> = (pr
               data-testid={'checkbox-switch-hasStatement'}
             />
           }
-          label={'Statement' /*t('switchDialog.hasGuard')*/}
+          label={t('switchDialog.hasStatement')}
         />
         {statementChecked && <StatementManipulation viewModel={statementsViewModel} />}
         {statementChecked && (
@@ -430,7 +430,7 @@ export const ManipulateSwitchDialog: React.FC<ManipulateSwitchDialogProps> = (pr
             sx={{ marginTop: 2 }}
             data-testid={'button-add-statement'}
           >
-            {'Statement hinzufügen' /*t('clauses.button.addClause')*/}
+            {t('switchDialog.button.addStatement')}
           </Button>
         )}
         <Divider sx={{ my: 1 }} />

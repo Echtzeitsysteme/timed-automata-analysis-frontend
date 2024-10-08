@@ -4,6 +4,7 @@ import { OpenedSystems, SystemOptionType } from '../viewmodel/OpenedSystems.ts';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import { OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
 import { deParseClockComparator } from '../model/ta/clockComparator.ts';
+import {useTranslation} from "react-i18next";
 
 interface ActiveModel {
   viewModel: AnalysisViewModel;
@@ -242,6 +243,7 @@ const createFile = async (currentSystem: SystemOptionType) => {
 
 const DownloadButton: React.FC<ActiveModel> = (props) => {
   const { openedSystems, viewModel, openedProcesses } = props;
+  const { t } = useTranslation();
   const currentSystem = openedSystems.selectedSystem;
   openedProcesses.selectedOption.automaton = viewModel.ta;
   currentSystem.processes = openedProcesses.automatonOptions;
@@ -266,7 +268,7 @@ const DownloadButton: React.FC<ActiveModel> = (props) => {
   return (
     <label htmlFor="downloadModel">
       <Button variant="contained" onClick={downloadModel} sx={{ mr: 0.15, mb: 0.2 }}>
-        Download System
+        {t('downloadButton.button')}
       </Button>
     </label>
   );

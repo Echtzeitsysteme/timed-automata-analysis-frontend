@@ -255,23 +255,23 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
             sx={{ marginTop: 2, marginLeft: 1 }}
             data-testid={'button-add-freeInvariant'}
           >
-            {'Freie Klausel hinzufügen' /*t('clauses.button.addClause')*/}
+            {t('freeClauses.button.addFreeClause')}
           </Button>
         )}
         <Divider sx={{ my: 1 }} />
         <FormControlLabel
           control={<Checkbox checked={committedChecked} onChange={(e) => setCommittedChecked(e.target.checked)} />}
-          label={'Committed' /*t('locDialog.hasInvariant')*/}
+          label={t('locDialog.isCommitted')}
           data-testid={'checkbox-location-isCommitted'}
         />
         <FormControlLabel
           control={<Checkbox checked={urgentChecked} onChange={(e) => setUrgentChecked(e.target.checked)} />}
-          label={'Urgent' /*t('locDialog.hasInvariant')*/}
+          label={t('locDialog.isUrgent')}
           data-testid={'checkbox-location-isUrgent'}
         />
         <FormControlLabel
           control={<Checkbox checked={labelListChecked} onChange={(e) => setLabelListChecked(e.target.checked)} />}
-          label={'Labels' /*t('locDialog.hasInvariant')*/}
+          label={t('locDialog.hasLabels')}
           data-testid={'checkbox-location-hasLabels'}
         />
         {labelListChecked && <LabelsListManipulation viewModel={labelsListViewModel} />}
@@ -283,7 +283,7 @@ export const ManipulateLocationDialog: React.FC<ManipulateLocationDialogProps> =
             sx={{ marginTop: 2, marginLeft: 1 }}
             data-testid={'button-add-label'}
           >
-            {'Label hinzufügen' /*t('clauses.button.addClause')*/}
+            {t('locDialog.button.addLabel')}
           </Button>
         )}
       </DialogContent>

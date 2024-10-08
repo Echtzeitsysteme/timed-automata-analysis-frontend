@@ -8,6 +8,7 @@ import { AutomatonOptionType, OpenedProcesses } from '../viewmodel/OpenedProcess
 import { OpenedSystems } from '../viewmodel/OpenedSystems.ts';
 import { Location } from '../model/ta/location.ts';
 import { TimedAutomaton } from '../model/ta/timedAutomaton.ts';
+import {useTranslation} from "react-i18next";
 
 export interface ProcessSelectionProps {
   viewModel: AnalysisViewModel;
@@ -17,6 +18,7 @@ export interface ProcessSelectionProps {
 
 const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
   const { viewModel, openedProcesses, openedSystems } = props;
+  const { t } = useTranslation();
   const options = openedProcesses.automatonOptions;
   let value = openedProcesses.selectedOption;
   let optionLabels = openedProcesses.getLabels(openedProcesses.automatonOptions);
@@ -64,9 +66,9 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
     setNameIsEmpty(newProcessName.trim() === '');
     setNameIsDuplicate(options.some((option) => option.label.toLowerCase() === newProcessName.trim().toLowerCase()));
 
-    nameIsEmpty && setNameErrorMsg('Name darf nicht leer sein');
-    nameIsDuplicate && setNameErrorMsg('Prozess existiert bereits');
-  }, [nameIsDuplicate, nameIsEmpty, newProcessName, options]);
+    nameIsEmpty && setNameErrorMsg(t('processSelection.error.emptyName'));
+    nameIsDuplicate && setNameErrorMsg(t('processSelection.error.duplicateName'));
+  }, [nameIsDuplicate, nameIsEmpty, newProcessName, options, t]);
 
   const validationError: boolean = useMemo(() => nameIsEmpty || nameIsDuplicate, [nameIsDuplicate, nameIsEmpty]);
 
@@ -76,7 +78,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
         <TextField
           sx={{ width: 200, mr: 0.5 }}
           margin="dense"
-          label={'Enter New Process'}
+          label={t('processSelection.input')}
           type="text"
           fullWidth
           variant="outlined"
@@ -88,7 +90,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
         />
         <Button variant="contained" disabled={validationError} onClick={addProcess} sx={{mb: 2}}>
           <AddIcon/>
-          Add Process
+          {t('processSelection.button.add')}
         </Button>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2.3 }}>
@@ -115,11 +117,11 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
             });
           }}
           options={optionLabels}
-          renderInput={(params) => <TextField {...params} label="Select Process" />}
+          renderInput={(params) => <TextField {...params} label={t('processSelection.select')} />}
         />
         <Button variant="contained" disabled={options.length === 1} onClick={deleteProcess}>
           <DeleteIcon/>
-          Discard Process
+          {t('processSelection.button.delete')}
         </Button>
       </Box>
     </Box>

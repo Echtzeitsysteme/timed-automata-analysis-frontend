@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useButtonUtils } from '../utils/buttonUtils.ts';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import {useTranslation} from "react-i18next";
 
 interface ManipulateIntegerDialog {
   open: boolean;
@@ -21,7 +22,7 @@ interface ManipulateIntegerDialog {
 
 export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props) => {
   const { open, integers, intPrevVersion, handleClose, handleSubmit } = props;
-  //const { t } = useTranslation();
+  const { t } = useTranslation();
   const { executeOnKeyboardClick } = useButtonUtils();
 
   const [justOpened, setJustOpened] = useState(true);
@@ -82,26 +83,14 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
     } else {
       setIsNameDuplicate(integers.some((int) => int.name.toLowerCase() === name.toLowerCase()));
     }
-    isNameEmpty && setNameErrorMessage('Name darf nicht leer sein' /*t('locDialog.errorNameEmpty')*/);
-    isNameDuplicate && setNameErrorMessage('Name wird bereits verwendet' /*t('locDialog.errorNameExists')*/);
-    isMinBiggerThanMax && setMinErrorMessage('Min muss kleiner als Max sein');
-    isMinBiggerThanMax && setMaxErrorMessage('Max muss größer als Min sein');
-    initOutsideIntervall && setInitErrorMessage('Init muss im Intervall liegen');
-    isSizeInvalid && setSizeErrorMessage('Size must be at least 1');
-  }, [
-    name,
-    integers,
-    isNameEmpty,
-    isNameDuplicate,
-    intPrevVersion,
-    size,
-    min,
-    max,
-    init,
-    isMinBiggerThanMax,
-    initOutsideIntervall,
-    isSizeInvalid,
-  ]);
+
+    isNameEmpty && setNameErrorMessage(t('integerDialog.error.nameEmpty'));
+    isNameDuplicate && setNameErrorMessage(t('integerDialog.error.nameExists'));
+    isMinBiggerThanMax && setMinErrorMessage(t('integerDialog.error.minMessage'));
+    isMinBiggerThanMax && setMaxErrorMessage(t('integerDialog.error.maxMessage'));
+    initOutsideIntervall && setInitErrorMessage(t('integerDialog.error.initMessage'));
+    isSizeInvalid && setSizeErrorMessage(t('integerDialog.error.sizeMessage'));
+  }, [name, integers, isNameEmpty, isNameDuplicate, intPrevVersion, size, min, max, init, isMinBiggerThanMax, initOutsideIntervall, isSizeInvalid, t]);
 
   const isValidationError: boolean = useMemo(
     () =>
@@ -162,8 +151,8 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
       <DialogTitle>
         {
           intPrevVersion
-            ? 'Integer bearbeiten' /*t('locDialog.editLoc')*/
-            : 'Integer hinzufügen' /*t('locDialog.addLoc')*/
+            ? t('integerDialog.title.editInteger')
+            : t('integerDialog.title.addInteger')
         }
         <IconButton
           onMouseDown={handleCloseDialog}
@@ -176,7 +165,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
       <DialogContent>
         <TextField
           margin="dense"
-          label={'Name'}
+          label={t('integerDialog.name')}
           type="text"
           fullWidth
           variant="outlined"
@@ -190,7 +179,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
           <Grid item xs={6}>
             <TextField
               margin="dense"
-              label={'Min' /*t('clauses.input.value')*/}
+              label={t('integerDialog.min')}
               type="number"
               fullWidth
               variant="outlined"
@@ -205,7 +194,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
           <Grid item xs={6}>
             <TextField
               margin="dense"
-              label={'Max' /*t('clauses.input.value')*/}
+              label={t('integerDialog.max')}
               type="number"
               fullWidth
               variant="outlined"
@@ -222,7 +211,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
           <Grid item xs={6}>
             <TextField
               margin="dense"
-              label={'Size' /*t('clauses.input.value')*/}
+              label={t('integerDialog.size')}
               type="number"
               fullWidth
               variant="outlined"
@@ -237,7 +226,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
           <Grid item xs={6}>
             <TextField
               margin="dense"
-              label={'Init' /*t('clauses.input.value')*/}
+              label={t('integerDialog.init')}
               type="number"
               fullWidth
               variant="outlined"
@@ -258,7 +247,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
           variant="contained"
           color="error"
         >
-          {'Abbrechen' /*t('locDialog.button.cancel')*/}
+          {t('integerDialog.button.cancel')}
         </Button>
         <Button
           onMouseDown={handleFormSubmit}
@@ -268,7 +257,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
           disabled={isValidationError}
           data-testid={'button-add-integer-ok'}
         >
-          {intPrevVersion ? 'Speichern' /*t('locDialog.button.edit')*/ : 'Hinzufügen' /*t('locDialog.button.add')*/}
+          {intPrevVersion ? t('integerDialog.button.edit') : t('integerDialog.button.add')}
         </Button>
       </DialogActions>
     </Dialog>

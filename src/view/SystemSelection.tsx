@@ -8,6 +8,7 @@ import { OpenedSystems, SystemOptionType } from '../viewmodel/OpenedSystems.ts';
 import { OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
 import { TimedAutomaton } from '../model/ta/timedAutomaton.ts';
 import { Location } from '../model/ta/location.ts';
+import {useTranslation} from "react-i18next";
 
 export interface SystemSelectionProps {
   viewModel: AnalysisViewModel;
@@ -17,6 +18,7 @@ export interface SystemSelectionProps {
 
 const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
   const { viewModel, openedSystems, openedProcesses } = props;
+  const { t } = useTranslation();
   const options = openedSystems.systemOptions;
   let value = openedSystems.selectedSystem;
   let optionLabels = openedSystems.getLabels(openedSystems.systemOptions);
@@ -68,9 +70,9 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
     setNameIsEmpty(newSystemName.trim() === '');
     setNameIsDuplicate(options.some((option) => option.label.toLowerCase() === newSystemName.trim().toLowerCase()));
 
-    nameIsEmpty && setNameErrorMsg('Name darf nicht leer sein');
-    nameIsDuplicate && setNameErrorMsg('System existiert bereits');
-  }, [nameIsDuplicate, nameIsEmpty, newSystemName, options]);
+    nameIsEmpty && setNameErrorMsg(t('systemSelection.error.emptyName'));
+    nameIsDuplicate && setNameErrorMsg(t('systemSelection.error.duplicateName'));
+  }, [nameIsDuplicate, nameIsEmpty, newSystemName, options, t]);
 
   const validationError: boolean = useMemo(() => nameIsEmpty || nameIsDuplicate, [nameIsDuplicate, nameIsEmpty]);
 
@@ -80,7 +82,7 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
         <TextField
           sx={{ width: 200, mr: 0.2 }}
           margin="dense"
-          label={'Enter New System'}
+          label={t('systemSelection.input')}
           type="text"
           fullWidth
           variant="outlined"
@@ -93,7 +95,7 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
         <br/>
         <Button variant="contained" disabled={validationError} onClick={addSystem} sx={{ mb: 1 }}>
           <AddIcon/>
-          Add System
+          {t('systemSelection.button.add')}
         </Button>
       </Box>
       <Box sx={{alignItems: 'center', mb: 1, mt: 2}}>
@@ -126,11 +128,11 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
               });
             }}
             options={optionLabels}
-            renderInput={(params) => <TextField {...params} label="Select System"/>}
+            renderInput={(params) => <TextField {...params} label={t('systemSelection.select')}/>}
         />
         <Button variant="contained" disabled={options.length === 1} onClick={deleteSystem} sx={{mt: 0.5}}>
           <DeleteIcon/>
-          Discard System
+          {t('systemSelection.button.delete')}
         </Button>
       </Box>
     </Box>

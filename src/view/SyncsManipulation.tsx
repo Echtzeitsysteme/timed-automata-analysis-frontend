@@ -15,6 +15,7 @@ import { useButtonUtils } from '../utils/buttonUtils.ts';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SyncViewModel } from '../viewmodel/SyncConstraintViewModel.ts';
 import { AutomatonOptionType } from '../viewmodel/OpenedProcesses.ts';
+import {useTranslation} from "react-i18next";
 
 interface SyncsManipulationProps {
   viewModel: SyncViewModel;
@@ -24,8 +25,7 @@ interface SyncsManipulationProps {
 export const SyncsManipulation: React.FC<SyncsManipulationProps> = (props) => {
   const { viewModel, processes } = props;
   const { syncs, deleteSync, changeSync, changeWeakOrNot } = viewModel;
-
-  //const { t } = useTranslation();
+  const { t } = useTranslation();
   const { executeOnKeyboardClick } = useButtonUtils();
 
   const processDropdownItems = useMemo(
@@ -49,14 +49,14 @@ export const SyncsManipulation: React.FC<SyncsManipulationProps> = (props) => {
               onKeyDown={(e) => executeOnKeyboardClick(e.key, () => deleteSync(viewModel, row.id))}
               data-testid={'button-delete-sync-row-' + row.id}
             >
-              <Tooltip title={'Sync löschen' /*t('clauses.delete')*/}>
+              <Tooltip title={t('sync.delete')}>
                 <DeleteIcon />
               </Tooltip>
             </IconButton>
           </Grid>
           <Grid item xs={4}>
             <FormControl fullWidth>
-              <InputLabel>{'Prozess' /*t('clauses.input.clock')*/}</InputLabel>
+              <InputLabel>{t('sync.input.process')}</InputLabel>
               <Select
                 value={row.processValue}
                 label="Process"
@@ -71,7 +71,7 @@ export const SyncsManipulation: React.FC<SyncsManipulationProps> = (props) => {
           <Grid item xs={4}>
             <TextField
               margin="dense"
-              label={'Aktion' /*t('clauses.input.value')*/}
+              label={t('sync.input.event')}
               fullWidth
               variant="outlined"
               value={row.actionValue}
@@ -89,7 +89,7 @@ export const SyncsManipulation: React.FC<SyncsManipulationProps> = (props) => {
                   onChange={(e) => changeWeakOrNot(viewModel, row.id, e.target.checked)}
                 />
               }
-              label={'schwache Sync' /*t('locDialog.hasInvariant')*/}
+              label={t('sync.input.isWeakSync')}
               data-testid={'checkbox-sync-is-weak'}
             />
           </Grid>

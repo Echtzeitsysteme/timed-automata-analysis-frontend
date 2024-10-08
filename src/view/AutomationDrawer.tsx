@@ -15,7 +15,7 @@ import UploadButton from './UploadButton.tsx';
 import DownloadButton from './DownloadButton.tsx';
 import { OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
 
-const drawerWidth = '20%';
+const drawerWidth = '25%';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',

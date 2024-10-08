@@ -7,6 +7,7 @@ import { useSyncConstraintViewModel } from "../viewmodel/SyncConstraintViewModel
 import {AutomatonOptionType} from "../viewmodel/OpenedProcesses.ts";
 import {SyncsManipulation} from "./SyncsManipulation.tsx";
 import {useSyncConstraintUtils} from "../utils/syncConstraintUtils.ts";
+import {useTranslation} from "react-i18next";
 
 interface ManipulateSyncDialog {
     open: boolean;
@@ -22,7 +23,7 @@ interface ManipulateSyncDialog {
 
 export const ManipulateSyncDialog: React.FC<ManipulateSyncDialog> = (props) => {
     const { open, synchronizations, processes, syncPrevVersion, handleClose, handleSubmit } = props;
-    //const { t } = useTranslation();
+    const { t } = useTranslation();
     const { executeOnKeyboardClick } = useButtonUtils();
     const syncConstraintViewModel = useSyncConstraintViewModel();
     const {syncs, setSyncsFromSyncConstraint} = syncConstraintViewModel;
@@ -51,8 +52,8 @@ export const ManipulateSyncDialog: React.FC<ManipulateSyncDialog> = (props) => {
         setLessThanTwoSyncs(syncs.length < 2);
         setSomeFieldInvalid( syncConstraintViewModel.isValidationError );
         
-        lessThanTwoSyncs && setSizeErrorMessage('Weniger als 2 SyncConstraint vorhanden');
-    }, [lessThanTwoSyncs, syncConstraintViewModel.isValidationError, syncs.length]);
+        lessThanTwoSyncs && setSizeErrorMessage(t('syncDialog.error.lessThanTwo'));
+    }, [lessThanTwoSyncs, syncConstraintViewModel.isValidationError, syncs.length, t]);
 
     const isValidationError: boolean = useMemo(
         () => lessThanTwoSyncs ||
@@ -92,8 +93,8 @@ export const ManipulateSyncDialog: React.FC<ManipulateSyncDialog> = (props) => {
             <DialogTitle>
                 {
                     syncPrevVersion
-                        ? 'Sync bearbeiten' /*t('locDialog.editLoc')*/
-                        : 'Sync hinzufügen' /*t('locDialog.addLoc')*/
+                        ? t('syncDialog.editSync')
+                        : t('syncDialog.addSync')
                 }
                 <IconButton
                     onMouseDown={handleCloseDialog}
@@ -112,7 +113,7 @@ export const ManipulateSyncDialog: React.FC<ManipulateSyncDialog> = (props) => {
                     sx={{ marginTop: 2 }}
                     data-testid={'button-add-sync'}
                 >
-                    {'Sync hinzufügen'/*t('clauses.button.addClause')*/}
+                    {t('syncDialog.button.addSync')}
                 </Button>
             </DialogContent>
             <DialogActions>
@@ -122,7 +123,7 @@ export const ManipulateSyncDialog: React.FC<ManipulateSyncDialog> = (props) => {
                     variant="contained"
                     color="error"
                 >
-                    {'Abbrechen' /*t('locDialog.button.cancel')*/}
+                    {t('syncDialog.button.cancel')}
                 </Button>
                 <Button
                     onMouseDown={handleFormSubmit}
@@ -132,7 +133,7 @@ export const ManipulateSyncDialog: React.FC<ManipulateSyncDialog> = (props) => {
                     disabled={isValidationError}
                     data-testid={'button-add-sync-ok'}
                 >
-                    {syncPrevVersion ? 'Speichern' /*t('locDialog.button.edit')*/ : 'Hinzufügen'/*t('locDialog.button.add')*/}
+                    {syncPrevVersion ? t('syncDialog.button.edit') : t('syncDialog.button.add')}
                 </Button>
             </DialogActions>
         </Dialog>

@@ -16,6 +16,7 @@ import {FreeClause} from "../model/ta/freeClause.ts";
 import {SwitchStatement} from "../model/ta/switchStatement.ts";
 import {SyncConstraint} from "../model/ta/syncConstraint.ts";
 import {Sync} from "../model/ta/sync.ts";
+import {useTranslation} from "react-i18next";
 
 export interface OpenedDocs {
   viewModel: AnalysisViewModel; //für update Locations iwie?
@@ -230,6 +231,7 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
 
 const UploadButton: React.FC<OpenedDocs> = (props) => {
   const { viewModel, openedSystems, openedProcesses } = props;
+  const { t } = useTranslation();
 
   const handleClick = (uploadedFileEvent: React.ChangeEvent<HTMLInputElement>) => {
     const inputElem = uploadedFileEvent.target as HTMLInputElement & {
@@ -288,7 +290,7 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
   return (
     <label htmlFor="uploadFile">
       <Button variant="contained" component="label" sx={{ml: 0.15, mr: 0.5, mb: 0.2}}>
-        Upload File
+        {t('uploadButton.button')}
         <input id="uploadFile" type="file" accept=".tck" onChange={handleClick}/>
       </Button>
     </label>

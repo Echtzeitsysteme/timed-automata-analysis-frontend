@@ -54,7 +54,7 @@ export const ManipulateClockDialog: React.FC<ManipulateClockDialogProps> = (prop
   useEffect(() => {
     setIsSizeInvalid(size.trim() === '' || parseInt(size) < 1);
 
-    isSizeInvalid && setSizeErrorMsg('Size must be at least 1');
+    isSizeInvalid && setSizeErrorMsg(t('clockDialog.errorSizeInvalid'));
   }, [isSizeInvalid, size]);
 
   const isValidationError = useMemo(
@@ -133,7 +133,7 @@ export const ManipulateClockDialog: React.FC<ManipulateClockDialogProps> = (prop
           <Grid item xs={5}>
             <TextField
               margin="dense"
-              label={'Size' /*t('clauses.input.value')*/}
+              label={t('clockDialog.input.size')}
               type="number"
               fullWidth
               variant="outlined"

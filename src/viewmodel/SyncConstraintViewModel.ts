@@ -80,7 +80,7 @@ export function useSyncConstraintViewModel(): SyncViewModel {
   );
 
   const deleteSync = useCallback((viewModel: SyncViewModel, id: number) => {
-    if (viewModel.syncs.length <= 1) {
+    if (viewModel.syncs.length <= 0) {
       return;
     }
     const updatedSyncs = viewModel.syncs.filter((row) => row.id !== id);
