@@ -77,7 +77,7 @@
   "clauses.input.value": "Value",
   "clauses.delete": "Delete Clause",
   "clauses.button.addClause": "Add Clause",
-  "freeClauses.input": "Input",
+  "freeClauses.input": "Free Clause",
   "freeClauses.delete": "Delete Free Clause",
   "freeClauses.button.addFreeClause": "Add Free Clause",
   "labels.delete": "Delete Label",
