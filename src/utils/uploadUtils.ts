@@ -50,19 +50,19 @@ interface LocalStatement {
 
 interface IfStatement {
   if?: string;
-  ifConstr?: Constr;
+  ifConstr?: Constr[];
   then?: string;
-  thenStmt?: Statement;
+  thenStmt?: Statement[];
   else?: string;
-  elseStmt?: Statement;
+  elseStmt?: Statement[];
   end?: string;
 }
 
 interface WhileStatement {
   while?: string;
-  whileConstr?: Constr;
+  whileConstr?: Constr[];
   do?: string;
-  doStmt?: Statement;
+  doStmt?: Statement[];
   end?: string;
 }
 
@@ -101,13 +101,13 @@ export function handleStatement(stmt: Statement, recursive: boolean = false) {
     return stmt.nop;
   } else if (stmt.ifStatement !== undefined) {
     if (stmt.ifStatement.if !== undefined && stmt.ifStatement.ifConstr !== undefined) {
-      expr += stmt.ifStatement.if + ' ' + handleConstr(stmt.ifStatement.ifConstr);
+      expr += stmt.ifStatement.if + ' ' + handleConstraints(stmt.ifStatement.ifConstr);
     }
     if (stmt.ifStatement.then !== undefined && stmt.ifStatement.thenStmt !== undefined) {
-      expr += ' ' + stmt.ifStatement.then + ' ' + handleStatement(stmt.ifStatement.thenStmt, true);
+      expr += ' ' + stmt.ifStatement.then + ' ' + handleStatements(stmt.ifStatement.thenStmt);
     }
     if (stmt.ifStatement.else !== undefined && stmt.ifStatement.elseStmt !== undefined) {
-      expr += ' ' + stmt.ifStatement.else + ' ' + handleStatement(stmt.ifStatement.elseStmt, true);
+      expr += ' ' + stmt.ifStatement.else + ' ' + handleStatements(stmt.ifStatement.elseStmt);
     }
     if (stmt.ifStatement.end !== undefined) {
       expr += ' ' + stmt.ifStatement.end;
@@ -126,10 +126,10 @@ export function handleStatement(stmt: Statement, recursive: boolean = false) {
     return expr;
   } else if (stmt.whileStatement !== undefined) {
     if (stmt.whileStatement.while !== undefined && stmt.whileStatement.whileConstr !== undefined) {
-      expr += stmt.whileStatement.while + ' ' + handleConstr(stmt.whileStatement.whileConstr);
+      expr += stmt.whileStatement.while + ' ' + handleConstraints(stmt.whileStatement.whileConstr);
     }
     if (stmt.whileStatement.do !== undefined && stmt.whileStatement.doStmt !== undefined) {
-      expr += stmt.whileStatement.do + ' ' + handleStatement(stmt.whileStatement.doStmt, true);
+      expr += ' ' + stmt.whileStatement.do + ' ' + handleStatements(stmt.whileStatement.doStmt);
     }
     if (stmt.whileStatement.end !== undefined) {
       expr += ' ' + stmt.whileStatement.end;
@@ -189,4 +189,36 @@ export function handleTerm(term: Term): string {
     return '(' + handleTerm(term.termInParenL) + ')' + term.maths + handleTerm(term.termR);
   }
   throw Error(`uploadUtils: Input ${term} is not a valid term`);
+}
+
+//internal, for while- and if-statements
+function handleStatements(stmts: Statement[]): string {
+  let term = '';
+  let first: boolean = true;
+  stmts.forEach((stmt) => {
+    if (first) {
+      term += ' ';
+      first = false;
+    } else {
+      term += ' &&';
+    }
+    term += handleStatement(stmt, true);
+  });
+  return term;
+}
+
+//internal, for while- and if-statements
+function handleConstraints(constrs: Constr[]): string {
+  let term = '';
+  let first: boolean = true;
+  constrs.forEach((constr) => {
+    if (first) {
+      term += ' ';
+      first = false;
+    } else {
+      term += ' &&';
+    }
+    term += handleConstr(constr);
+  });
+  return term;
 }

@@ -278,12 +278,12 @@ local_statement
  ;
 
 if_statement
- : TOK_IF constraint TOK_THEN statement TOK_END {$$ = {if: $1, ifConstr: $2, then: $3, thenStmt: $4, end: $5};}
- | TOK_IF constraint TOK_THEN statement TOK_ELSE statement TOK_END {$$ = {if: $1, ifConstr: $2, then: $3, thenStmt: $4, else: $5, elseStmt: $6, end: $7};}
+ : TOK_IF constraints TOK_THEN statements TOK_END {$$ = {if: $1, ifConstr: $2, then: $3, thenStmt: $4, end: $5};}
+ | TOK_IF constraints TOK_THEN statements TOK_ELSE statements TOK_END {$$ = {if: $1, ifConstr: $2, then: $3, thenStmt: $4, else: $5, elseStmt: $6, end: $7};}
  ;
 
 while_statement
- : TOK_WHILE constraint TOK_DO statement TOK_END {$$ = {while: $1, whileConstr: $2, do: $3, doStmt: $4, end: $5};}
+ : TOK_WHILE constraints TOK_DO statements TOK_END {$$ = {while: $1, whileConstr: $2, do: $3, doStmt: $4, end: $5};}
  ;
 
 cmp
