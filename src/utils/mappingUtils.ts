@@ -30,12 +30,20 @@ export function useMappingUtils(): MappingUtils {
       });
 
       ta.switches.forEach((sw, index) => {
-        edges.add({
+        const newEdge: Edge = {
           id: index,
           from: `${sw.source.name}`,
           to: `${sw.target.name}`,
           label: formatSwitchLabelVisual(sw),
-        });
+        };
+        //unnötig (?)
+        newEdge.smooth = {
+          enabled: true,
+          type: 'dynamic',
+          forceDirection: undefined,
+          roundness: 0,
+        };
+        edges.add(newEdge);
       });
 
       return <Data>{

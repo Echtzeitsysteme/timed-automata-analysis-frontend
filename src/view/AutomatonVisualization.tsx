@@ -14,10 +14,15 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
   const { mapTaToVisDataModel } = useMappingUtils();
   const networkRef = useRef<HTMLDivElement>(null);
 
-  let activatePhysics: boolean = true;
+  const data: Data = mapTaToVisDataModel(ta);
+
   locations.forEach((location) => {
     if (location.xCoordinate !== 0 || location.yCoordinate !== 0) {
-      activatePhysics = false;
+      if (data.nodes) {
+        data.nodes.forEach((node) => {
+          node.physics = false;
+        });
+      }
     }
   });
 
@@ -26,7 +31,6 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
       return;
     }
 
-    const data: Data = mapTaToVisDataModel(ta);
     const options: Options = {
       groups: {
         startGroup: { color: { background: '#d3d3d3' }, borderWidth: 2 },
@@ -51,12 +55,12 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
         },
       },
       physics: {
-        enabled: false,
+        enabled: true,
         forceAtlas2Based: {
           gravitationalConstant: -26,
           centralGravity: 0.005,
-          springLength: 230,
-          springConstant: 0.18,
+          springLength: 280,
+          springConstant: 0.2,
           avoidOverlap: 1,
           theta: 0.1,
         },
@@ -73,14 +77,6 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
 
     const network = new Network(networkRef.current, data, options);
 
-    if (activatePhysics) {
-      network.setOptions({
-        physics: {
-          enabled: true,
-        },
-      });
-    }
-
     network.on('stabilizationIterationsDone', function () {
       const nodePositions = network.getPositions();
       locations.forEach((location) => {
@@ -88,7 +84,7 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
         location.xCoordinate = nodePositions[locationName].x;
         location.yCoordinate = nodePositions[locationName].y;
       });
-      network.setOptions({ physics: false });
+      //network.setOptions({ physics: false });
     });
 
     // Event listener for dragEnd event (update coordinates saved in locations if a location is moved)
@@ -113,7 +109,7 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
         });
       }
     });
-  }, [ta, viewModel, updateLocationCoordinates, mapTaToVisDataModel, activatePhysics, locations]);
+  }, [ta, viewModel, updateLocationCoordinates, mapTaToVisDataModel, locations, data]);
 
   return <div ref={networkRef} style={{ width: '100%', height: '100%' }} />;
 };
