@@ -26,6 +26,22 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
     }
   });
 
+  /*
+  //alternative: disable physics for each node, leaving some enabled, some disabled,
+  //but they may overlap when the algorithm does its algorithm things
+  locations.forEach((location) => {
+    if (location.xCoordinate !== 0 && location.yCoordinate !== 0) {
+      if (data.nodes) {
+        data.nodes.forEach((node) => {
+          if(node.id === location.name){
+            node.physics = false;
+          }
+        });
+      }
+    }
+  });
+  */
+
   useEffect(() => {
     if (!networkRef.current) {
       return;
@@ -59,7 +75,7 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
         forceAtlas2Based: {
           gravitationalConstant: -26,
           centralGravity: 0.005,
-          springLength: 280,
+          springLength: 250,
           springConstant: 0.2,
           avoidOverlap: 1,
           theta: 0.1,
