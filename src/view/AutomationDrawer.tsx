@@ -77,11 +77,15 @@ const AutomatonDrawer: React.FC<AutomatonDrawerProps> = (props) => {
         </DrawerHeader>
         <Divider />
         <Box sx={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center', mt: 1, mb: 1 }}>
-          <UploadButton viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
-          <DownloadButton viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
+            <Box sx={{ ml: "2%", mr: "1%", mb: 0.2}}>
+              <UploadButton viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
+            </Box>
+            <Box sx={{ mr: "2%", ml: "1%", mb: 0.2 }}>
+                <DownloadButton viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
+            </Box>
         </Box>
         <Divider />
-        <Box sx={{ justifyContent: 'flex-start', display: 'inline-flex', mt: 1, mb: 1, ml: 2 }}>
+        <Box sx={{ justifyContent: 'flex-start', display: 'inline-flex', mt: 1, mb: 1, ml: '5%' }}>
           <SystemSelection viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
         </Box>
       </Drawer>

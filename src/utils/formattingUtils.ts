@@ -8,6 +8,7 @@ import {Sync} from "../model/ta/sync.ts";
 
 export interface FormattingUtils {
   formatClockConstraint: (clockConstraint?: ClockConstraint, clauseJoinStr?: string) => string | undefined;
+  formatLabels: (labels?: string[], labelJoinStr?: string) =>  string | undefined;
   formatReset: (clocks?: Clock[]) => string | undefined;
   formatStatement: (statement: SwitchStatement) => string | undefined;
   formatLocationLabelTable: (location: Location) => string;
@@ -39,6 +40,30 @@ export function useFormattingUtils(): FormattingUtils {
     return clauses + freeClauses;
   }, []);
 
+  const formatUrgent = useCallback((urgent?: boolean) =>{
+    if(!urgent){
+      return undefined;
+    }
+    return "urgent";
+  }, []);
+
+  const formatCommitted = useCallback((committed?: boolean) =>{
+    if(!committed){
+      return undefined;
+    }
+    return "committed";
+  }, []);
+
+  const formatLabels = useCallback((labels?: string[], labelJoinStr: string= ', ') => {
+    if(!labels || labels.length === 0){
+      return undefined;
+    }
+    let labelStr: string = 'labels: [';
+    labelStr += labels.map((label) => label).join(labelJoinStr);
+    labelStr += ']'
+    return labelStr;
+  }, []);
+
   const formatReset = useCallback((clocks?: Clock[], compact: boolean = false) => {
     if (!clocks || clocks.length === 0) {
       return undefined;
@@ -64,17 +89,24 @@ export function useFormattingUtils(): FormattingUtils {
   const formatLocationLabelTable = useCallback(
     (location: Location) => {
       const invariant = formatClockConstraint(location.invariant);
-      return [location.name, invariant].filter((e) => e !== undefined).join(', ');
+      const committed = formatCommitted(location.committed);
+      const urgent = formatUrgent(location.urgent);
+      const labels = formatLabels(location.labels);
+      return [location.name, invariant, committed, urgent, labels].filter((e) => e !== undefined).join(', ');
     },
-    [formatClockConstraint]
+    [formatClockConstraint, formatCommitted, formatLabels, formatUrgent]
   );
 
   const formatLocationLabelVisual = useCallback(
     (location: Location) => {
       const invariant = formatClockConstraint(location.invariant);
-      return invariant ? `${location.name}\n${invariant}` : location.name;
+      const urgent = formatUrgent(location.urgent);
+      const committed = formatCommitted(location.committed);
+      const labels = formatLabels(location.labels);
+      //return invariant ? `${location.name}\n${invariant}` : location.name;
+      return [location.name, invariant, committed, urgent, labels].filter((e) => e !== undefined).join('\n');
     },
-    [formatClockConstraint]
+    [formatClockConstraint, formatCommitted, formatLabels, formatUrgent]
   );
 
   const formatSwitchTable = useCallback(
@@ -127,6 +159,7 @@ export function useFormattingUtils(): FormattingUtils {
 
   return {
     formatClockConstraint: formatClockConstraint,
+    formatLabels: formatLabels,
     formatReset: formatReset,
     formatStatement: formatStatement,
     formatLocationLabelTable: formatLocationLabelTable,

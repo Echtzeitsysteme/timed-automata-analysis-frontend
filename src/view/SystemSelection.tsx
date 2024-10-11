@@ -77,7 +77,7 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
   const validationError: boolean = useMemo(() => nameIsEmpty || nameIsDuplicate, [nameIsDuplicate, nameIsEmpty]);
 
   return (
-    <Box sx={{ ml: 0.2 }}>
+    <Box>
       <Box sx={{ alignItems: 'center', mb: 3 }}>
         <TextField
           sx={{ width: 200, mr: 0.2 }}

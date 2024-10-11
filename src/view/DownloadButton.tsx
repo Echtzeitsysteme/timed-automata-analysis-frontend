@@ -267,7 +267,7 @@ const DownloadButton: React.FC<ActiveModel> = (props) => {
   //TODO hier noch das "Download Model" in diese Localization file tun
   return (
     <label htmlFor="downloadModel">
-      <Button variant="contained" onClick={downloadModel} sx={{ mr: 0.15, mb: 0.2 }}>
+      <Button variant="contained" onClick={downloadModel}>
         {t('downloadButton.button')}
       </Button>
     </label>
