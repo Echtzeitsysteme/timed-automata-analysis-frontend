@@ -73,14 +73,15 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
       physics: {
         enabled: true,
         forceAtlas2Based: {
-          gravitationalConstant: -26,
+          gravitationalConstant: -28,
           centralGravity: 0.005,
           springLength: 250,
           springConstant: 0.2,
-          avoidOverlap: 1,
+          avoidOverlap: 0.75,
           theta: 0.1,
         },
         maxVelocity: 146,
+        minVelocity: 1,
         solver: 'forceAtlas2Based',
         stabilization: {
           enabled: true,
@@ -100,7 +101,6 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
         location.xCoordinate = nodePositions[locationName].x;
         location.yCoordinate = nodePositions[locationName].y;
       });
-      //network.setOptions({ physics: false });
     });
 
     // Event listener for dragEnd event (update coordinates saved in locations if a location is moved)
