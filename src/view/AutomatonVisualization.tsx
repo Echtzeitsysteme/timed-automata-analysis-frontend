@@ -16,31 +16,18 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
 
   const data: Data = mapTaToVisDataModel(ta);
 
-  locations.forEach((location) => {
-    if (location.xCoordinate !== 0 || location.yCoordinate !== 0) {
-      if (data.nodes) {
-        data.nodes.forEach((node) => {
-          node.physics = false;
-        });
-      }
-    }
-  });
-
-  /*
-  //alternative: disable physics for each node, leaving some enabled, some disabled,
-  //but they may overlap when the algorithm does its algorithm things
+  //disable physics for each node, leaving some enabled, some disabled
   locations.forEach((location) => {
     if (location.xCoordinate !== 0 && location.yCoordinate !== 0) {
       if (data.nodes) {
         data.nodes.forEach((node) => {
-          if(node.id === location.name){
+          if (node.id === location.name) {
             node.physics = false;
           }
         });
       }
     }
   });
-  */
 
   useEffect(() => {
     if (!networkRef.current) {
