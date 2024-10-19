@@ -18,14 +18,12 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
 
   //disable physics for each node, leaving some enabled, some disabled
   locations.forEach((location) => {
-    if (location.xCoordinate !== 0 && location.yCoordinate !== 0) {
-      if (data.nodes) {
-        data.nodes.forEach((node) => {
-          if (node.id === location.name) {
-            node.physics = false;
-          }
-        });
-      }
+    if (data.nodes) {
+      data.nodes.forEach((node) => {
+        if (node.id === location.name) {
+          node.physics = !location.setLayout;
+        }
+      });
     }
   });
 
@@ -97,6 +95,7 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
         const locationName = location.name;
         location.xCoordinate = nodePositions[locationName].x;
         location.yCoordinate = nodePositions[locationName].y;
+        location.setLayout = true;
       });
 
       // Check if nodes are dragged

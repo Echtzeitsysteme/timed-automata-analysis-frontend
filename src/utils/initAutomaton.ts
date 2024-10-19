@@ -40,11 +40,13 @@ const LOC_0: Location = {
   invariant: CLOCK_CONSTRAINT_0,
   xCoordinate: -100,
   yCoordinate: 100,
+  setLayout: true,
 };
 const LOC_1: Location = {
   name: 'final',
   xCoordinate: 100,
   yCoordinate: 100,
+  setLayout: true,
 };
 
 const SWITCH_0: Switch = {

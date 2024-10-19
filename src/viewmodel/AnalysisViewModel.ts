@@ -115,9 +115,10 @@ export function useAnalysisViewModel(): AnalysisViewModel {
           labels: labels,
           xCoordinate: xCoordAvg,
           yCoordinate: yCoordAvg,
+          setLayout: true,
         };
       } else {
-        newLoc = { name: locationName, isInitial: true, invariant: invariant, committed: committed, urgent: urgent, labels: labels, xCoordinate: 0, yCoordinate: 0 };
+        newLoc = { name: locationName, isInitial: true, invariant: invariant, committed: committed, urgent: urgent, labels: labels, xCoordinate: 0, yCoordinate: 0, setLayout: true, };
       }
       const updatedLocs = [...locations, newLoc];
       if (isInitial) {
@@ -192,6 +193,7 @@ export function useAnalysisViewModel(): AnalysisViewModel {
       const loc = updatedLocs.filter((l) => l.name === locationName)[0];
       loc.xCoordinate = xCoordinate;
       loc.yCoordinate = yCoordinate;
+      loc.setLayout = true;
       const updatedTa = { ...ta, locations: updatedLocs };
       setViewModel({ ...viewModel, ta: updatedTa });
     },

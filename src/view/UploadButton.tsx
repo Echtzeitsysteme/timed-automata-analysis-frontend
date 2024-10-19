@@ -77,6 +77,7 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
       let isCommitted: boolean = false;
       let hasLabels: boolean = false;
       let labelList: string[] = [];
+      let setLayout: boolean = false;
       const invariants : ClockConstraint = { clauses: [], freeClauses: [] };
       if(item.hasOwnProperty('attributes')){
         item.attributes.forEach((attribute) => {
@@ -93,6 +94,7 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
           if(attribute.hasOwnProperty('layout')){
             xCoord = attribute.x;
             yCoord = attribute.y;
+            setLayout = true;
           } else {
             xCoord = 0;
             yCoord = 0;
@@ -110,7 +112,7 @@ const convertToTa = async (parsedData):Promise<SystemOptionType> => {
         })
       }
       const newLocation: Location =
-          {name: locName, isInitial: isInitial, committed: isCommitted, urgent: isUrgent, xCoordinate: xCoord, yCoordinate: yCoord };
+          {name: locName, isInitial: isInitial, committed: isCommitted, urgent: isUrgent, xCoordinate: xCoord, yCoordinate: yCoord, setLayout: setLayout };
       if(invariants.freeClauses.length > 0 || invariants.clauses.length > 0){
         newLocation.invariant = invariants;
       }

@@ -36,6 +36,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
         isInitial: true,
         xCoordinate: -100,
         yCoordinate: 100,
+        setLayout: true,
       };
       const newTA: TimedAutomaton = { locations: [startLoc], clocks: [], switches: [] };
       const newOption: AutomatonOptionType = { label: newProcessName.trim(), automaton: newTA };
