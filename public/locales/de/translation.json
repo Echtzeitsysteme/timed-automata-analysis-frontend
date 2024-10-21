@@ -112,5 +112,6 @@
   "systemSelection.input": "System eingeben",
   "systemSelection.button.add": "System hinzufügen",
   "systemSelection.select": "System auswählen",
-  "systemSelection.button.delete": "System löschen"
+  "systemSelection.button.delete": "System löschen",
+  "layoutButton.text": "Justieren"
 }

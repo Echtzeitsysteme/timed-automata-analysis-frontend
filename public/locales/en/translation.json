@@ -112,5 +112,6 @@
   "systemSelection.input": "Enter New System",
   "systemSelection.button.add": "Add System",
   "systemSelection.select": "Select System",
-  "systemSelection.button.delete": "Discard System"
+  "systemSelection.button.delete": "Discard System",
+  "layoutButton.text": "Adjust"
 }

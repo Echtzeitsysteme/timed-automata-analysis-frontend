@@ -9,6 +9,7 @@ import ProcessSelection from './view/ProcessSelection.tsx';
 import AutomatonDrawer from './view/AutomationDrawer.tsx';
 import { useOpenedSystems } from './viewmodel/OpenedSystems.ts';
 import { useOpenedProcesses } from './viewmodel/OpenedProcesses.ts';
+import LayoutButton from './view/LayoutButton.tsx';
 
 function App() {
   const viewModel = useAnalysisViewModel();
@@ -26,7 +27,7 @@ function App() {
     const updateContentHeight = () => {
       const headerEl = headerRef.current;
       const toolEl = toolRef.current;
-      if(toolEl){
+      if (toolEl) {
         const style = window.getComputedStyle(toolEl);
         const marginTop = parseInt(style.marginTop, 10);
         const marginBottom = parseInt(style.marginBottom, 10);
@@ -54,9 +55,10 @@ function App() {
       <h1 style={{ paddingLeft: '16px' }} ref={headerRef}>
         ⏰ {t('app.title')}
       </h1>
-      <Box ref={toolRef} sx={{ display: 'flex', alignItems: 'center'}}>
+      <Box ref={toolRef} sx={{ display: 'flex', alignItems: 'center' }}>
         <AutomatonDrawer viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
         <ProcessSelection viewModel={viewModel} openedSystems={openedSystems} openedProcesses={openedProcesses} />
+        <LayoutButton viewModel={viewModel} />
       </Box>
       <Box sx={{ display: 'flex', height: `${contentHeight - toolbarHeight - 1}px`, overflow: 'hidden' }}>
         <Grid container sx={{ height: '100%' }}>
