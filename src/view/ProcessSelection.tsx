@@ -8,7 +8,7 @@ import { AutomatonOptionType, OpenedProcesses } from '../viewmodel/OpenedProcess
 import { OpenedSystems } from '../viewmodel/OpenedSystems.ts';
 import { Location } from '../model/ta/location.ts';
 import { TimedAutomaton } from '../model/ta/timedAutomaton.ts';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 export interface ProcessSelectionProps {
   viewModel: AnalysisViewModel;
@@ -85,12 +85,12 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
           variant="outlined"
           value={newProcessName}
           onChange={(e) => setNewProcessName(e.target.value)}
-          error={validationError}
+          error={nameIsDuplicate}
           helperText={validationError ? nameErrorMsg : ' '}
           data-testid={'input-process-name'}
         />
-        <Button variant="contained" disabled={validationError} onClick={addProcess} sx={{mb: 2}}>
-          <AddIcon/>
+        <Button variant="contained" disabled={validationError} onClick={addProcess} sx={{ mb: 2 }}>
+          <AddIcon />
           {t('processSelection.button.add')}
         </Button>
       </Box>
@@ -121,7 +121,7 @@ const ProcessSelection: React.FC<ProcessSelectionProps> = (props) => {
           renderInput={(params) => <TextField {...params} label={t('processSelection.select')} />}
         />
         <Button variant="contained" disabled={options.length === 1} onClick={deleteProcess}>
-          <DeleteIcon/>
+          <DeleteIcon />
           {t('processSelection.button.delete')}
         </Button>
       </Box>

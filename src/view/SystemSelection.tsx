@@ -8,7 +8,7 @@ import { OpenedSystems, SystemOptionType } from '../viewmodel/OpenedSystems.ts';
 import { OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
 import { TimedAutomaton } from '../model/ta/timedAutomaton.ts';
 import { Location } from '../model/ta/location.ts';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 export interface SystemSelectionProps {
   viewModel: AnalysisViewModel;
@@ -89,50 +89,50 @@ const SystemSelection: React.FC<SystemSelectionProps> = (props) => {
           variant="outlined"
           value={newSystemName}
           onChange={(e) => setNewSystemName(e.target.value)}
-          error={validationError}
+          error={nameIsDuplicate}
           helperText={validationError ? nameErrorMsg : ''}
           data-testid={'input-system-name'}
         />
-        <br/>
+        <br />
         <Button variant="contained" disabled={validationError} onClick={addSystem} sx={{ mb: 1 }}>
-          <AddIcon/>
+          <AddIcon />
           {t('systemSelection.button.add')}
         </Button>
       </Box>
-      <Box sx={{alignItems: 'center', mb: 1, mt: 2}}>
+      <Box sx={{ alignItems: 'center', mb: 1, mt: 2 }}>
         <Autocomplete
-            sx={{width: 200, mr: 0.2}}
-            id="select-automaton"
-            freeSolo
-            selectOnFocus
-            handleHomeEndKeys
-            disableClearable
-            value={value}
-            onChange={(event, newValue) => {
-              console.log(event);
-              console.log('Optionen:', options);
+          sx={{ width: 200, mr: 0.2 }}
+          id="select-automaton"
+          freeSolo
+          selectOnFocus
+          handleHomeEndKeys
+          disableClearable
+          value={value}
+          onChange={(event, newValue) => {
+            console.log(event);
+            console.log('Optionen:', options);
 
-              //set value and automaton to existing option
-              options.forEach((option) => {
-                if (option.label === newValue) {
-                  openedProcesses.selectedOption.automaton = viewModel.ta;
-                  console.log('processOptions:', openedProcesses.automatonOptions);
-                  value.processes = openedProcesses.automatonOptions;
-                  openedSystems.selectedSystem = option;
-                  //setValue(option);
-                  openedSystems.setSelectedSystem(option);
-                  openedProcesses.setAutomatonOptions(openedProcesses, openedSystems.selectedSystem.processes);
-                  viewModel.setAutomaton(viewModel, option.processes[0].automaton);
-                  //console.log("openedSystems after change:",openedSystems);
-                  //console.log("openedProcesses after change:", openedProcesses);
-                }
-              });
-            }}
-            options={optionLabels}
-            renderInput={(params) => <TextField {...params} label={t('systemSelection.select')}/>}
+            //set value and automaton to existing option
+            options.forEach((option) => {
+              if (option.label === newValue) {
+                openedProcesses.selectedOption.automaton = viewModel.ta;
+                console.log('processOptions:', openedProcesses.automatonOptions);
+                value.processes = openedProcesses.automatonOptions;
+                openedSystems.selectedSystem = option;
+                //setValue(option);
+                openedSystems.setSelectedSystem(option);
+                openedProcesses.setAutomatonOptions(openedProcesses, openedSystems.selectedSystem.processes);
+                viewModel.setAutomaton(viewModel, option.processes[0].automaton);
+                //console.log("openedSystems after change:",openedSystems);
+                //console.log("openedProcesses after change:", openedProcesses);
+              }
+            });
+          }}
+          options={optionLabels}
+          renderInput={(params) => <TextField {...params} label={t('systemSelection.select')} />}
         />
-        <Button variant="contained" disabled={options.length === 1} onClick={deleteSystem} sx={{mt: 0.5}}>
-          <DeleteIcon/>
+        <Button variant="contained" disabled={options.length === 1} onClick={deleteSystem} sx={{ mt: 0.5 }}>
+          <DeleteIcon />
           {t('systemSelection.button.delete')}
         </Button>
       </Box>
