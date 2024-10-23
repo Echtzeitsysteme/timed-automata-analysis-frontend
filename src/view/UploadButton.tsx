@@ -250,7 +250,6 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
       files: FileList;
     };
 
-    //TODO der überprüft ja momentan noch nicht wirklich, ob das eine .tck Datei ist...
     if (!inputElem.files[0] || !inputElem.files[0].name.endsWith('.tck')) {
       console.log('Invalid or no File');
       return;
@@ -302,7 +301,6 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
     inputElem.value = '';
   };
 
-  //TODO hier noch das "Upload file" in diese Localization file tun
   return (
     <label htmlFor="uploadFile">
       <Button variant="contained" component="label">
