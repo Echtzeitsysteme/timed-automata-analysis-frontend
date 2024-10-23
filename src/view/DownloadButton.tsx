@@ -4,7 +4,7 @@ import { OpenedSystems, SystemOptionType } from '../viewmodel/OpenedSystems.ts';
 import { AnalysisViewModel } from '../viewmodel/AnalysisViewModel.ts';
 import { OpenedProcesses } from '../viewmodel/OpenedProcesses.ts';
 import { deParseClockComparator } from '../model/ta/clockComparator.ts';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 interface ActiveModel {
   viewModel: AnalysisViewModel;
@@ -64,83 +64,60 @@ const createFile = async (currentSystem: SystemOptionType) => {
     //locations
     ta.locations.forEach((location) => {
       let newLocation = 'location:' + process + ':' + location.name + '{';
-      let hasPrevElem = false;
+
+      let initial: undefined | string = undefined;
+      let invariant: undefined | string = undefined;
+      let urgent: undefined | string = undefined;
+      let committed: undefined | string = undefined;
+      let labels: undefined | string = undefined;
+      let layout: undefined | string = undefined;
+
       if (location.isInitial) {
-        newLocation += 'initial:';
-        hasPrevElem = true;
-      }
-      if (hasPrevElem && location.invariant != undefined && location.invariant.clauses.length > 0) {
-        newLocation += ' : ';
-        hasPrevElem = false;
+        initial = 'initial:';
       }
       if (location.invariant != undefined) {
-        let first: boolean = true;
+        const invar = 'invariant:';
+
+        const clauses: string[] = [];
         location.invariant.clauses.forEach((clause) => {
           const operator = deParseClockComparator(clause.op);
           const newClause = clause.lhs.name.toString() + operator + clause.rhs.toString();
-
-          if (first) {
-            newLocation += 'invariant:' + newClause;
-            first = false;
-          } else {
-            newLocation += ' && ' + newClause;
-          }
-          hasPrevElem = true;
+          clauses.push(newClause);
         });
-        if (hasPrevElem) {
-          newLocation += ' : ';
-          hasPrevElem = false;
-        }
+        const joinedClauses = clauses.join(' && ');
+
+        const freeClauses: string[] = [];
         location.invariant.freeClauses.forEach((clause) => {
           const newClause = clause.term;
-          if (first) {
-            newLocation += 'invariant:' + newClause;
-            first = false;
-          } else {
-            newLocation += ' && ' + newClause;
-          }
-
-          hasPrevElem = true;
+          freeClauses.push(newClause);
         });
-      }
-      if (hasPrevElem) {
-        newLocation += ' : ';
-        hasPrevElem = false;
+        const joinedFreeClauses = freeClauses.join(' && ');
+
+        const allClauses = [joinedClauses, joinedFreeClauses].filter((c) => c !== '').join(' && ');
+        if (allClauses !== '') {
+          invariant = invar + allClauses;
+        }
       }
       if (location.urgent) {
-        newLocation += 'urgent:';
-        hasPrevElem = true;
-      }
-      if (hasPrevElem) {
-        newLocation += ' : ';
-        hasPrevElem = false;
+        urgent = 'urgent:';
       }
       if (location.committed) {
-        newLocation += 'committed:';
-        hasPrevElem = true;
-      }
-      if (hasPrevElem) {
-        newLocation += ' : ';
-        hasPrevElem = false;
+        committed = 'committed:';
       }
       if (location.labels && location.labels.length > 0) {
-        let first: boolean = true;
-        location.labels.forEach((label) => {
-          if (first) {
-            newLocation += 'labels:' + label;
-            first = false;
-          } else {
-            newLocation += ',' + label;
-          }
-        });
-        hasPrevElem = true;
+        const lbl = 'labels:';
+        const allLabels = location.labels.join(', ');
+        if (allLabels !== '') {
+          labels = lbl + allLabels;
+        }
       }
-      if (hasPrevElem) {
-        newLocation += ' : ';
-        hasPrevElem = false;
-      }
-      newLocation += 'layout:' + location.xCoordinate.toString() + ',' + location.yCoordinate.toString();
-      newLocation += '}' + '\n';
+      layout = 'layout:' + location.xCoordinate.toString() + ',' + location.yCoordinate.toString();
+
+      const attributeList = [initial, invariant, urgent, committed, labels, layout]
+        .filter((e) => e !== undefined)
+        .join(' : ');
+
+      newLocation += attributeList + '}' + '\n';
       locations += newLocation;
     });
 
@@ -157,55 +134,57 @@ const createFile = async (currentSystem: SystemOptionType) => {
       }
       //actual edge definition
       let newEdge = 'edge:' + process + ':' + edge.source.name + ':' + edge.target.name + ':' + edge.actionLabel + '{';
-      let needColon: boolean = false;
+
+      let guard: string | undefined = undefined;
+      let resetsAndStatements: string | undefined = undefined;
+
       if (edge.guard != undefined) {
-        let first: boolean = true;
+        const prov = 'provided:';
+
+        const clauses: string[] = [];
         edge.guard.clauses.forEach((clause) => {
           const operator = deParseClockComparator(clause.op);
           const newClause = clause.lhs.name.toString() + operator + clause.rhs.toString();
-
-          if (first) {
-            newEdge += 'provided:' + newClause;
-            first = false;
-          } else {
-            newEdge += ' && ' + newClause;
-          }
-          needColon = true;
+          clauses.push(newClause);
         });
+        const joinedClauses = clauses.join(' && ');
+
+        const freeClauses: string[] = [];
         edge.guard.freeClauses.forEach((clause) => {
           const newClause = clause.term;
-          if (first) {
-            newEdge += 'provided:' + newClause;
-            first = false;
-          } else {
-            newEdge += ' && ' + newClause;
-          }
-          needColon = true;
+          freeClauses.push(newClause);
         });
-      }
-      if (needColon && (edge.reset.length > 0 || (edge.statement && edge.statement.statements.length > 0))) {
-        newEdge += ' : ';
-      }
-      let first: boolean = true;
-      edge.reset.forEach((reset) => {
-        if (first) {
-          newEdge += 'do:' + reset.name + '=0';
-          first = false;
-        } else {
-          newEdge += ';' + reset.name + '=0';
+        const joinedFreeClauses = freeClauses.join(' && ');
+
+        const allClauses = [joinedClauses, joinedFreeClauses].filter((c) => c !== '').join(' && ');
+        if (allClauses !== '') {
+          guard = prov + allClauses;
         }
+      }
+
+      const doLbl = 'do:';
+      const resetStrings: string[] = [];
+      edge.reset.forEach((reset) => {
+        resetStrings.push(reset.name + '=0');
       });
+      const resetString = resetStrings.join(';');
+
+      const statementsList: string[] = [];
       if (edge.statement != undefined) {
         edge.statement.statements.forEach((stmt) => {
-          if (first) {
-            newEdge += 'do:' + stmt.term;
-            first = false;
-          } else {
-            newEdge += ';' + stmt.term;
-          }
+          statementsList.push(stmt.term);
         });
       }
-      newEdge += '}' + '\n';
+      const statementsString = statementsList.join(';');
+
+      const allDos = [resetString, statementsString].filter((s) => s !== '').join(';');
+      if (allDos !== '') {
+        resetsAndStatements = doLbl + allDos;
+      }
+
+      const attributeList = [guard, resetsAndStatements].filter((e) => e !== undefined).join(' : ');
+
+      newEdge += attributeList + '}' + '\n';
       edges += newEdge;
     });
     const singularProcess = processDef + clocks + locations + edges;
@@ -217,22 +196,21 @@ const createFile = async (currentSystem: SystemOptionType) => {
 
   currentSystem.synchronizations.forEach((syncConstr) => {
     let newSyncConstr = '';
-    let first: boolean = true;
+
+    const syncLbl = 'sync:';
+    const syncs: string[] = [];
     syncConstr.syncs.forEach((sync) => {
       let newSync = sync.process + '@' + sync.event;
       if (sync.weakSynchronisation) {
         newSync += '?';
       }
-
-      if (first) {
-        newSyncConstr += 'sync:' + newSync;
-        first = false;
-      } else {
-        newSyncConstr += ':' + newSync;
-      }
+      syncs.push(newSync);
     });
-    newSyncConstr += '\n';
-    synchronizations += newSyncConstr;
+    const syncsStr = syncs.join(':');
+    if (syncsStr !== '') {
+      newSyncConstr += syncLbl + syncsStr + '\n';
+      synchronizations += newSyncConstr;
+    }
   });
 
   taFile += synchronizations;
