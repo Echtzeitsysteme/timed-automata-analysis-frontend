@@ -270,7 +270,7 @@ const UploadButton: React.FC<OpenedDocs> = (props) => {
         const one = 1;
         openedSystems.systemOptions.forEach((option) => {
           if (option.label === systemName) {
-            systemName += '(' + String(one) + ')';
+            systemName += '__' + String(one);
           }
         });
         const processes: AutomatonOptionType[] = systemOption.processes;
