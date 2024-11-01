@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useButtonUtils } from '../utils/buttonUtils.ts';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 interface ManipulateIntegerDialog {
   open: boolean;
@@ -71,8 +71,8 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
     setIsMinEmpty(min.trim() === '');
     setIsMaxEmpty(max.trim() === '');
     setIsInitEmpty(init.trim() === '');
-    setIsMinBiggerThanMax(min > max);
-    setInitOutsideIntervall(init > max || init < min);
+    setIsMinBiggerThanMax(parseInt(min) > parseInt(max));
+    setInitOutsideIntervall(parseInt(init) > parseInt(max) || parseInt(init) < parseInt(min));
     setIsSizeInvalid(parseInt(size) < 1);
     if (intPrevVersion) {
       // previous name is allowed
@@ -90,7 +90,21 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
     isMinBiggerThanMax && setMaxErrorMessage(t('integerDialog.error.maxMessage'));
     initOutsideIntervall && setInitErrorMessage(t('integerDialog.error.initMessage'));
     isSizeInvalid && setSizeErrorMessage(t('integerDialog.error.sizeMessage'));
-  }, [name, integers, isNameEmpty, isNameDuplicate, intPrevVersion, size, min, max, init, isMinBiggerThanMax, initOutsideIntervall, isSizeInvalid, t]);
+  }, [
+    name,
+    integers,
+    isNameEmpty,
+    isNameDuplicate,
+    intPrevVersion,
+    size,
+    min,
+    max,
+    init,
+    isMinBiggerThanMax,
+    initOutsideIntervall,
+    isSizeInvalid,
+    t,
+  ]);
 
   const isValidationError: boolean = useMemo(
     () =>
@@ -149,11 +163,7 @@ export const ManipulateIntegerDialog: React.FC<ManipulateIntegerDialog> = (props
   return (
     <Dialog open={open} onClose={handleCloseDialog}>
       <DialogTitle>
-        {
-          intPrevVersion
-            ? t('integerDialog.title.editInteger')
-            : t('integerDialog.title.addInteger')
-        }
+        {intPrevVersion ? t('integerDialog.title.editInteger') : t('integerDialog.title.addInteger')}
         <IconButton
           onMouseDown={handleCloseDialog}
           onKeyDown={(e) => executeOnKeyboardClick(e.key, handleCloseDialog)}
