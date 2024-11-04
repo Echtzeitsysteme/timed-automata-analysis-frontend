@@ -111,7 +111,9 @@ const createFile = async (currentSystem: SystemOptionType) => {
           labels = lbl + allLabels;
         }
       }
-      layout = 'layout:' + location.xCoordinate.toString() + ',' + location.yCoordinate.toString();
+      if (location.setLayout) {
+        layout = 'layout:' + location.xCoordinate.toString() + ',' + location.yCoordinate.toString();
+      }
 
       const attributeList = [initial, invariant, urgent, committed, labels, layout]
         .filter((e) => e !== undefined)

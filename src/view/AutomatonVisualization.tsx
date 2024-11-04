@@ -85,6 +85,7 @@ const AutomatonVisualization: React.FC<VisualizationProps> = (props) => {
         const locationName = location.name;
         location.xCoordinate = nodePositions[locationName].x;
         location.yCoordinate = nodePositions[locationName].y;
+        location.setLayout = true;
       });
     });
 
